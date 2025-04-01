@@ -1,0 +1,13 @@
+# Ignore all files created by the Unity Editor (and its integrations)
+/.vscode/
+/Library/
+/Logs/
+/Temp/
+/UserSettings/
+/*.csproj
+/*.sln
+/.vsconfig
+
+# Ignore all files created by Gradle
+/.gradle/
+/build/
