@@ -11,7 +11,7 @@ restore="$__dirname/com.google.play.games-${version}"
 # Clean and extract Unity package
 ! test -d $extract || rm -rf $extract
 mkdir -p $extract
-tar -zxf $extract.unitypackage -C $extract 
+tar --no-xattrs -zxf $extract.unitypackage -C $extract --warning=no-unknown-keyword || tar zxf $extract.unitypackage -C $extract
 
 # Clean and restore Unity package
 ! test -d $restore || rm -rf $restore
