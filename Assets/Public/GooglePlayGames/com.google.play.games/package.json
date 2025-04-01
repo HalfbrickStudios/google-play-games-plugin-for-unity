@@ -15,7 +15,7 @@
             "name": "OpenUPM",
             "url": "https://package.openupm.com",
             "scopes": [
-              "com.google.external-dependency-manager"
+                "com.google.external-dependency-manager"
             ]
         }
     ]
