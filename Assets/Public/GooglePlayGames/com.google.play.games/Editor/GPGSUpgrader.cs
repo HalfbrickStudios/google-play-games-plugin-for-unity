@@ -16,46 +16,38 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.Editor
-{
-    using System.IO;
-    using UnityEditor;
-    using UnityEngine;
+using UnityEditor;
+using UnityEngine;
+
+namespace GooglePlayGames.Editor {
 
     /// <summary>
     /// GPGS upgrader handles performing and upgrade tasks.
     /// </summary>
     [InitializeOnLoad]
-    public class GPGSUpgrader
-    {
+    public class GPGSUpgrader {
+
         /// <summary>
         /// Initializes static members of the <see cref="GooglePlayGames.GPGSUpgrader"/> class.
         /// </summary>
         static GPGSUpgrader()
         {
-            if (EditorApplication.isPlayingOrWillChangePlaymode)
-                return;
-            Debug.Log("GPGSUpgrader start");
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
             GPGSProjectSettings.Instance.Set(GPGSUtil.LASTUPGRADEKEY, PluginVersion.VersionKey);
-            GPGSProjectSettings.Instance.Set(GPGSUtil.PLUGINVERSIONKEY,
-                PluginVersion.VersionString);
+            GPGSProjectSettings.Instance.Set(GPGSUtil.PLUGINVERSIONKEY, PluginVersion.VersionString);
             GPGSProjectSettings.Instance.Save();
 
-            bool isChanged = false;
-            // Check that there is a AndroidManifest.xml file
-            if (!GPGSUtil.AndroidManifestExists())
-            {
-                isChanged = true;
+            var changed = false;
+            if (!GPGSUtil.AndroidManifestExists()) {
+                changed = true;
                 GPGSUtil.GenerateAndroidManifest();
             }
-
-            if (isChanged)
-            {
-                AssetDatabase.Refresh();
-            }
-            Debug.Log("GPGSUpgrader done");
+            if (changed) AssetDatabase.Refresh();
         }
+
     }
+
 }
+
 #endif
