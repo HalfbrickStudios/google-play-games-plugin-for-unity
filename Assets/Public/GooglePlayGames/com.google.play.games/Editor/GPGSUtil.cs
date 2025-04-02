@@ -123,19 +123,33 @@ namespace GooglePlayGames.Editor {
         public static string RootPath {
             get {
                 if (string.IsNullOrEmpty(m_rootPath)) {
+                    var assets = Directory.GetDirectories("Assets", RootFolderName, SearchOption.AllDirectories);
 #if UNITY_2018_4_OR_NEWER
                     var packages = Directory.GetDirectories("Packages", RootFolderName, SearchOption.AllDirectories);
-                    var assets = Directory.GetDirectories("Assets", RootFolderName, SearchOption.AllDirectories);
                     var length = packages.Length;
                     Array.Resize(ref packages, length + assets.Length);
                     Array.Copy(assets, 0, packages, length, assets.Length);
 #else
-                    var assets = Directory.GetDirectories("Assets", RootFolderName, SearchOption.AllDirectories);
+                    var packages = assets; // For older Unity versions, only search in Assets
 #endif
                     switch (packages.Length) {
                         case 0:
-                            Alert("Plugin error: com.google.play.games folder was renamed");
-                            throw new Exception("com.google.play.games folder was renamed");
+                            // Patch 1: handle the case when the plugin is installed from the package cache
+                            var cache = Directory.GetDirectories("Library/PackageCache", $"{RootFolderName}*", SearchOption.TopDirectoryOnly);
+                            if (cache.Length == 1) {
+                                m_rootPath = SlashesToPlatformSeparator(cache[0]);
+                                break;
+                            } else {
+                                // Patch 2: handle the case when the plugin is installed locally
+                                var info = UnityEditor.PackageManager.PackageInfo.FindForAssetPath("Packages/" + RootFolderName);
+                                if (info != null) {
+                                    m_rootPath = SlashesToPlatformSeparator(info.resolvedPath);
+                                    break;
+                                } else {
+                                    Alert($"Plugin error (1): {RootFolderName} folder was renamed or not found");
+                                    throw new Exception($"{RootFolderName} folder was renamed or not found");
+                                }
+                            }
                         case 1:
                             m_rootPath = SlashesToPlatformSeparator(packages[0]);
                             break;
@@ -147,10 +161,9 @@ namespace GooglePlayGames.Editor {
                                     break;
                                 }
                             }
-
                             if (string.IsNullOrEmpty(m_rootPath)) {
-                                Alert("Plugin error: com.google.play.games folder was renamed");
-                                throw new Exception("com.google.play.games folder was renamed");
+                                Alert($"Plugin error (2): {RootFolderName} folder was renamed");
+                                throw new Exception($"{RootFolderName} folder was renamed");
                             }
                             break;
                     }
@@ -217,7 +230,6 @@ namespace GooglePlayGames.Editor {
                 Alert("Plugin error: file not found: " + filePath);
                 return null;
             }
-
             using var sr = new StreamReader(filePath);
             return sr.ReadToEnd();
         }
@@ -415,18 +427,14 @@ namespace GooglePlayGames.Editor {
         /// <returns>The unity major version.</returns>
         public static int GetUnityMajorVersion()
         {
+            var version = 0;
 #if UNITY_5
             var major = Application.unityVersion.Split('.')[0];
-            var version = 0;
-            if (!int.TryParse(major, out version)) {
-                // Nothing to do
-            }
-            return version;
+            int.TryParse(major, out version);
 #elif UNITY_4_6
-            return 4;
-#else
-            return 0;
+            version = 4;
 #endif
+            return version;
         }
 
         /// <summary>
@@ -480,9 +488,8 @@ namespace GooglePlayGames.Editor {
         /// <param name="resourceKeys">Resource keys.</param>
         public static void WriteResourceIds(string classDirectory, string className, Hashtable resourceKeys)
         {
-            if (string.IsNullOrEmpty(classDirectory)) {
-                classDirectory = "Assets";
-            }
+            if (string.IsNullOrEmpty(classDirectory)) classDirectory = "Assets";
+            
             var parts = className.Split('.');
             var constants = string.Empty;
             var @namespace = string.Empty;
@@ -570,9 +577,8 @@ namespace GooglePlayGames.Editor {
             var versions = Directory.GetFiles(RootPath, "GooglePlayGamesPlugin_v*.txt", SearchOption.AllDirectories);
 
             if (versions.Length == 1) {
-                var tmpFilePath = Path.GetTempFileName();
-
-                using (var sw = new StreamWriter(tmpFilePath)) {
+                var temporal = Path.GetTempFileName();
+                using (var sw = new StreamWriter(temporal)) {
                     using (var sr = new StreamReader(versions[0])) {
                         string line;
                         while ((line = sr.ReadLine()) != null) {
@@ -588,9 +594,9 @@ namespace GooglePlayGames.Editor {
                 }
 
                 try {
-                    File.Copy(tmpFilePath, versions[0], true);
+                    File.Copy(temporal, versions[0], true);
                 } finally {
-                    File.Delete(tmpFilePath);
+                    File.Delete(temporal);
                 }
             }
         }
@@ -630,14 +636,14 @@ namespace GooglePlayGames.Editor {
             var path = libProjPath + "/res/values/version.xml";
             using var reader = new XmlTextReader(new StreamReader(path));
 
-            var inResource = false;
+            var resource = false;
             var version = -1;
 
             while (reader.Read()) {
                 if (reader.Name == "resources") {
-                    inResource = true;
+                    resource = true;
                 }
-                if (inResource && reader.Name == "integer") {
+                if (resource && reader.Name == "integer") {
                     if ("google_play_services_version".Equals(reader.GetAttribute("name"))) {
                         reader.Read();
                         Debug.Log("Read version string: " + reader.Value);
