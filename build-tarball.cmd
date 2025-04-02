@@ -35,7 +35,7 @@ IF DEFINED PACKAGE_VERSION (
 )
 
 ECHO ^>^> Running Gradle task "export_plugin_tgz" using the wrapper script...
-CMD /c gradlew.bat export_plugin_tgz
+CMD /c gradlew.bat export_plugin_tgz --stacktrace
 
 REM Check if the task succeeded
 IF %ERRORLEVEL% NEQ 0 (
