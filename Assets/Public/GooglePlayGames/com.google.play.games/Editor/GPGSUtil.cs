@@ -15,21 +15,22 @@
 // </copyright>
 // Keep this even on unsupported configurations.
 
-namespace GooglePlayGames.Editor
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Xml;
-    using UnityEditor;
-    using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using UnityEditor;
+using UnityEngine;
+
+namespace GooglePlayGames.Editor {
 
     /// <summary>
     /// Utility class to perform various tasks in the editor.
     /// </summary>
-    public static class GPGSUtil
-    {
+    public static class GPGSUtil {
+
         /// <summary>Property key for project settings.</summary>
         public const string SERVICEIDKEY = "App.NearbdServiceId";
 
@@ -107,68 +108,58 @@ namespace GooglePlayGames.Editor
         /// </summary>
         /// <remarks>The Games SDK requires additional metadata in the AndroidManifest.xml
         ///     file. </remarks>
-        private const string ManifestRelativePath =
-            "../../Plugins/Android/GooglePlayGamesManifest.androidlib/AndroidManifest.xml";
+        private const string ManifestRelativePath = "../../Plugins/Android/GooglePlayGamesManifest.androidlib/AndroidManifest.xml";
 
         private const string RootFolderName = "com.google.play.games";
 
         /// <summary>
         /// The root path of the Google Play Games plugin
         /// </summary>
-        public static string RootPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(mRootPath))
-                {
+        private static string m_rootPath = "";
+
+        /// <summary>
+        /// The root path of the Google Play Games plugin
+        /// </summary>
+        public static string RootPath {
+            get {
+                if (string.IsNullOrEmpty(m_rootPath)) {
 #if UNITY_2018_4_OR_NEWER
-                    // Search for root path in plugin locations for both Asset packages and UPM packages
-                    string[] dirs = Directory.GetDirectories("Packages", RootFolderName, SearchOption.AllDirectories);
-                    string[] dir1 = Directory.GetDirectories("Assets", RootFolderName, SearchOption.AllDirectories);
-                    int dirsLength = dirs.Length;
-                    Array.Resize<string>(ref dirs, dirsLength + dir1.Length);
-                    Array.Copy(dir1, 0, dirs, dirsLength, dir1.Length);
+                    var packages = Directory.GetDirectories("Packages", RootFolderName, SearchOption.AllDirectories);
+                    var assets = Directory.GetDirectories("Assets", RootFolderName, SearchOption.AllDirectories);
+                    var length = packages.Length;
+                    Array.Resize(ref packages, length + assets.Length);
+                    Array.Copy(assets, 0, packages, length, assets.Length);
 #else
-                    string[] dirs = Directory.GetDirectories("Assets", RootFolderName, SearchOption.AllDirectories);
+                    var assets = Directory.GetDirectories("Assets", RootFolderName, SearchOption.AllDirectories);
 #endif
-                    switch (dirs.Length)
-                    {
+                    switch (packages.Length) {
                         case 0:
                             Alert("Plugin error: com.google.play.games folder was renamed");
                             throw new Exception("com.google.play.games folder was renamed");
-
                         case 1:
-                            mRootPath = SlashesToPlatformSeparator(dirs[0]);
+                            m_rootPath = SlashesToPlatformSeparator(packages[0]);
                             break;
-
                         default:
-                            for (int i = 0; i < dirs.Length; i++)
-                            {
-                                if (File.Exists(SlashesToPlatformSeparator(Path.Combine(dirs[i], GameInfoRelativePath)))
-                                )
-                                {
-                                    mRootPath = SlashesToPlatformSeparator(dirs[i]);
+                            for (var i = 0; i < packages.Length; i += 1) {
+                                var info = SlashesToPlatformSeparator(Path.Combine(packages[i], GameInfoRelativePath));
+                                if (File.Exists(info)) {
+                                    m_rootPath = SlashesToPlatformSeparator(packages[i]);
                                     break;
                                 }
                             }
 
-                            if (string.IsNullOrEmpty(mRootPath))
-                            {
+                            if (string.IsNullOrEmpty(m_rootPath)) {
                                 Alert("Plugin error: com.google.play.games folder was renamed");
                                 throw new Exception("com.google.play.games folder was renamed");
                             }
-
                             break;
                     }
                 }
-                // UPM package root path is 'Library/PackageCache/com.google.play.games@.*/
-                // where the suffix can be a version number if installed with URS
-                // or a hash if from disk or tarball
-                if (mRootPath.Contains(RootFolderName + '@'))
-                {
-                    mRootPath = mRootPath.Replace("Packages", "Library/PackageCache");
+
+                if (m_rootPath.Contains(RootFolderName + '@')) {
+                    m_rootPath = m_rootPath.Replace("Packages", "Library/PackageCache");
                 }
-                return mRootPath;
+                return m_rootPath;
             }
         }
 
@@ -177,7 +168,7 @@ namespace GooglePlayGames.Editor
         /// </summary>
         private static string GameInfoPath
         {
-            get { return SlashesToPlatformSeparator(Path.Combine(RootPath, GameInfoRelativePath)); }
+            get => SlashesToPlatformSeparator(Path.Combine(RootPath, GameInfoRelativePath));
         }
 
         /// <summary>
@@ -187,42 +178,32 @@ namespace GooglePlayGames.Editor
         ///     file. </remarks>
         private static string ManifestPath
         {
-            get { return SlashesToPlatformSeparator(Path.Combine(RootPath, ManifestRelativePath)); }
+            get => SlashesToPlatformSeparator(Path.Combine(RootPath, ManifestRelativePath));
         }
-
-        /// <summary>
-        /// The root path of the Google Play Games plugin
-        /// </summary>
-        private static string mRootPath = "";
 
         /// <summary>
         /// The map of replacements for filling in code templates.  The
         /// key is the string that appears in the template as a placeholder,
         /// the value is the key into the GPGSProjectSettings.
         /// </summary>
-        private static Dictionary<string, string> replacements =
-            new Dictionary<string, string>()
-            {
-                // Put this element placeholder first, since it has embedded placeholder
-                {SERVICEID_ELEMENT_PLACEHOLDER, SERVICEID_ELEMENT_PLACEHOLDER},
-                {SERVICEIDPLACEHOLDER, SERVICEIDKEY},
-                {APPIDPLACEHOLDER, APPIDKEY},
-                {CLASSNAMEPLACEHOLDER, CLASSNAMEKEY},
-                {WEBCLIENTIDPLACEHOLDER, WEBCLIENTIDKEY},
-                {PLUGINVERSIONPLACEHOLDER, PLUGINVERSIONKEY},
-                // Causes the placeholder to be replaced with overridden value at runtime.
-                {NEARBY_PERMISSIONS_PLACEHOLDER, NEARBY_PERMISSIONS_PLACEHOLDER}
-            };
+        private static readonly Dictionary<string, string> s_replacements = new() {
+            // Put this element placeholder first, since it has embedded placeholder
+            {SERVICEID_ELEMENT_PLACEHOLDER, SERVICEID_ELEMENT_PLACEHOLDER},
+            {SERVICEIDPLACEHOLDER, SERVICEIDKEY},
+            {APPIDPLACEHOLDER, APPIDKEY},
+            {CLASSNAMEPLACEHOLDER, CLASSNAMEKEY},
+            {WEBCLIENTIDPLACEHOLDER, WEBCLIENTIDKEY},
+            {PLUGINVERSIONPLACEHOLDER, PLUGINVERSIONKEY},
+            // Causes the placeholder to be replaced with overridden value at runtime.
+            {NEARBY_PERMISSIONS_PLACEHOLDER, NEARBY_PERMISSIONS_PLACEHOLDER}
+        };
 
         /// <summary>
         /// Replaces / in file path to be the os specific separator.
         /// </summary>
         /// <returns>The path.</returns>
         /// <param name="path">Path with correct separators.</param>
-        public static string SlashesToPlatformSeparator(string path)
-        {
-            return path.Replace("/", System.IO.Path.DirectorySeparatorChar.ToString());
-        }
+        public static string SlashesToPlatformSeparator(string path) => path.Replace("/", Path.DirectorySeparatorChar.ToString());
 
         /// <summary>
         /// Reads the file.
@@ -232,16 +213,13 @@ namespace GooglePlayGames.Editor
         public static string ReadFile(string filePath)
         {
             filePath = SlashesToPlatformSeparator(filePath);
-            if (!File.Exists(filePath))
-            {
+            if (!File.Exists(filePath)) {
                 Alert("Plugin error: file not found: " + filePath);
                 return null;
             }
 
-            StreamReader sr = new StreamReader(filePath);
-            string body = sr.ReadToEnd();
-            sr.Close();
-            return body;
+            using var sr = new StreamReader(filePath);
+            return sr.ReadToEnd();
         }
 
         /// <summary>
@@ -251,8 +229,9 @@ namespace GooglePlayGames.Editor
         /// <param name="name">Name of the template in the editor directory.</param>
         public static string ReadEditorTemplate(string name)
         {
-            return ReadFile(
-                Path.Combine(RootPath, string.Format("Editor{0}{1}.txt", Path.DirectorySeparatorChar, name)));
+            var file = string.Format("Editor{0}{1}.txt", Path.DirectorySeparatorChar, name);
+            var path = Path.Combine(RootPath, file);
+            return ReadFile(path);
         }
 
         /// <summary>
@@ -263,12 +242,10 @@ namespace GooglePlayGames.Editor
         public static void WriteFile(string file, string body)
         {
             file = SlashesToPlatformSeparator(file);
-            DirectoryInfo dir = Directory.GetParent(file);
+            var dir = Directory.GetParent(file);
             dir.Create();
-            using (var wr = new StreamWriter(file, false))
-            {
-                wr.Write(body);
-            }
+            using var wr = new StreamWriter(file, false);
+            wr.Write(body);
         }
 
         /// <summary>
@@ -278,19 +255,10 @@ namespace GooglePlayGames.Editor
         /// <param name="s">string to test.</param>
         public static bool LooksLikeValidServiceId(string s)
         {
-            if (s.Length < 3)
-            {
-                return false;
+            if (s.Length < 3) return false;
+            foreach (var c in s) {
+                if (!char.IsLetterOrDigit(c) && c != '.') return false;
             }
-
-            foreach (char c in s)
-            {
-                if (!char.IsLetterOrDigit(c) && c != '.')
-                {
-                    return false;
-                }
-            }
-
             return true;
         }
 
@@ -301,19 +269,10 @@ namespace GooglePlayGames.Editor
         /// <param name="s">the string to test.</param>
         public static bool LooksLikeValidAppId(string s)
         {
-            if (s.Length < 5)
-            {
-                return false;
+            if (s.Length < 5) return false;
+            foreach (var c in s) {
+                if (c < '0' || c > '9') return false;
             }
-
-            foreach (char c in s)
-            {
-                if (c < '0' || c > '9')
-                {
-                    return false;
-                }
-            }
-
             return true;
         }
 
@@ -322,20 +281,14 @@ namespace GooglePlayGames.Editor
         /// </summary>
         /// <returns><c>true</c>, if valid client identifier, <c>false</c> otherwise.</returns>
         /// <param name="s">the string to test.</param>
-        public static bool LooksLikeValidClientId(string s)
-        {
-            return s.EndsWith(".googleusercontent.com");
-        }
+        public static bool LooksLikeValidClientId(string s) => s.EndsWith(".googleusercontent.com");
 
         /// <summary>
         /// Looks the like a valid bundle identifier.
         /// </summary>
         /// <returns><c>true</c>, if valid bundle identifier, <c>false</c> otherwise.</returns>
         /// <param name="s">the string to test.</param>
-        public static bool LooksLikeValidBundleId(string s)
-        {
-            return s.Length > 3;
-        }
+        public static bool LooksLikeValidBundleId(string s) => s.Length > 3;
 
         /// <summary>
         /// Looks like a valid package.
@@ -344,32 +297,21 @@ namespace GooglePlayGames.Editor
         /// <param name="s">the string to test.</param>
         public static bool LooksLikeValidPackageName(string s)
         {
-            if (string.IsNullOrEmpty(s))
-            {
-                throw new Exception("cannot be empty");
-            }
+            if (string.IsNullOrEmpty(s)) throw new Exception("cannot be empty");
 
-            string[] parts = s.Split(new char[] {'.'});
-            foreach (string p in parts)
-            {
-                char[] bytes = p.ToCharArray();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    if (i == 0 && !char.IsLetter(bytes[i]))
-                    {
+            var parts = s.Split(new char[] {'.'});
+            foreach (var part in parts) {
+                var bytes = part.ToCharArray();
+                for (var i = 0; i < bytes.Length; i += 1) {
+                    if (i == 0 && !char.IsLetter(bytes[i])) {
                         throw new Exception("each part must start with a letter");
-                    }
-                    else if (char.IsWhiteSpace(bytes[i]))
-                    {
+                    } else if (char.IsWhiteSpace(bytes[i])) {
                         throw new Exception("cannot contain spaces");
-                    }
-                    else if (!char.IsLetterOrDigit(bytes[i]) && bytes[i] != '_')
-                    {
+                    } else if (!char.IsLetterOrDigit(bytes[i]) && bytes[i] != '_') {
                         throw new Exception("must be alphanumeric or _");
                     }
                 }
             }
-
             return parts.Length >= 1;
         }
 
@@ -379,28 +321,21 @@ namespace GooglePlayGames.Editor
         /// <returns><c>true</c> if is setup done; otherwise, <c>false</c>.</returns>
         public static bool IsSetupDone()
         {
-            bool doneSetup = true;
+            var done = true;
 #if UNITY_ANDROID
-            doneSetup = GPGSProjectSettings.Instance.GetBool(ANDROIDSETUPDONEKEY, false);
-            // check gameinfo
-            if (File.Exists(GameInfoPath))
-            {
-                string contents = ReadFile(GameInfoPath);
-                if (contents.Contains(APPIDPLACEHOLDER))
-                {
-                    Debug.Log("GameInfo not initialized with AppId.  " +
-                              "Run Window > Google Play Games > Setup > Android Setup...");
+            done = GPGSProjectSettings.Instance.GetBool(ANDROIDSETUPDONEKEY, false);
+            if (File.Exists(GameInfoPath)) {
+                var contents = ReadFile(GameInfoPath);
+                if (contents.Contains(APPIDPLACEHOLDER)) {
+                    Debug.Log("GameInfo not initialized with AppId; run Window > Google Play Games > Setup > Android Setup...");
                     return false;
                 }
-            }
-            else
-            {
+            } else {
                 Debug.Log("GameInfo.cs does not exist.  Run Window > Google Play Games > Setup > Android Setup...");
                 return false;
             }
 #endif
-
-            return doneSetup;
+            return done;
         }
 
         /// <summary>
@@ -414,44 +349,29 @@ namespace GooglePlayGames.Editor
         /// <param name="key">Key to convert to an identifier.</param>
         public static string MakeIdentifier(string key)
         {
-            string s;
-            string retval = string.Empty;
-            if (string.IsNullOrEmpty(key))
-            {
-                return "_";
-            }
-
-            s = key.Trim().Replace(' ', '_');
-
-            foreach (char c in s)
-            {
-                if (char.IsLetterOrDigit(c) || c == '_')
-                {
-                    retval += c;
+            if (string.IsNullOrEmpty(key)) return "_";
+            var invalid = key.Trim().Replace(' ', '_');
+            var acc = string.Empty;
+            foreach (var c in invalid) {
+                if (char.IsLetterOrDigit(c) || c == '_') {
+                    acc += c;
                 }
             }
-
-            return retval;
+            return acc;
         }
 
         /// <summary>
         /// Displays an error dialog.
         /// </summary>
         /// <param name="s">the message</param>
-        public static void Alert(string s)
-        {
-            Alert(GPGSStrings.Error, s);
-        }
+        public static void Alert(string s) => Alert(GPGSStrings.Error, s);
 
         /// <summary>
         /// Displays a dialog with the given title and message.
         /// </summary>
         /// <param name="title">the title.</param>
         /// <param name="message">the message.</param>
-        public static void Alert(string title, string message)
-        {
-            EditorUtility.DisplayDialog(title, message, GPGSStrings.Ok);
-        }
+        public static void Alert(string title, string message) => EditorUtility.DisplayDialog(title, message, GPGSStrings.Ok);
 
         /// <summary>
         /// Gets the android sdk path.
@@ -459,29 +379,24 @@ namespace GooglePlayGames.Editor
         /// <returns>The android sdk path.</returns>
         public static string GetAndroidSdkPath()
         {
-            string sdkPath = EditorPrefs.GetString("AndroidSdkRoot");
+            var path = EditorPrefs.GetString("AndroidSdkRoot");
 #if UNITY_2019_1_OR_NEWER
             // Unity 2019.x added installation of the Android SDK in the AndroidPlayer directory
             // so fallback to searching for it there.
-            if (string.IsNullOrEmpty(sdkPath) || EditorPrefs.GetBool("SdkUseEmbedded"))
-            {
-                string androidPlayerDir = BuildPipeline.GetPlaybackEngineDirectory(BuildTarget.Android, BuildOptions.None);
-                if (!string.IsNullOrEmpty(androidPlayerDir))
-                {
-                    string androidPlayerSdkDir = Path.Combine(androidPlayerDir, "SDK");
-                    if (Directory.Exists(androidPlayerSdkDir))
-                    {
-                        sdkPath = androidPlayerSdkDir;
+            if (string.IsNullOrEmpty(path) || EditorPrefs.GetBool("SdkUseEmbedded")) {
+                var player = BuildPipeline.GetPlaybackEngineDirectory(BuildTarget.Android, BuildOptions.None);
+                if (!string.IsNullOrEmpty(player)) {
+                    var sdk = Path.Combine(player, "SDK");
+                    if (Directory.Exists(sdk)) {
+                        path = sdk;
                     }
                 }
             }
 #endif
-            if (sdkPath != null && (sdkPath.EndsWith("/") || sdkPath.EndsWith("\\")))
-            {
-                sdkPath = sdkPath.Substring(0, sdkPath.Length - 1);
+            if (path != null && (path.EndsWith("/") || path.EndsWith("\\"))) {
+                path = path.Substring(0, path.Length - 1);
             }
-
-            return sdkPath;
+            return path;
         }
 
         /// <summary>
@@ -490,8 +405,8 @@ namespace GooglePlayGames.Editor
         /// <returns><c>true</c> if  android sdk exists; otherwise, <c>false</c>.</returns>
         public static bool HasAndroidSdk()
         {
-            string sdkPath = GetAndroidSdkPath();
-            return sdkPath != null && sdkPath.Trim() != string.Empty && System.IO.Directory.Exists(sdkPath);
+            var path = GetAndroidSdkPath();
+            return path != null && path.Trim() != string.Empty && Directory.Exists(path);
         }
 
         /// <summary>
@@ -501,14 +416,12 @@ namespace GooglePlayGames.Editor
         public static int GetUnityMajorVersion()
         {
 #if UNITY_5
-            string majorVersion = Application.unityVersion.Split('.')[0];
-            int ver;
-            if (!int.TryParse(majorVersion, out ver))
-            {
-                ver = 0;
+            var major = Application.unityVersion.Split('.')[0];
+            var version = 0;
+            if (!int.TryParse(major, out version)) {
+                // Nothing to do
             }
-
-            return ver;
+            return version;
 #elif UNITY_4_6
             return 4;
 #else
@@ -520,55 +433,42 @@ namespace GooglePlayGames.Editor
         /// Checks for the android manifest file exsistance.
         /// </summary>
         /// <returns><c>true</c>, if the file exists <c>false</c> otherwise.</returns>
-        public static bool AndroidManifestExists()
-        {
-            string destFilename = ManifestPath;
-
-            return File.Exists(destFilename);
-        }
+        public static bool AndroidManifestExists() => File.Exists(ManifestPath);
 
         /// <summary>
         /// Generates the android manifest.
         /// </summary>
         public static void GenerateAndroidManifest()
         {
-            string destFilename = ManifestPath;
-
-            // Generate AndroidManifest.xml
-            string manifestBody = GPGSUtil.ReadEditorTemplate("template-AndroidManifest");
-
-            Dictionary<string, string> overrideValues =
-                new Dictionary<string, string>();
-
-            if (!string.IsNullOrEmpty(GPGSProjectSettings.Instance.Get(SERVICEIDKEY)))
-            {
-                overrideValues[NEARBY_PERMISSIONS_PLACEHOLDER] =
-                    "        <!-- Required for Nearby Connections -->\n" +
-                    "        <uses-permission android:name=\"android.permission.BLUETOOTH\" />\n" +
-                    "        <uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\" />\n" +
-                    "        <uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\" />\n" +
-                    "        <uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\" />\n" +
-                    "        <uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />\n";
-                overrideValues[SERVICEID_ELEMENT_PLACEHOLDER] =
-                    "             <!-- Required for Nearby Connections API -->\n" +
-                    "             <meta-data android:name=\"com.google.android.gms.nearby.connection.SERVICE_ID\"\n" +
-                    "                  android:value=\"__NEARBY_SERVICE_ID__\" />\n";
-            }
-            else
-            {
-                overrideValues[NEARBY_PERMISSIONS_PLACEHOLDER] = "";
-                overrideValues[SERVICEID_ELEMENT_PLACEHOLDER] = "";
+            var content = ReadEditorTemplate("template-AndroidManifest");
+            var extend = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(GPGSProjectSettings.Instance.Get(SERVICEIDKEY))) {
+                extend[NEARBY_PERMISSIONS_PLACEHOLDER] = string.Join("\n", new[] {
+                        "<!-- Required for Nearby Connections -->\n",
+                        "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
+                        "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\" />",
+                        "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\" />",
+                        "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\" />",
+                        "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />",
+                    }.Select(it => $"        {it}")
+                );
+                extend[SERVICEID_ELEMENT_PLACEHOLDER] = string.Join("\n", new[] {
+                        "<!-- Required for Nearby Connections API -->\n",
+                        "<meta-data android:name=\"com.google.android.gms.nearby.connection.SERVICE_ID\" android:value=\"__NEARBY_SERVICE_ID__\" />",
+                    }.Select(it => $"             {it}")
+                );
+            } else {
+                extend[NEARBY_PERMISSIONS_PLACEHOLDER] = "";
+                extend[SERVICEID_ELEMENT_PLACEHOLDER] = "";
             }
 
-            foreach (KeyValuePair<string, string> ent in replacements)
-            {
-                string value =
-                    GPGSProjectSettings.Instance.Get(ent.Value, overrideValues);
-                manifestBody = manifestBody.Replace(ent.Key, value);
+            foreach (var entry in s_replacements) {
+                var value = GPGSProjectSettings.Instance.Get(entry.Value, extend);
+                content = content.Replace(entry.Key, value);
             }
 
-            GPGSUtil.WriteFile(destFilename, manifestBody);
-            GPGSUtil.UpdateGameInfo();
+            WriteFile(ManifestPath, content);
+            UpdateGameInfo();
         }
 
         /// <summary>
@@ -580,60 +480,43 @@ namespace GooglePlayGames.Editor
         /// <param name="resourceKeys">Resource keys.</param>
         public static void WriteResourceIds(string classDirectory, string className, Hashtable resourceKeys)
         {
-            string constantsValues = string.Empty;
-            string[] parts = className.Split('.');
-            string dirName = classDirectory;
-            if (string.IsNullOrEmpty(dirName))
-            {
-                dirName = "Assets";
+            if (string.IsNullOrEmpty(classDirectory)) {
+                classDirectory = "Assets";
             }
-
-            string nameSpace = string.Empty;
-            for (int i = 0; i < parts.Length - 1; i++)
-            {
-                dirName += "/" + parts[i];
-                if (nameSpace != string.Empty)
-                {
-                    nameSpace += ".";
+            var parts = className.Split('.');
+            var constants = string.Empty;
+            var @namespace = string.Empty;
+            for (var i = 0; i < parts.Length - 1; i += 1) {
+                classDirectory += "/" + parts[i];
+                if (@namespace != string.Empty) {
+                    @namespace += ".";
                 }
-
-                nameSpace += parts[i];
+                @namespace += parts[i];
             }
 
-            EnsureDirExists(dirName);
-            foreach (DictionaryEntry ent in resourceKeys)
-            {
-                string key = MakeIdentifier((string) ent.Key);
-                constantsValues += "        public const string " +
-                                   key + " = \"" + ent.Value + "\"; // <GPGSID>\n";
+            EnsureDirExists(classDirectory);
+            foreach (DictionaryEntry ent in resourceKeys) {
+                var key = MakeIdentifier((string) ent.Key);
+                constants += $"        public const string {key} = \"{ent.Value}\"; // <GPGSID>\n";
             }
 
-            string fileBody = GPGSUtil.ReadEditorTemplate("template-Constants");
-            if (nameSpace != string.Empty)
-            {
-                fileBody = fileBody.Replace(
-                    NAMESPACESTARTPLACEHOLDER,
-                    "namespace " + nameSpace + "\n{");
-            }
-            else
-            {
-                fileBody = fileBody.Replace(NAMESPACESTARTPLACEHOLDER, string.Empty);
+            var contents = ReadEditorTemplate("template-Constants");
+            if (@namespace != string.Empty) {
+                contents = contents.Replace(NAMESPACESTARTPLACEHOLDER, "namespace " + @namespace + "\n{");
+            } else {
+                contents = contents.Replace(NAMESPACESTARTPLACEHOLDER, string.Empty);
             }
 
-            fileBody = fileBody.Replace(CLASSNAMEPLACEHOLDER, parts[parts.Length - 1]);
-            fileBody = fileBody.Replace(CONSTANTSPLACEHOLDER, constantsValues);
-            if (nameSpace != string.Empty)
-            {
-                fileBody = fileBody.Replace(
-                    NAMESPACEENDPLACEHOLDER,
-                    "}");
-            }
-            else
-            {
-                fileBody = fileBody.Replace(NAMESPACEENDPLACEHOLDER, string.Empty);
+            contents = contents.Replace(CLASSNAMEPLACEHOLDER, parts[parts.Length - 1]);
+            contents = contents.Replace(CONSTANTSPLACEHOLDER, constants);
+            if (@namespace != string.Empty) {
+                contents = contents.Replace(NAMESPACEENDPLACEHOLDER, "}");
+            } else {
+                contents = contents.Replace(NAMESPACEENDPLACEHOLDER, string.Empty);
             }
 
-            WriteFile(Path.Combine(dirName, parts[parts.Length - 1] + ".cs"), fileBody);
+            var file = Path.Combine(classDirectory, parts[^1] + ".cs");
+            WriteFile(file, contents);
         }
 
         /// <summary>
@@ -642,16 +525,12 @@ namespace GooglePlayGames.Editor
         /// </summary>
         public static void UpdateGameInfo()
         {
-            string fileBody = GPGSUtil.ReadEditorTemplate("template-GameInfo");
-
-            foreach (KeyValuePair<string, string> ent in replacements)
-            {
-                string value =
-                    GPGSProjectSettings.Instance.Get(ent.Value);
-                fileBody = fileBody.Replace(ent.Key, value);
+            var contents = ReadEditorTemplate("template-GameInfo");
+            foreach (var ent in s_replacements) {
+                var value = GPGSProjectSettings.Instance.Get(ent.Value);
+                contents = contents.Replace(ent.Key, value);
             }
-
-            GPGSUtil.WriteFile(GameInfoPath, fileBody);
+            WriteFile(GameInfoPath, contents);
         }
 
         /// <summary>
@@ -662,29 +541,23 @@ namespace GooglePlayGames.Editor
         /// </summary>
         public static void CheckAndFixDependencies()
         {
-            string depPath =
-                SlashesToPlatformSeparator(Path.Combine(GPGSUtil.RootPath,
-                    "Editor/GooglePlayGamesPluginDependencies.xml"));
+            var dependencies = SlashesToPlatformSeparator(Path.Combine(RootPath, "Editor/GooglePlayGamesPluginDependencies.xml"));
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(depPath);
+            var xml = new XmlDocument();
+            xml.Load(dependencies);
 
-            XmlNodeList repos = doc.SelectNodes("//androidPackage[contains(@spec,'com.google.games')]//repository");
-            foreach (XmlNode repo in repos)
-            {
-                if (!Directory.Exists(repo.InnerText))
-                {
-                    int pos = repo.InnerText.IndexOf(RootFolderName);
-                    if (pos != -1)
-                    {
-                        repo.InnerText =
-                            Path.Combine(RootPath, repo.InnerText.Substring(pos + RootFolderName.Length + 1))
-                                .Replace("\\", "/");
+            var repos = xml.SelectNodes("//androidPackage[contains(@spec,'com.google.games')]//repository");
+            foreach (XmlNode repo in repos) {
+                if (!Directory.Exists(repo.InnerText)) {
+                    var pos = repo.InnerText.IndexOf(RootFolderName);
+                    if (pos != -1) {
+                        var relative = repo.InnerText.Substring(pos + RootFolderName.Length + 1);
+                        repo.InnerText = Path.Combine(RootPath, relative).Replace("\\", "/");
                     }
                 }
             }
 
-            doc.Save(depPath);
+            xml.Save(dependencies);
         }
 
         /// <summary>
@@ -694,39 +567,29 @@ namespace GooglePlayGames.Editor
         /// </summary>
         public static void CheckAndFixVersionedAssestsPaths()
         {
-            string[] foundPaths =
-                Directory.GetFiles(RootPath, "GooglePlayGamesPlugin_v*.txt", SearchOption.AllDirectories);
+            var versions = Directory.GetFiles(RootPath, "GooglePlayGamesPlugin_v*.txt", SearchOption.AllDirectories);
 
-            if (foundPaths.Length == 1)
-            {
-                string tmpFilePath = Path.GetTempFileName();
+            if (versions.Length == 1) {
+                var tmpFilePath = Path.GetTempFileName();
 
-                StreamWriter writer = new StreamWriter(tmpFilePath);
-                using (StreamReader reader = new StreamReader(foundPaths[0]))
-                {
-                    string assetPath;
-                    while ((assetPath = reader.ReadLine()) != null)
-                    {
-                        int pos = assetPath.IndexOf(RootFolderName);
-                        if (pos != -1)
-                        {
-                            assetPath = Path.Combine(RootPath, assetPath.Substring(pos + RootFolderName.Length + 1))
-                                .Replace("\\", "/");
+                using (var sw = new StreamWriter(tmpFilePath)) {
+                    using (var sr = new StreamReader(versions[0])) {
+                        string line;
+                        while ((line = sr.ReadLine()) != null) {
+                            var index = line.IndexOf(RootFolderName);
+                            if (index != -1) {
+                                var relative = line.Substring(index + RootFolderName.Length + 1);
+                                line = Path.Combine(RootPath, relative).Replace("\\", "/");
+                            }
+                            sw.WriteLine(line);
                         }
-
-                        writer.WriteLine(assetPath);
                     }
+                    sw.Flush();
                 }
 
-                writer.Flush();
-                writer.Close();
-
-                try
-                {
-                    File.Copy(tmpFilePath, foundPaths[0], true);
-                }
-                finally
-                {
+                try {
+                    File.Copy(tmpFilePath, versions[0], true);
+                } finally {
                     File.Delete(tmpFilePath);
                 }
             }
@@ -739,8 +602,7 @@ namespace GooglePlayGames.Editor
         public static void EnsureDirExists(string dir)
         {
             dir = SlashesToPlatformSeparator(dir);
-            if (!Directory.Exists(dir))
-            {
+            if (!Directory.Exists(dir)) {
                 Directory.CreateDirectory(dir);
             }
         }
@@ -752,8 +614,7 @@ namespace GooglePlayGames.Editor
         public static void DeleteDirIfExists(string dir)
         {
             dir = SlashesToPlatformSeparator(dir);
-            if (Directory.Exists(dir))
-            {
+            if (Directory.Exists(dir)) {
                 Directory.Delete(dir, true);
             }
         }
@@ -766,33 +627,27 @@ namespace GooglePlayGames.Editor
         /// <param name="libProjPath">Lib proj path.</param>
         private static int GetGPSVersion(string libProjPath)
         {
-            string versionFile = libProjPath + "/res/values/version.xml";
+            var path = libProjPath + "/res/values/version.xml";
+            using var reader = new XmlTextReader(new StreamReader(path));
 
-            XmlTextReader reader = new XmlTextReader(new StreamReader(versionFile));
-            bool inResource = false;
-            int version = -1;
+            var inResource = false;
+            var version = -1;
 
-            while (reader.Read())
-            {
-                if (reader.Name == "resources")
-                {
+            while (reader.Read()) {
+                if (reader.Name == "resources") {
                     inResource = true;
                 }
-
-                if (inResource && reader.Name == "integer")
-                {
-                    if ("google_play_services_version".Equals(
-                        reader.GetAttribute("name")))
-                    {
+                if (inResource && reader.Name == "integer") {
+                    if ("google_play_services_version".Equals(reader.GetAttribute("name"))) {
                         reader.Read();
                         Debug.Log("Read version string: " + reader.Value);
                         version = Convert.ToInt32(reader.Value);
                     }
                 }
             }
-
-            reader.Close();
             return version;
         }
+
     }
+
 }
