@@ -17,7 +17,6 @@
 #if UNITY_ANDROID
 
 using UnityEditor;
-using UnityEngine;
 
 namespace GooglePlayGames.Editor {
 

@@ -31,7 +31,8 @@ namespace GooglePlayGames.Editor {
 
         private static GPGSProjectSettings s_instance = null;
 
-        public static GPGSProjectSettings Instance {
+        public static GPGSProjectSettings Instance
+        {
             get => s_instance ??= new GPGSProjectSettings();
         }
 
@@ -100,20 +101,11 @@ namespace GooglePlayGames.Editor {
             }
         }
 
-        public string Get(string key)
-        {
-            return Get(key, string.Empty);
-        }
+        public string Get(string key) => Get(key, string.Empty);
 
-        public bool GetBool(string key, bool defaultValue)
-        {
-            return Get(key, defaultValue ? "true" : "false").Equals("true");
-        }
+        public bool GetBool(string key, bool defaultValue) => Get(key, defaultValue ? "true" : "false").Equals("true");
 
-        public bool GetBool(string key)
-        {
-            return Get(key, "false").Equals("true");
-        }
+        public bool GetBool(string key) => Get(key, "false").Equals("true");
 
         public void Set(string key, string val)
         {
@@ -126,10 +118,7 @@ namespace GooglePlayGames.Editor {
             m_dirty = true;
         }
 
-        public void Set(string key, bool val)
-        {
-            Set(key, val ? "true" : "false");
-        }
+        public void Set(string key, bool val) => Set(key, val ? "true" : "false");
 
         public void Save()
         {
@@ -142,18 +131,14 @@ namespace GooglePlayGames.Editor {
             }
             if (!m_dirty) return;
 
-            using (var sw = new StreamWriter(m_file, false)) {
-                foreach (var key in m_dict.Keys) {
-                    sw.WriteLine(key + "=" + m_dict[key]);
-                }
+            using var sw = new StreamWriter(m_file, false);
+            foreach (var key in m_dict.Keys) {
+                sw.WriteLine(key + "=" + m_dict[key]);
             }
             m_dirty = false;
         }
 
-        public static void Reload()
-        {
-            s_instance = new GPGSProjectSettings();
-        }
+        public static void Reload() => s_instance = new GPGSProjectSettings();
 
     }
 
