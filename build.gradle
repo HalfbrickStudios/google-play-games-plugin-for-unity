@@ -422,6 +422,22 @@ copy_pluginProjSrc.dependsOn import_jarresolver
 copy_pluginProjSrc.ext.remoteTaskPhase = 'build'
 
 
+task sync_pluginProjMeta () {
+    doLast {
+        def logFilename = "${pluginProj}/unity.log"
+        def argv = [
+                "-batchmode",
+                "-quit",
+                "-projectPath", "${pluginProj}",
+                "-logFile", logFilename,
+                "-quit"
+        ]
+        runUnity(argv, logFilename)
+    }
+}
+sync_pluginProjMeta.dependsOn copy_pluginProjSrc
+sync_pluginProjMeta.ext.remoteTaskPhase = 'build'
+
 
 task generate_dependency_xml() {
   description "Generate the JarResolver dependency file for the support library"
@@ -567,7 +583,7 @@ task export_plugin_tgz_setup() {
                 }
             }
             task.dependsOn generate_manifest, import_jarresolver, copy_manifestMetadata
-            task.dependsOn copy_pluginProjSrc
+            task.dependsOn sync_pluginProjMeta
     }
 }
 export_plugin_tgz_setup.ext.remoteTaskPhase = 'build'
