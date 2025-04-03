@@ -34,6 +34,20 @@ IF DEFINED PACKAGE_VERSION (
     EXIT /b 1
 )
 
+REM Prepare to publish the package
+SET "OUTPUT_DIR=current-build"
+SET "PACKAGE_PATH=%OUTPUT_DIR%\%PACKAGE_ID%"
+
+ECHO ^>^> Entering the package folder: %PACKAGE_PATH%
+IF EXIST "%PACKAGE_PATH%" (
+    ECHO ^>^> Package folder found: %PACKAGE_PATH%
+    CD /d "%PACKAGE_PATH%"
+) ELSE (
+    ECHO ^>^> Package folder not found: %PACKAGE_PATH%
+    PAUSE
+    EXIT /b 1
+)
+
 :ask_registry
 SET /P USER_INPUT=^>^> Enter the registry you want to publish the package to: 
 IF /I "!USER_INPUT!" == "" (
@@ -41,8 +55,7 @@ IF /I "!USER_INPUT!" == "" (
     GOTO end_registry
 )
 
-ECHO ^>^> Publishing to registry: !USER_INPUT!
-CD /d "%OUTPUT_DIR%\%PACKAGE_ID%"
+ECHO ^>^> Publishing package "%PACKAGE_ID%" registry "!USER_INPUT!"
 CMD /c npm publish --registry "!USER_INPUT!"
 
 REM Check if the extraction was successful
