@@ -5,14 +5,14 @@ ECHO ^>^> Navigating to the top-level directory of the repository...
 CD /d "%~dp0"
 
 :ask_confirmation
-SET /P USER_INPUT=^>^> Have you executed the "build-tarball.cmd" script to ensure the latest changes have been compiled? (y)es/no =^> 
+SET /P USER_INPUT=^>^> Have you executed the "prepare-package.cmd" script to ensure the package files have been patched? (y)es/no =^> 
 IF /I "!USER_INPUT!" == "y" (
     ECHO ^>^> Proceeding with the publish process...
 ) ELSE IF /I "!USER_INPUT!" == "yes" (
     ECHO ^>^> Proceeding with the publish process...
 ) ELSE IF /I "!USER_INPUT!" == "no" (
-    ECHO ^>^> Stopping publish process; executing "build-tarball.cmd" to ensure the latest changes have been compiled...
-    CALL build-tarball.cmd
+    ECHO ^>^> Stopping publish process; executing "prepare-package.cmd" to ensure the package has been patched...
+    CALL prepare-package.cmd
     EXIT /B 1
 ) ELSE (
     ECHO ^>^> Invalid input. Please type "yes" or "no".
@@ -33,38 +33,6 @@ IF DEFINED PACKAGE_VERSION (
     PAUSE
     EXIT /b 1
 )
-
-REM Prepare to extract the compressed tarball
-SET "OUTPUT_DIR=current-build"
-SET "PACKAGE_FILENAME=%PACKAGE_ID%.tgz"
-SET "PACKAGE_PATH=%OUTPUT_DIR%\%PACKAGE_FILENAME%"
-
-ECHO ^>^> Extracting compressed tarball "%PACKAGE_PATH%" at "%OUTPUT_DIR%"
-7z x "%CD%\%PACKAGE_PATH%" "-o%CD%\%OUTPUT_DIR%" -y -sns
-
-REM Check if the extraction was successful
-IF %ERRORLEVEL% NEQ 0 (
-    ECHO ^>^> Compressed tarball extraction failed with error code: %ERRORLEVEL%
-    PAUSE
-    EXIT /b %ERRORLEVEL%
-)
-
-REM Prepare to extract the tarball
-SET "PACKAGE_FILENAME=%PACKAGE_ID%.tar"
-SET "PACKAGE_PATH=%OUTPUT_DIR%\%PACKAGE_FILENAME%"
-
-ECHO ^>^> Extracting uncompressed tarball: %PACKAGE_PATH%
-7z x "%CD%\%PACKAGE_PATH%" "-o%CD%\%OUTPUT_DIR%" -y -sns
-
-REM Check if the extraction was successful
-IF %ERRORLEVEL% NEQ 0 (
-    ECHO ^>^> Uncompressed tarball extraction failed with error code: %ERRORLEVEL%
-    PAUSE
-    EXIT /b %ERRORLEVEL%
-)
-
-ECHO ^>^> Renaming extracted folder to "%PACKAGE_ID%"
-MOVE %OUTPUT_DIR%/package %OUTPUT_DIR%/%PACKAGE_ID%
 
 :ask_registry
 SET /P USER_INPUT=^>^> Enter the registry you want to publish the package to: 
