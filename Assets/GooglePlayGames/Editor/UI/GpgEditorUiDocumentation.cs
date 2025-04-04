@@ -19,11 +19,11 @@
 using UnityEngine;
 using UnityEditor;
 
-using static GooglePlayGames.Editor.GPGSStrings;
+using static GooglePlayGames.Editor.GpgEditorStrings;
 
 namespace GooglePlayGames.Editor.UI {
 
-    sealed internal class GpgEditorUiDocumentation {
+    internal static class GpgEditorUiDocumentation {
 
         [MenuItem("Google/Play Games/Documentation/Getting Started Guide...", false, 100)]
         private static void MenuItemGettingStartedGuide() => Application.OpenURL(ExternalLinks.GettingStartedGuideURL);

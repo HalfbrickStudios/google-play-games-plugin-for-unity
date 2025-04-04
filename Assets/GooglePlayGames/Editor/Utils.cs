@@ -376,14 +376,14 @@ namespace GooglePlayGames.Editor {
         /// Displays an error dialog.
         /// </summary>
         /// <param name="s">the message</param>
-        public static void Alert(string s) => Alert(GPGSStrings.Error, s);
+        public static void Alert(string s) => Alert(GpgEditorStrings.Error, s);
 
         /// <summary>
         /// Displays a dialog with the given title and message.
         /// </summary>
         /// <param name="title">the title.</param>
         /// <param name="message">the message.</param>
-        public static void Alert(string title, string message) => EditorUtility.DisplayDialog(title, message, GPGSStrings.Ok);
+        public static void Alert(string title, string message) => EditorUtility.DisplayDialog(title, message, GpgEditorStrings.Ok);
 
         /// <summary>
         /// Gets the android sdk path.

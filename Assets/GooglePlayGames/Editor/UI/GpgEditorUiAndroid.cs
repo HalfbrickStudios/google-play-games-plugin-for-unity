@@ -24,7 +24,7 @@ using System.Xml;
 using UnityEditor;
 using UnityEngine;
 
-using static GooglePlayGames.Editor.GPGSStrings;
+using static GooglePlayGames.Editor.GpgEditorStrings;
 
 namespace GooglePlayGames.Editor.UI {
 

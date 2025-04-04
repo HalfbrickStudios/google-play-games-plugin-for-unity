@@ -19,11 +19,11 @@
 using UnityEngine;
 using UnityEditor;
 
-using static GooglePlayGames.Editor.GPGSStrings;
+using static GooglePlayGames.Editor.GpgEditorStrings;
 
 namespace GooglePlayGames.Editor.UI {
 
-    sealed internal class GpgEditorUiNearbyConnection : EditorWindow {
+    internal sealed class GpgEditorUiNearbyConnection : EditorWindow {
 
         private string m_id = string.Empty;
 
