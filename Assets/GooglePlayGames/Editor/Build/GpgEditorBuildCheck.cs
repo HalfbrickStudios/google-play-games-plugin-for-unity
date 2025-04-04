@@ -29,7 +29,7 @@ namespace GooglePlayGames.Editor.Build {
         [PostProcessBuild(99999)]
         private static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
         {
-            var done = GPGSProjectSettings.Instance.GetBool(KEY_ANDROID_SETUP_DONE, false);
+            var done = GpgEditorProjectSettings.Instance.GetBool(KEY_ANDROID_SETUP_DONE, false);
             if (done) return;
             Alert($"Warning: The {Title} package was not configured; Google Play Game Services will not work correctly");
         }

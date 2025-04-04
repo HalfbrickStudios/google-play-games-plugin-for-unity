@@ -33,9 +33,9 @@ namespace GooglePlayGames.Editor {
 
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
-            GPGSProjectSettings.Instance.Set(KEY_LAST_UPGRADE, Version.VersionKey);
-            GPGSProjectSettings.Instance.Set(KEY_PLUGIN_VERSION, Version.VersionString);
-            GPGSProjectSettings.Instance.Save();
+            GpgEditorProjectSettings.Instance.Set(KEY_LAST_UPGRADE, Version.VersionKey);
+            GpgEditorProjectSettings.Instance.Set(KEY_PLUGIN_VERSION, Version.VersionString);
+            GpgEditorProjectSettings.Instance.Save();
 
             var changed = false;
             if (!AndroidManifestExists()) {

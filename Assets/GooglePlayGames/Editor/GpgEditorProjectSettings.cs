@@ -14,8 +14,7 @@
 //    limitations under the License.
 // </copyright>
 
-// Keep this file even on unsupported configurations.
-
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -25,32 +24,34 @@ using UnityEngine.Networking;
 using UnityEngine;
 #endif
 
+using static GooglePlayGames.Editor.GpgEditorUtils;
+
 namespace GooglePlayGames.Editor {
 
-    public class GPGSProjectSettings {
+    public class GpgEditorProjectSettings {
 
-        private static GPGSProjectSettings s_instance = null;
+        private static GpgEditorProjectSettings s_instance = null;
 
-        public static GPGSProjectSettings Instance
+        public static GpgEditorProjectSettings Instance
         {
-            get => s_instance ??= new GPGSProjectSettings();
+            get => s_instance ??= new GpgEditorProjectSettings();
         }
 
         private bool m_dirty = false;
         private readonly string m_file;
         private Dictionary<string, string> m_dict = new();
 
-        private GPGSProjectSettings()
+        private GpgEditorProjectSettings()
         {
-            m_file = GpgEditorUtils.SlashesToPlatformSeparator("ProjectSettings/GooglePlayGameSettings.txt");
+            m_file = SlashesToPlatformSeparator("ProjectSettings/GooglePlayGameSettings.txt");
 
             var files = new[] {
                 m_file,
-                GpgEditorUtils.SlashesToPlatformSeparator(Path.Combine(GpgEditorUtils.RootPath, "Editor/projsettings.txt")),
-                GpgEditorUtils.SlashesToPlatformSeparator("Assets/Editor/projsettings.txt")
+                SlashesToPlatformSeparator(Path.Combine(RootPath, "Editor/projsettings.txt")),
+                SlashesToPlatformSeparator("Assets/Editor/projsettings.txt")
             };
 
-            StreamReader rd = null;
+            var rd = null as StreamReader;
             foreach (var it in files) {
                 if (File.Exists(it)) {
                     rd = new StreamReader(it);
@@ -105,7 +106,7 @@ namespace GooglePlayGames.Editor {
 
         public bool GetBool(string key, bool defaultValue) => Get(key, defaultValue ? "true" : "false").Equals("true");
 
-        public bool GetBool(string key) => Get(key, "false").Equals("true");
+        private bool GetBool(string key) => Get(key, "false").Equals("true");
 
         public void Set(string key, string val)
         {
@@ -122,7 +123,7 @@ namespace GooglePlayGames.Editor {
 
         public void Save()
         {
-            var args = System.Environment.GetCommandLineArgs();
+            var args = Environment.GetCommandLineArgs();
             foreach (var arg in args) {
                 if (arg == "-g.building") {
                     m_dirty = false;
@@ -138,7 +139,7 @@ namespace GooglePlayGames.Editor {
             m_dirty = false;
         }
 
-        public static void Reload() => s_instance = new GPGSProjectSettings();
+        private static void Reload() => s_instance = new GpgEditorProjectSettings();
 
     }
 

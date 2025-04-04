@@ -44,7 +44,7 @@ namespace GooglePlayGames.Editor.UI {
 
         private void OnEnable()
         {
-            m_id = GPGSProjectSettings.Instance.Get(KEY_SERVICE_ID);
+            m_id = GpgEditorProjectSettings.Instance.Get(KEY_SERVICE_ID);
         }
 
         private void OnGUI()
@@ -92,11 +92,11 @@ namespace GooglePlayGames.Editor.UI {
                               "Do you want to remove the AndroidManifest entries for Nearby connections?";
                 var dialog = EditorUtility.DisplayDialog(title, message, Yes, No);
                 if (!dialog) return false;
-                GPGSProjectSettings.Instance.Set(KEY_SERVICE_ID, null);
-                GPGSProjectSettings.Instance.Save();
+                GpgEditorProjectSettings.Instance.Set(KEY_SERVICE_ID, null);
+                GpgEditorProjectSettings.Instance.Save();
             } else {
-                GPGSProjectSettings.Instance.Set(KEY_SERVICE_ID, id);
-                GPGSProjectSettings.Instance.Save();
+                GpgEditorProjectSettings.Instance.Set(KEY_SERVICE_ID, id);
+                GpgEditorProjectSettings.Instance.Save();
             }
 
             if (!android) return true;
@@ -106,8 +106,8 @@ namespace GooglePlayGames.Editor.UI {
 
             GenerateAndroidManifest();
 
-            GPGSProjectSettings.Instance.Set(KEY_NEARBY_SETUP_DONE, true);
-            GPGSProjectSettings.Instance.Save();
+            GpgEditorProjectSettings.Instance.Set(KEY_NEARBY_SETUP_DONE, true);
+            GpgEditorProjectSettings.Instance.Save();
 
             EnableExternalDependencyResolverFlags(verbose: true);
             UpdateExternalDependencyResolverAssets(force: true);

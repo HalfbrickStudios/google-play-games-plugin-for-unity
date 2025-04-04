@@ -228,7 +228,7 @@ namespace GooglePlayGames.Editor {
         {
             var done = true;
 #if UNITY_ANDROID
-            done = GPGSProjectSettings.Instance.GetBool(KEY_ANDROID_SETUP_DONE, false);
+            done = GpgEditorProjectSettings.Instance.GetBool(KEY_ANDROID_SETUP_DONE, false);
             if (File.Exists(GameInfoPath)) {
                 var contents = ReadFile(GameInfoPath);
                 if (contents.Contains(PLACEHOLDER_APP_ID)) {
@@ -320,7 +320,7 @@ namespace GooglePlayGames.Editor {
         {
             var content = ReadEditorTemplate("template-AndroidManifest");
             var extend = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(GPGSProjectSettings.Instance.Get(KEY_SERVICE_ID))) {
+            if (!string.IsNullOrEmpty(GpgEditorProjectSettings.Instance.Get(KEY_SERVICE_ID))) {
                 extend[PLACEHOLDER_NEARBY_PERMISSIONS] = string.Join("\n", new[] {
                         "<!-- Required for Nearby Connections -->\n",
                         "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
@@ -341,7 +341,7 @@ namespace GooglePlayGames.Editor {
             }
 
             foreach (var entry in s_replacements) {
-                var value = GPGSProjectSettings.Instance.Get(entry.Value, extend);
+                var value = GpgEditorProjectSettings.Instance.Get(entry.Value, extend);
                 content = content.Replace(entry.Key, value);
             }
 
@@ -395,7 +395,7 @@ namespace GooglePlayGames.Editor {
         {
             var contents = ReadEditorTemplate("template-GameInfo");
             foreach (var ent in s_replacements) {
-                var value = GPGSProjectSettings.Instance.Get(ent.Value);
+                var value = GpgEditorProjectSettings.Instance.Get(ent.Value);
                 contents = contents.Replace(ent.Key, value);
             }
             WriteFile(GameInfoPath, contents);
