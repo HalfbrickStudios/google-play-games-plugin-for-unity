@@ -156,7 +156,7 @@ namespace GooglePlayGames.Editor
         public const string AboutText = "Copyright (C) 2014 Google Inc.\n\nThis is an open-source " +
                                         "plugin that allows cross-platform integration with Google Play games services. " +
                                         "For more information, visit the official site on Github:\n\n" +
-                                        "https://github.com/playgameservices/play-games-plugin-for-unity\n\nPlugin version: ";
+                                        "https://github.com/playgameservices/play-games-plugin-for-unity";
 
         public const string LicenseTitle = "Google Play Games Plugin for Unity";
 
