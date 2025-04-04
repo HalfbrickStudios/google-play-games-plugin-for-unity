@@ -1,4 +1,4 @@
-// <copyright file="GPGSProjectSettings.cs" company="Google Inc.">
+// <copyright file="GpgEditorProjectSettings.cs" company="Google Inc.">
 // Copyright (C) 2014 Google Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,8 @@
 //  See the License for the specific language governing permissions and
 //    limitations under the License.
 // </copyright>
+
+#if UNITY_EDITOR
 
 using System;
 using System.Collections.Generic;
@@ -106,8 +108,6 @@ namespace GooglePlayGames.Editor {
 
         public bool GetBool(string key, bool defaultValue) => Get(key, defaultValue ? "true" : "false").Equals("true");
 
-        private bool GetBool(string key) => Get(key, "false").Equals("true");
-
         public void Set(string key, string val)
         {
 #if UNITY_2017_3_OR_NEWER
@@ -139,8 +139,8 @@ namespace GooglePlayGames.Editor {
             m_dirty = false;
         }
 
-        private static void Reload() => s_instance = new GpgEditorProjectSettings();
-
     }
 
 }
+
+#endif

@@ -1,4 +1,4 @@
-// <copyright file="GPGSAndroidSetupUI.cs" company="Google Inc.">
+// <copyright file="GpgEditorUiAndroid.cs" company="Google Inc.">
 // Copyright (C) Google Inc. All Rights Reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");

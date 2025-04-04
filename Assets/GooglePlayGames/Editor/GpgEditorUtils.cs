@@ -1,4 +1,4 @@
-// <copyright file="GPGSUtil.cs" company="Google Inc.">
+// <copyright file="GpgEditorUtils.cs" company="Google Inc.">
 // Copyright (C) 2014 Google Inc. All Rights Reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,8 @@
 //    limitations under the License.
 // </copyright>
 
+#if UNITY_EDITOR
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,7 +24,6 @@ using System.Linq;
 using System.Xml;
 
 using UnityEditor;
-using UnityEngine;
 
 using static GooglePlayGames.Editor.GpgEditorStrings;
 
@@ -44,7 +45,6 @@ namespace GooglePlayGames.Editor {
         public   const string KEY_NEARBY_SETUP_DONE  = "android.NearbySetupDone";
         internal const string KEY_PLUGIN_VERSION     = "proj.pluginVersion";
         public   const string KEY_SERVICE_ID         = "App.NearbdServiceId";
-        private  const string KEY_TOKEN_PERMISSION   = "proj.tokenPermissions";
         public   const string KEY_WEB_CLIENT_ID      = "and.ClientId";
 
         // Constants for token replacement
@@ -55,7 +55,6 @@ namespace GooglePlayGames.Editor {
         private const string PLACEHOLDER_NAMESPACE_START     = "__NameSpaceStart__";
         private const string PLACEHOLDER_NEARBY_PERMISSIONS  = "__NEARBY_PERMISSIONS__";
         private const string PLACEHOLDER_PLUGIN_VERSION      = "__PLUGIN_VERSION__";
-        private const string PLACEHOLDER_REQUIRE_GOOGLE_PLUS = "__REQUIRE_GOOGLE_PLUS__";
         private const string PLACEHOLDER_SERVICE_ID          = "__NEARBY_SERVICE_ID__";
         private const string PLACEHOLDER_SERVICE_ID_ELEMENT  = "__NEARBY_SERVICE_ELEMENT__";
         private const string PLACEHOLDER_WEB_CLIENT_ID       = "__WEB_CLIENTID__";
@@ -199,9 +198,6 @@ namespace GooglePlayGames.Editor {
         // Checks that a string is a valid Client Id
         public static bool LooksLikeValidClientId(string s) => s.EndsWith(".googleusercontent.com");
 
-        // Checks that a string is a valid Bundle Id
-        private static bool LooksLikeValidBundleId(string s) => s.Length > 3;
-
         // Checks that a string is a valid Package Name
         public static bool LooksLikeValidPackageName(string s)
         {
@@ -221,26 +217,6 @@ namespace GooglePlayGames.Editor {
                 }
             }
             return parts.Length >= 1;
-        }
-
-        // Determines if is setup done
-        private static bool IsSetupDone()
-        {
-            var done = true;
-#if UNITY_ANDROID
-            done = GpgEditorProjectSettings.Instance.GetBool(KEY_ANDROID_SETUP_DONE, false);
-            if (File.Exists(GameInfoPath)) {
-                var contents = ReadFile(GameInfoPath);
-                if (contents.Contains(PLACEHOLDER_APP_ID)) {
-                    Debug.Log("GameInfo not initialized with AppId; run Window > Google Play Games > Setup > Android Setup...");
-                    return false;
-                }
-            } else {
-                Debug.Log("GameInfo.cs does not exist.  Run Window > Google Play Games > Setup > Android Setup...");
-                return false;
-            }
-#endif
-            return done;
         }
 
         // Constructs a legal identifier from a string
@@ -297,19 +273,6 @@ namespace GooglePlayGames.Editor {
         {
             var path = GetAndroidSdkPath();
             return path != null && path.Trim() != string.Empty && Directory.Exists(path);
-        }
-
-        // Gets the Unity major version
-        private static int GetUnityMajorVersion()
-        {
-            var version = 0;
-#if UNITY_5
-            var major = Application.unityVersion.Split('.')[0];
-            int.TryParse(major, out version);
-#elif UNITY_4_6
-            version = 4;
-#endif
-            return version;
         }
 
         // Checks for the Android Manifest file existence
@@ -462,39 +425,6 @@ namespace GooglePlayGames.Editor {
             }
         }
 
-        // Deletes a directory if exists
-        private static void DeleteDirIfExists(string dir)
-        {
-            dir = SlashesToPlatformSeparator(dir);
-            if (Directory.Exists(dir)) {
-                Directory.Delete(dir, true);
-            }
-        }
-
-        // Gets the Google Play Services library version
-        private static int GetGPSVersion(string libProjPath)
-        {
-            var path = libProjPath + "/res/values/version.xml";
-            using var reader = new XmlTextReader(new StreamReader(path));
-
-            var resource = false;
-            var version = -1;
-
-            while (reader.Read()) {
-                if (reader.Name == "resources") {
-                    resource = true;
-                }
-                if (resource && reader.Name == "integer") {
-                    if ("google_play_services_version".Equals(reader.GetAttribute("name"))) {
-                        reader.Read();
-                        Debug.Log("Read version string: " + reader.Value);
-                        version = Convert.ToInt32(reader.Value);
-                    }
-                }
-            }
-            return version;
-        }
-
         // Enables EDM4U flags (formerly Google Play Resolver)
         public static void EnableExternalDependencyResolverFlags(bool? enable = null, bool? verbose = null)
         {
@@ -520,3 +450,5 @@ namespace GooglePlayGames.Editor {
     }
 
 }
+
+#endif

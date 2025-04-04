@@ -1,4 +1,4 @@
-﻿// <copyright file="NearbyConnectionUI.cs" company="Google Inc.">
+﻿// <copyright file="GpgEditorUiNearbyConnection.cs" company="Google Inc.">
 // Copyright (C) 2014 Google Inc. All Rights Reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_EDITOR && UNITY_ANDROID
+#if UNITY_EDITOR
 
 using UnityEngine;
 using UnityEditor;
