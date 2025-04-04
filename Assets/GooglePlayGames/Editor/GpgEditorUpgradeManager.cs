@@ -18,29 +18,29 @@
 
 using UnityEditor;
 
+using static GooglePlayGames.Editor.GpgEditorUtils;
+
 namespace GooglePlayGames.Editor {
 
-    /// <summary>
-    /// GPGS upgrader handles performing and upgrade tasks.
-    /// </summary>
+    // GPGS upgrader handles performing and upgrade tasks.
     [InitializeOnLoad]
-    public class GPGSUpgrader {
+    internal class GpgEditorUpgradeManager {
 
-        /// <summary>
-        /// Initializes static members of the <see cref="GooglePlayGames.GPGSUpgrader"/> class.
-        /// </summary>
-        static GPGSUpgrader()
+        static GpgEditorUpgradeManager()
         {
+            // TODO: review this build script
+            return;
+
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
-            GPGSProjectSettings.Instance.Set(GpgUtils.KEY_LAST_UPGRADE, PluginVersion.VersionKey);
-            GPGSProjectSettings.Instance.Set(GpgUtils.KEY_PLUGIN_VERSION, PluginVersion.VersionString);
+            GPGSProjectSettings.Instance.Set(KEY_LAST_UPGRADE, Version.VersionKey);
+            GPGSProjectSettings.Instance.Set(KEY_PLUGIN_VERSION, Version.VersionString);
             GPGSProjectSettings.Instance.Save();
 
             var changed = false;
-            if (!GpgUtils.AndroidManifestExists()) {
+            if (!AndroidManifestExists()) {
                 changed = true;
-                GpgUtils.GenerateAndroidManifest();
+                GenerateAndroidManifest();
             }
             if (changed) AssetDatabase.Refresh();
         }

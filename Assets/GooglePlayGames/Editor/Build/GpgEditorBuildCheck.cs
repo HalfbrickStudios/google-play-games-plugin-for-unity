@@ -19,7 +19,8 @@
 using UnityEditor;
 using UnityEditor.Callbacks;
 
-using static GooglePlayGames.Editor.GpgUtils;
+using static GooglePlayGames.Editor.GpgEditorStrings;
+using static GooglePlayGames.Editor.GpgEditorUtils;
 
 namespace GooglePlayGames.Editor.Build {
 
@@ -30,10 +31,7 @@ namespace GooglePlayGames.Editor.Build {
         {
             var done = GPGSProjectSettings.Instance.GetBool(KEY_ANDROID_SETUP_DONE, false);
             if (done) return;
-            
-            var title = "Google Play Games not configured!";
-            var message = "Warning!!  Google Play Games was not configured, Game Services will not work correctly.";
-            GpgUtils.Alert(title, message);
+            Alert($"Warning: The {Title} package was not configured; Google Play Game Services will not work correctly");
         }
 
     }

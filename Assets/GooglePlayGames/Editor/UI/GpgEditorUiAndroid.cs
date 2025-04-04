@@ -25,7 +25,7 @@ using UnityEditor;
 using UnityEngine;
 
 using static GooglePlayGames.Editor.GpgEditorStrings;
-using static GooglePlayGames.Editor.GpgUtils;
+using static GooglePlayGames.Editor.GpgEditorUtils;
 
 namespace GooglePlayGames.Editor.UI {
 
@@ -110,15 +110,12 @@ namespace GooglePlayGames.Editor.UI {
             CheckAndFixVersionedAssestsPaths();
             AssetDatabase.Refresh();
 
-            Google.VersionHandler.VerboseLoggingEnabled = true;
-            Google.VersionHandler.UpdateVersionedAssets(forceUpdate: true);
-            Google.VersionHandler.Enabled = true;
+            EnableExternalDependencyResolverFlags(verbose: true);
+            UpdateExternalDependencyResolverAssets(force: true);
+            EnableExternalDependencyResolverFlags(enable: true);
             AssetDatabase.Refresh();
 
-            var assembly = "Google.JarResolver";
-            var klass = "GooglePlayServices.PlayServicesResolver";
-            var method = "MenuResolve";
-            Google.VersionHandler.InvokeStaticMethod(Google.VersionHandler.FindClass(assembly, klass), method, null);
+            ResolveExternalDependencies();
 
             appId = GPGSProjectSettings.Instance.Get(KEY_APP_ID);
             return PerformSetup(clientId, appId, nearbyServiceId);

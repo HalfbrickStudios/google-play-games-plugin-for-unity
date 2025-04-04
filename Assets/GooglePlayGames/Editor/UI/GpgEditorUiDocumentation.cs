@@ -20,7 +20,7 @@ using UnityEngine;
 using UnityEditor;
 
 using static GooglePlayGames.Editor.GpgEditorStrings;
-using static GooglePlayGames.Editor.GpgUtils;
+using static GooglePlayGames.Editor.GpgEditorUtils;
 
 namespace GooglePlayGames.Editor.UI {
 
@@ -35,8 +35,8 @@ namespace GooglePlayGames.Editor.UI {
         [MenuItem("Google/Play Games/About/Plugin...", false, 300)]
         private static void MenuItemAbout()
         {
-            var version = PluginVersion.VersionString;
-            var semver = string.Format("0x{0:X8}", PluginVersion.VersionInt);
+            var version = Version.VersionString;
+            var semver = string.Format("0x{0:X8}", Version.VersionInt);
             var message = $"{AboutText}\n\nPlugin version: {version} ({semver})";
             Alert(AboutTitle, message);
         }

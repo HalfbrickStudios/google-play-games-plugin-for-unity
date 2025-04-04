@@ -14,8 +14,6 @@
 //    limitations under the License.
 // </copyright>
 
-// Keep the strings all the time even if on an unsupported configuration.
-
 #if UNITY_EDITOR
 
 namespace GooglePlayGames.Editor {

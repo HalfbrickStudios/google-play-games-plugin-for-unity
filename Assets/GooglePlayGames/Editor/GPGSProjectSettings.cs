@@ -42,12 +42,12 @@ namespace GooglePlayGames.Editor {
 
         private GPGSProjectSettings()
         {
-            m_file = GpgUtils.SlashesToPlatformSeparator("ProjectSettings/GooglePlayGameSettings.txt");
+            m_file = GpgEditorUtils.SlashesToPlatformSeparator("ProjectSettings/GooglePlayGameSettings.txt");
 
             var files = new[] {
                 m_file,
-                GpgUtils.SlashesToPlatformSeparator(Path.Combine(GpgUtils.RootPath, "Editor/projsettings.txt")),
-                GpgUtils.SlashesToPlatformSeparator("Assets/Editor/projsettings.txt")
+                GpgEditorUtils.SlashesToPlatformSeparator(Path.Combine(GpgEditorUtils.RootPath, "Editor/projsettings.txt")),
+                GpgEditorUtils.SlashesToPlatformSeparator("Assets/Editor/projsettings.txt")
             };
 
             StreamReader rd = null;
