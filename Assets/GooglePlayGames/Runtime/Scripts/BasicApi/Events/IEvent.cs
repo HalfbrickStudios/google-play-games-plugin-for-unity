@@ -13,48 +13,21 @@
 //  See the License for the specific language governing permissions and
 //    limitations under the License.
 // </copyright>
-namespace GooglePlayGames.BasicApi.Events
-{
-    public enum EventVisibility
-    {
-        Hidden = 1,
+
+namespace GooglePlayGames.BasicApi.Events {
+
+    public enum EventVisibility {
+        Hidden   = 1,
         Revealed = 2,
     }
 
-    /// <summary>
-    /// Data object representing an Event. <see cref="Native.PInvoke.EventManager"/> for more.
-    /// </summary>
-    public interface IEvent
-    {
-        /// <summary>
-        /// The ID of the event.
-        /// </summary>
-        string Id { get; }
-
-        /// <summary>
-        /// The name of the event.
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// The description of the event.
-        /// </summary>
-        string Description { get; }
-
-        /// <summary>
-        /// The URL of the image for the event. Empty if there is no image for this event.
-        /// </summary>
-        /// <value>The image URL.</value>
-        string ImageUrl { get; }
-
-        /// <summary>
-        /// The current count for this event.
-        /// </summary>
-        ulong CurrentCount { get; }
-
-        /// <summary>
-        /// The visibility of the event.
-        /// </summary>
-        EventVisibility Visibility { get; }
+    public interface IEvent {
+        string          Id           { get; }
+        string          Name         { get; }
+        string          Description  { get; }
+        string          ImageUrl     { get; }
+        ulong           CurrentCount { get; }
+        EventVisibility Visibility   { get; }
     }
+
 }
