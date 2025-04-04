@@ -37,6 +37,8 @@ namespace GooglePlayGames.Editor {
         internal static string TplASM    = $"{TplSDK} Manager";
         internal static string TplWACID  = $"Web App {TplCID}";
 
+        public static string Title = TplGPG;
+
         public const string Cancel  = "Cancel";
         public const string Error   = "Error";
         public const string No      = "No";

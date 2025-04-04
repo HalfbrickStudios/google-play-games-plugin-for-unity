@@ -20,6 +20,7 @@ using UnityEngine;
 using UnityEditor;
 
 using static GooglePlayGames.Editor.GpgEditorStrings;
+using static GooglePlayGames.Editor.GpgUtils;
 
 namespace GooglePlayGames.Editor.UI {
 
@@ -37,7 +38,7 @@ namespace GooglePlayGames.Editor.UI {
             var version = PluginVersion.VersionString;
             var semver = string.Format("0x{0:X8}", PluginVersion.VersionInt);
             var message = $"{AboutText}\n\nPlugin version: {version} ({semver})";
-            EditorUtility.DisplayDialog(AboutTitle, message, Ok);
+            Alert(AboutTitle, message);
         }
 
         [MenuItem("Google/Play Games/About/License...", false, 301)]

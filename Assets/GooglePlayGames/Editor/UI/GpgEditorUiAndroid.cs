@@ -25,6 +25,7 @@ using UnityEditor;
 using UnityEngine;
 
 using static GooglePlayGames.Editor.GpgEditorStrings;
+using static GooglePlayGames.Editor.GpgUtils;
 
 namespace GooglePlayGames.Editor.UI {
 
@@ -90,7 +91,7 @@ namespace GooglePlayGames.Editor.UI {
             string appId;
             
             if (string.IsNullOrEmpty(resourceXmlData) && !string.IsNullOrEmpty(nearbyServiceId)) {
-                appId = GPGSProjectSettings.Instance.Get(GPGSUtil.APPIDKEY);
+                appId = GPGSProjectSettings.Instance.Get(KEY_APP_ID);
                 return PerformSetup(clientId, appId, nearbyServiceId);
             }
 
@@ -98,15 +99,15 @@ namespace GooglePlayGames.Editor.UI {
                 return false;
             }
             
-            GPGSProjectSettings.Instance.Set(GPGSUtil.CLASSDIRECTORYKEY, classDirectory);
-            GPGSProjectSettings.Instance.Set(GPGSUtil.CLASSNAMEKEY, className);
-            GPGSProjectSettings.Instance.Set(GPGSUtil.ANDROIDRESOURCEKEY, resourceXmlData);
+            GPGSProjectSettings.Instance.Set(KEY_CLASS_DIRECTORY, classDirectory);
+            GPGSProjectSettings.Instance.Set(KEY_CLASS_NAME, className);
+            GPGSProjectSettings.Instance.Set(KEY_ANDROID_RESOURCE, resourceXmlData);
 
             // check the bundle id and set it if needed.
             CheckBundleId();
 
-            GPGSUtil.CheckAndFixDependencies();
-            GPGSUtil.CheckAndFixVersionedAssestsPaths();
+            CheckAndFixDependencies();
+            CheckAndFixVersionedAssestsPaths();
             AssetDatabase.Refresh();
 
             Google.VersionHandler.VerboseLoggingEnabled = true;
@@ -119,7 +120,7 @@ namespace GooglePlayGames.Editor.UI {
             var method = "MenuResolve";
             Google.VersionHandler.InvokeStaticMethod(Google.VersionHandler.FindClass(assembly, klass), method, null);
 
-            appId = GPGSProjectSettings.Instance.Get(GPGSUtil.APPIDKEY);
+            appId = GPGSProjectSettings.Instance.Get(KEY_APP_ID);
             return PerformSetup(clientId, appId, nearbyServiceId);
         }
 
@@ -134,20 +135,20 @@ namespace GooglePlayGames.Editor.UI {
         private static bool PerformSetup(string webClientId, string appId, string nearbyServiceId)
         {
             if (!string.IsNullOrEmpty(webClientId)) {
-                if (!GPGSUtil.LooksLikeValidClientId(webClientId)) {
-                    GPGSUtil.Alert(Setup.ClientIdError);
+                if (!LooksLikeValidClientId(webClientId)) {
+                    Error(0x311, Setup.ClientIdError);
                     return false;
                 }
                 var serverAppId = webClientId.Split('-')[0];
                 if (!serverAppId.Equals(appId)) {
-                    GPGSUtil.Alert(Setup.AppIdMismatch);
+                    Error(0x312, Setup.AppIdMismatch);
                     return false;
                 }
             }
 
             // check for valid app id
-            if (!GPGSUtil.LooksLikeValidAppId(appId) && string.IsNullOrEmpty(nearbyServiceId)) {
-                GPGSUtil.Alert(Setup.AppIdError);
+            if (!LooksLikeValidAppId(appId) && string.IsNullOrEmpty(nearbyServiceId)) {
+                Error(0x313, Setup.AppIdError);
                 return false;
             }
 
@@ -159,24 +160,24 @@ namespace GooglePlayGames.Editor.UI {
             }
 #endif
 
-            GPGSProjectSettings.Instance.Set(GPGSUtil.APPIDKEY, appId);
-            GPGSProjectSettings.Instance.Set(GPGSUtil.WEBCLIENTIDKEY, webClientId);
+            GPGSProjectSettings.Instance.Set(KEY_APP_ID, appId);
+            GPGSProjectSettings.Instance.Set(KEY_WEB_CLIENT_ID, webClientId);
             GPGSProjectSettings.Instance.Save();
-            GPGSUtil.UpdateGameInfo();
+            UpdateGameInfo();
 
             // check that Android SDK is there
-            if (!GPGSUtil.HasAndroidSdk()) {
+            if (!HasAndroidSdk()) {
                 Debug.LogError("Android SDK not found.");
                 EditorUtility.DisplayDialog( AndroidSetup.SdkNotFound, AndroidSetup.SdkNotFoundBlurb, Ok);
                 return false;
             }
 
             // Generate AndroidManifest.xml
-            GPGSUtil.GenerateAndroidManifest();
+            GenerateAndroidManifest();
 
             // refresh assets, and we're done
             AssetDatabase.Refresh();
-            GPGSProjectSettings.Instance.Set(GPGSUtil.ANDROIDSETUPDONEKEY, true);
+            GPGSProjectSettings.Instance.Set(KEY_ANDROID_SETUP_DONE, true);
             GPGSProjectSettings.Instance.Save();
 
             return true;
@@ -188,10 +189,10 @@ namespace GooglePlayGames.Editor.UI {
         private void OnEnable()
         {
             var settings = GPGSProjectSettings.Instance;
-            m_constantsPath = settings.Get(GPGSUtil.CLASSDIRECTORYKEY, m_constantsPath);
-            m_class = settings.Get(GPGSUtil.CLASSNAMEKEY, m_class);
-            m_config = settings.Get(GPGSUtil.ANDROIDRESOURCEKEY);
-            m_webId = settings.Get(GPGSUtil.WEBCLIENTIDKEY);
+            m_constantsPath = settings.Get(KEY_CLASS_DIRECTORY, m_constantsPath);
+            m_class = settings.Get(KEY_CLASS_NAME, m_class);
+            m_config = settings.Get(KEY_ANDROID_RESOURCE);
+            m_webId = settings.Get(KEY_WEB_CLIENT_ID);
         }
 
         /// <summary>
@@ -251,12 +252,12 @@ namespace GooglePlayGames.Editor.UI {
             if (GUILayout.Button(Setup.SetupButton, GUILayout.Width(100))) {
                 // check that the classname entered is valid
                 try {
-                    if (GPGSUtil.LooksLikeValidPackageName(m_class)) {
+                    if (LooksLikeValidPackageName(m_class)) {
                         DoSetup();
                         return;
                     }
                 } catch (Exception e) {
-                    GPGSUtil.Alert(Error, "Invalid classname: " + e.Message);
+                    Error(0x314, "Invalid classname: " + e.Message);
                 }
             }
 
@@ -276,15 +277,15 @@ namespace GooglePlayGames.Editor.UI {
         private void DoSetup()
         {
             if (!PerformSetup(m_webId, m_constantsPath, m_class, m_config, null)) {
-                var message = "Invalid or missing XML resource data.   " +
+                var message = "Invalid or missing XML resource data.\n" +
                               "Make sure the data is valid and contains the app_id element.";
-                GPGSUtil.Alert(Error, message);
+                Error(0x315, message);
                 return;
             }
 
             CheckBundleId();
             EditorUtility.DisplayDialog(Success, AndroidSetup.SetupComplete, Ok);
-            GPGSProjectSettings.Instance.Set(GPGSUtil.ANDROIDSETUPDONEKEY, true);
+            GPGSProjectSettings.Instance.Set(KEY_ANDROID_SETUP_DONE, true);
             Close();
         }
 
@@ -299,7 +300,7 @@ namespace GooglePlayGames.Editor.UI {
         /// </remarks>
         private static void CheckBundleId()
         {
-            var packageName = GPGSProjectSettings.Instance.Get(GPGSUtil.ANDROIDBUNDLEIDKEY, string.Empty);
+            var packageName = GPGSProjectSettings.Instance.Get(KEY_ANDROID_BUNDLE_ID, string.Empty);
 #if UNITY_5_6_OR_NEWER
             var currentId = PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Android);
 #else
@@ -360,9 +361,9 @@ namespace GooglePlayGames.Editor.UI {
                         if (reader.HasValue) {
                             if (lastProp == "app_id") {
                                 appId = reader.Value;
-                                GPGSProjectSettings.Instance.Set(GPGSUtil.APPIDKEY, appId);
+                                GPGSProjectSettings.Instance.Set(KEY_APP_ID, appId);
                             } else if (lastProp == "package_name") {
-                                GPGSProjectSettings.Instance.Set(GPGSUtil.ANDROIDBUNDLEIDKEY, reader.Value);
+                                GPGSProjectSettings.Instance.Set(KEY_ANDROID_BUNDLE_ID, reader.Value);
                             } else {
                                 resourceKeys[lastProp] = reader.Value;
                             }
@@ -373,7 +374,7 @@ namespace GooglePlayGames.Editor.UI {
             }
 
             if (resourceKeys.Count > 0) {
-                GPGSUtil.WriteResourceIds(classDirectory, className, resourceKeys);
+                WriteResourceIds(classDirectory, className, resourceKeys);
             }
 
             return appId != null;

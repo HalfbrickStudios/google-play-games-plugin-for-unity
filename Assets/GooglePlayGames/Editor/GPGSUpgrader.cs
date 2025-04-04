@@ -33,14 +33,14 @@ namespace GooglePlayGames.Editor {
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
-            GPGSProjectSettings.Instance.Set(GPGSUtil.LASTUPGRADEKEY, PluginVersion.VersionKey);
-            GPGSProjectSettings.Instance.Set(GPGSUtil.PLUGINVERSIONKEY, PluginVersion.VersionString);
+            GPGSProjectSettings.Instance.Set(GpgUtils.KEY_LAST_UPGRADE, PluginVersion.VersionKey);
+            GPGSProjectSettings.Instance.Set(GpgUtils.KEY_PLUGIN_VERSION, PluginVersion.VersionString);
             GPGSProjectSettings.Instance.Save();
 
             var changed = false;
-            if (!GPGSUtil.AndroidManifestExists()) {
+            if (!GpgUtils.AndroidManifestExists()) {
                 changed = true;
-                GPGSUtil.GenerateAndroidManifest();
+                GpgUtils.GenerateAndroidManifest();
             }
             if (changed) AssetDatabase.Refresh();
         }

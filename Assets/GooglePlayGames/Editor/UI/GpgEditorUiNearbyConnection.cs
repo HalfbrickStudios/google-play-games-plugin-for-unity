@@ -20,6 +20,7 @@ using UnityEngine;
 using UnityEditor;
 
 using static GooglePlayGames.Editor.GpgEditorStrings;
+using static GooglePlayGames.Editor.GpgUtils;
 
 namespace GooglePlayGames.Editor.UI {
 
@@ -43,7 +44,7 @@ namespace GooglePlayGames.Editor.UI {
 
         private void OnEnable()
         {
-            m_id = GPGSProjectSettings.Instance.Get(GPGSUtil.SERVICEIDKEY);
+            m_id = GPGSProjectSettings.Instance.Get(KEY_SERVICE_ID);
         }
 
         private void OnGUI()
@@ -85,29 +86,29 @@ namespace GooglePlayGames.Editor.UI {
         internal static bool PerformSetup(string id, bool android)
         {
             // check for valid app id
-            if (!GPGSUtil.LooksLikeValidServiceId(id)) {
+            if (!LooksLikeValidServiceId(id)) {
                 var title = "Remove Nearby connection permissions?  ";
                 var message = "The service Id is invalid.  It must follow package naming rules.  " +
                               "Do you want to remove the AndroidManifest entries for Nearby connections?";
                 var dialog = EditorUtility.DisplayDialog(title, message, Yes, No);
                 if (!dialog) return false;
-                GPGSProjectSettings.Instance.Set(GPGSUtil.SERVICEIDKEY, null);
+                GPGSProjectSettings.Instance.Set(KEY_SERVICE_ID, null);
                 GPGSProjectSettings.Instance.Save();
             } else {
-                GPGSProjectSettings.Instance.Set(GPGSUtil.SERVICEIDKEY, id);
+                GPGSProjectSettings.Instance.Set(KEY_SERVICE_ID, id);
                 GPGSProjectSettings.Instance.Save();
             }
 
             if (!android) return true;
 
             // create needed directories
-            GPGSUtil.EnsureDirExists("Assets/Plugins");
-            GPGSUtil.EnsureDirExists("Assets/Plugins/Android");
+            EnsureDirExists("Assets/Plugins");
+            EnsureDirExists("Assets/Plugins/Android");
 
             // Generate AndroidManifest.xml
-            GPGSUtil.GenerateAndroidManifest();
+            GenerateAndroidManifest();
 
-            GPGSProjectSettings.Instance.Set(GPGSUtil.NEARBYSETUPDONEKEY, true);
+            GPGSProjectSettings.Instance.Set(KEY_NEARBY_SETUP_DONE, true);
             GPGSProjectSettings.Instance.Save();
 
             // Resolve the dependencies
