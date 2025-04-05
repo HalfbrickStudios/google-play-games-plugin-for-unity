@@ -14,79 +14,50 @@
 //    limitations under the License.
 // </copyright>
 
-namespace GooglePlayGames.OurUtils
-{
-    using System;
-    using UnityEngine;
+using System;
+using UnityEngine;
 
-    public class Logger
-    {
-        private static bool debugLogEnabled = false;
+namespace GooglePlayGames.OurUtils {
 
-        public static bool DebugLogEnabled
-        {
-            get { return debugLogEnabled; }
+    public static class Logger {
 
-            set { debugLogEnabled = value; }
-        }
+        private static readonly string Tag = $"[Play Games Plugin {Version.VersionString}]";
 
-        private static bool warningLogEnabled = true;
-
-        public static bool WarningLogEnabled
-        {
-            get { return warningLogEnabled; }
-
-            set { warningLogEnabled = value; }
-        }
+        public static bool DebugLogEnabled   { get; set; }
+        public static bool WarningLogEnabled { get; set; }
 
         public static void d(string msg)
         {
-            if (debugLogEnabled)
-            {
-                PlayGamesHelperObject.RunOnGameThread(() =>
-                    Debug.Log(ToLogMessage(string.Empty, "DEBUG", msg)));
-            }
+            if (!DebugLogEnabled) return;
+            PlayGamesHelperObject.RunOnGameThread(() => Debug.Log(ToLogMessage(string.Empty, "DEBUG", msg)));
         }
 
         public static void w(string msg)
         {
-            if (warningLogEnabled)
-            {
-                PlayGamesHelperObject.RunOnGameThread(() =>
-                    Debug.LogWarning(ToLogMessage("!!!", "WARNING", msg)));
-            }
+            if (!WarningLogEnabled) return;
+            PlayGamesHelperObject.RunOnGameThread(() => Debug.LogWarning(ToLogMessage("!!!", "WARNING", msg)));
         }
 
         public static void e(string msg)
         {
-            if (warningLogEnabled)
-            {
-                PlayGamesHelperObject.RunOnGameThread(() =>
-                    Debug.LogWarning(ToLogMessage("***", "ERROR", msg)));
-            }
+            if (!WarningLogEnabled) return;
+            PlayGamesHelperObject.RunOnGameThread(() => Debug.LogWarning(ToLogMessage("***", "ERROR", msg)));
         }
 
-        public static string describe(byte[] b)
-        {
-            return b == null ? "(null)" : "byte[" + b.Length + "]";
-        }
+        public static string describe(byte[] b) => b == null ? "(null)" : $"byte[{b.Length}]";
 
         private static string ToLogMessage(string prefix, string logType, string msg)
         {
             string timeString = null;
-            try
-            {
+            try {
                 timeString = DateTime.Now.ToString("MM/dd/yy H:mm:ss zzz");
-            }
-            catch (Exception)
-            {
-                PlayGamesHelperObject.RunOnGameThread(() =>
-                    Debug.LogWarning("*** [Play Games Plugin " + GooglePlayGames.Version.VersionString + "] ERROR: Failed to format DateTime.Now"));
+            } catch (Exception) {
+                PlayGamesHelperObject.RunOnGameThread(() => Debug.LogWarning($"*** {Tag} ERROR: Failed to format DateTime.Now"));
                 timeString = string.Empty;
             }
-
-            return string.Format("{0} [Play Games Plugin " + GooglePlayGames.Version.VersionString+ "] {1} {2}: {3}",
-                prefix, timeString, logType, msg);
+            return $"{prefix} {Tag} {timeString} {logType}: {msg}";
         }
+
     }
+
 }

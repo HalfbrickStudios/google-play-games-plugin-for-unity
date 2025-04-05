@@ -15,28 +15,19 @@
 // </copyright>
 
 #if UNITY_ANDROID
-namespace GooglePlayGames.OurUtils
-{
-    using UnityEngine;
-    using System;
 
-    public static class PlatformUtils
-    {
-        /// <summary>
-        /// Check if the Google Play Games platform is supported at runtime.
-        /// </summary>
-        /// <value>If the platform is supported.</value>
-        public static bool Supported
-        {
-            get
-            {
+namespace GooglePlayGames.OurUtils {
+
+    public static class PlatformUtils {
+
 #if UNITY_EDITOR
-                return false;
+        public static bool Supported => false;
 #else
-                return true;
+        public static bool Supported => true;
 #endif
-            }
-        }
+
     }
+
 }
-#endif //UNITY_ANDROID
+
+#endif

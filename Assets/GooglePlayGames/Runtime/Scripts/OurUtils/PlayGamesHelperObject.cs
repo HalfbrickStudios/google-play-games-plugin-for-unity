@@ -14,60 +14,37 @@
 //    limitations under the License.
 // </copyright>
 
-namespace GooglePlayGames.OurUtils
-{
-    using System;
-    using System.Collections;
-    using UnityEngine;
-    using System.Collections.Generic;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
-    public class PlayGamesHelperObject : MonoBehaviour
-    {
-        // our (singleton) instance
-        private static PlayGamesHelperObject instance = null;
+using UnityEngine;
 
-        // are we a dummy instance (used in the editor?)
-        private static bool sIsDummy = false;
+namespace GooglePlayGames.OurUtils {
 
-        // queue of actions to run on the game thread
-        private static List<System.Action> sQueue = new List<Action>();
+    public sealed class PlayGamesHelperObject : MonoBehaviour {
 
-        // member variable used to copy actions from the sQueue and
-        // execute them on the game thread.  It is a member variable
-        // to help minimize memory allocations.
-        List<System.Action> localQueue = new List<System.Action>();
+        private static PlayGamesHelperObject s_instance = null;
+        private static bool                  s_dummy    = false;
 
-        // flag that alerts us that we should check the queue
-        // (we do this just so we don't have to lock() the queue every
-        // frame to check if it's empty or not).
-        private volatile static bool sQueueEmpty = true;
+        private static readonly List<Action>       s_queue          = new();
+        private static readonly List<Action<bool>> s_pauseCallbacks = new();
+        private static readonly List<Action<bool>> s_focusCallbacks = new();
 
-        // callback for application pause and focus events
-        private static List<Action<bool>> sPauseCallbackList =
-            new List<Action<bool>>();
+        private static volatile bool s_empty = true;
 
-        private static List<Action<bool>> sFocusCallbackList =
-            new List<Action<bool>>();
+        private readonly List<Action> m_queue = new();
 
-        // Call this once from the game thread
         public static void CreateObject()
         {
-            if (instance != null)
-            {
-                return;
-            }
-
-            if (Application.isPlaying)
-            {
-                // add an invisible game object to the scene
-                GameObject obj = new GameObject("PlayGames_QueueRunner");
+            if (s_instance != null) return;
+            if (Application.isPlaying) {
+                var obj = new GameObject("PlayGames_QueueRunner");
                 DontDestroyOnLoad(obj);
-                instance = obj.AddComponent<PlayGamesHelperObject>();
-            }
-            else
-            {
-                instance = new PlayGamesHelperObject();
-                sIsDummy = true;
+                s_instance = obj.AddComponent<PlayGamesHelperObject>();
+            } else {
+                s_instance = new PlayGamesHelperObject();
+                s_dummy = true;
             }
         }
 
@@ -78,145 +55,76 @@ namespace GooglePlayGames.OurUtils
 
         public void OnDisable()
         {
-            if (instance == this)
-            {
-                instance = null;
-            }
+            if (s_instance != this) return;
+            s_instance = null;
         }
 
         public static void RunCoroutine(IEnumerator action)
         {
-            if (instance != null)
-            {
-                RunOnGameThread(() => instance.StartCoroutine(action));
-            }
+            if (s_instance == null)
+            RunOnGameThread(() => s_instance.StartCoroutine(action));
         }
 
-        public static void RunOnGameThread(System.Action action)
+        public static void RunOnGameThread(Action action)
         {
-            if (action == null)
-            {
-                throw new ArgumentNullException("action");
-            }
-
-            if (sIsDummy)
-            {
-                return;
-            }
-
-            lock (sQueue)
-            {
-                sQueue.Add(action);
-                sQueueEmpty = false;
+            if (action == null) throw new ArgumentNullException("action");
+            if (s_dummy) return;
+            lock (s_queue) {
+                s_queue.Add(action);
+                s_empty = false;
             }
         }
 
         public void Update()
         {
-            if (sIsDummy || sQueueEmpty)
-            {
-                return;
+            if (s_dummy || s_empty) return;
+            m_queue.Clear();
+            lock (s_queue) {
+                m_queue.AddRange(s_queue);
+                s_queue.Clear();
+                s_empty = true;
             }
-
-            // first copy the shared queue into a local queue
-            localQueue.Clear();
-            lock (sQueue)
-            {
-                // transfer the whole queue to our local queue
-                localQueue.AddRange(sQueue);
-                sQueue.Clear();
-                sQueueEmpty = true;
-            }
-
-            // execute queued actions (from local queue)
-            // use a loop to avoid extra memory allocations using the
-            // forEach
-            for (int i = 0; i < localQueue.Count; i++)
-            {
-                localQueue[i].Invoke();
-            }
+            m_queue.ForEach(it => it.Invoke());
         }
 
         public void OnApplicationFocus(bool focused)
         {
-            foreach (Action<bool> cb in sFocusCallbackList)
-            {
-                try
-                {
-                    cb(focused);
-                }
-                catch (Exception e)
-                {
-                    Logger.e("Exception in OnApplicationFocus:" +
-                                   e.Message + "\n" + e.StackTrace);
+            foreach (var callback in s_focusCallbacks) {
+                try {
+                    callback(focused);
+                } catch (Exception e) {
+                    Logger.e($"Exception in OnApplicationFocus: {e.Message}\n" + e.StackTrace);
                 }
             }
         }
 
         public void OnApplicationPause(bool paused)
         {
-            foreach (Action<bool> cb in sPauseCallbackList)
-            {
-                try
-                {
-                    cb(paused);
-                }
-                catch (Exception e)
-                {
-                    Logger.e("Exception in OnApplicationPause:" +
-                                   e.Message + "\n" + e.StackTrace);
+            foreach (var callback in s_pauseCallbacks) {
+                try {
+                    callback(paused);
+                } catch (Exception e) {
+                    Logger.e($"Exception in OnApplicationPause: {e.Message}\n" + e.StackTrace);
                 }
             }
         }
 
-        /// <summary>
-        /// Adds a callback that is called when the Unity method OnApplicationFocus
-        /// is called.
-        /// </summary>
-        /// <see cref="OnApplicationFocus"/>
-        /// <param name="callback">Callback.</param>
         public static void AddFocusCallback(Action<bool> callback)
         {
-            if (!sFocusCallbackList.Contains(callback))
-            {
-                sFocusCallbackList.Add(callback);
-            }
+            if (s_focusCallbacks.Contains(callback)) return;
+            s_focusCallbacks.Add(callback);
         }
 
-        /// <summary>
-        /// Removes the callback from the list to call when handling OnApplicationFocus
-        /// is called.
-        /// </summary>
-        /// <returns><c>true</c>, if focus callback was removed, <c>false</c> otherwise.</returns>
-        /// <param name="callback">Callback.</param>
-        public static bool RemoveFocusCallback(Action<bool> callback)
-        {
-            return sFocusCallbackList.Remove(callback);
-        }
+        public static bool RemoveFocusCallback(Action<bool> callback) => s_focusCallbacks.Remove(callback);
 
-        /// <summary>
-        /// Adds a callback that is called when the Unity method OnApplicationPause
-        /// is called.
-        /// </summary>
-        /// <see cref="OnApplicationPause"/>
-        /// <param name="callback">Callback.</param>
         public static void AddPauseCallback(Action<bool> callback)
         {
-            if (!sPauseCallbackList.Contains(callback))
-            {
-                sPauseCallbackList.Add(callback);
-            }
+            if (s_pauseCallbacks.Contains(callback)) return;
+            s_pauseCallbacks.Add(callback);
         }
 
-        /// <summary>
-        /// Removes the callback from the list to call when handling OnApplicationPause
-        /// is called.
-        /// </summary>
-        /// <returns><c>true</c>, if focus callback was removed, <c>false</c> otherwise.</returns>
-        /// <param name="callback">Callback.</param>
-        public static bool RemovePauseCallback(Action<bool> callback)
-        {
-            return sPauseCallbackList.Remove(callback);
-        }
+        public static bool RemovePauseCallback(Action<bool> callback) => s_pauseCallbacks.Remove(callback);
+
     }
+
 }

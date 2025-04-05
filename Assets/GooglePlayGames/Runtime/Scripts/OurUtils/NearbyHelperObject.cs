@@ -1,104 +1,71 @@
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.OurUtils
-{
-    using BasicApi.Nearby;
-    using System;
-    using UnityEngine;
+using System;
 
-    public class NearbyHelperObject : MonoBehaviour
-    {
-        // our (singleton) instance
-        private static NearbyHelperObject instance = null;
+using UnityEngine;
 
-        // timers to keep track of discovery and advertising
-        private static double mAdvertisingRemaining = 0;
-        private static double mDiscoveryRemaining = 0;
+using GooglePlayGames.BasicApi.Nearby;
 
-        // nearby client to stop discovery and to stop advertising
-        private static INearbyConnectionClient mClient = null;
+namespace GooglePlayGames.OurUtils {
+
+    public sealed class NearbyHelperObject : MonoBehaviour {
+
+        private static NearbyHelperObject s_instance = null;
+
+        private static double s_advertisingRemaining = 0;
+        private static double s_discoveryRemaining   = 0;
+
+        private static INearbyConnectionClient s_client = null;
 
         public static void CreateObject(INearbyConnectionClient client)
         {
-            if (instance != null)
-            {
-                return;
-            }
-
-            mClient = client;
-            if (Application.isPlaying)
-            {
-                // add an invisible game object to the scene
-                GameObject obj = new GameObject("PlayGames_NearbyHelper");
+            if (s_instance != null) return;
+            s_client = client;
+            if (Application.isPlaying) {
+                var obj = new GameObject("PlayGames_NearbyHelper");
                 DontDestroyOnLoad(obj);
-                instance = obj.AddComponent<NearbyHelperObject>();
-            }
-            else
-            {
-                instance = new NearbyHelperObject();
+                s_instance = obj.AddComponent<NearbyHelperObject>();
+            } else {
+                s_instance = new();
             }
         }
 
         private static double ToSeconds(TimeSpan? span)
         {
-            if (!span.HasValue)
-            {
-                return 0;
-            }
-
-            if (span.Value.TotalSeconds < 0)
-            {
-                return 0;
-            }
-
+            if (!span.HasValue) return 0;
+            if (span.Value.TotalSeconds < 0) return 0;
             return span.Value.TotalSeconds;
         }
 
-        public static void StartAdvertisingTimer(TimeSpan? span)
-        {
-            mAdvertisingRemaining = ToSeconds(span);
-        }
+        public static void StartAdvertisingTimer(TimeSpan? span) => s_advertisingRemaining = ToSeconds(span);
+        public static void StartDiscoveryTimer(TimeSpan? span)   => s_discoveryRemaining   = ToSeconds(span);
 
-        public static void StartDiscoveryTimer(TimeSpan? span)
-        {
-            mDiscoveryRemaining = ToSeconds(span);
-        }
-
-        public void Awake()
-        {
-            DontDestroyOnLoad(gameObject);
-        }
+        public void Awake() => DontDestroyOnLoad(gameObject);
 
         public void OnDisable()
         {
-            if (instance == this)
-            {
-                instance = null;
-            }
+            if (s_instance != this) return;
+            s_instance = null;
         }
 
         public void Update()
         {
-            // check if currently advertising
-            if (mAdvertisingRemaining > 0)
-            {
-                mAdvertisingRemaining -= Time.deltaTime;
-                if (mAdvertisingRemaining < 0)
-                {
-                    mClient.StopAdvertising();
+            if (s_advertisingRemaining > 0) {
+                s_advertisingRemaining -= Time.deltaTime;
+                if (s_advertisingRemaining < 0) {
+                    s_client.StopAdvertising();
                 }
             }
-
-            // check if currently discovering
-            if (mDiscoveryRemaining > 0)
-            {
-                mDiscoveryRemaining -= Time.deltaTime;
-                if (mDiscoveryRemaining < 0)
-                {
-                    mClient.StopDiscovery(mClient.GetServiceId());
+            if (s_discoveryRemaining > 0) {
+                s_discoveryRemaining -= Time.deltaTime;
+                if (s_discoveryRemaining < 0) {
+                    s_client.StopDiscovery(s_client.GetServiceId());
                 }
             }
         }
+
     }
+
 }
+
 #endif
