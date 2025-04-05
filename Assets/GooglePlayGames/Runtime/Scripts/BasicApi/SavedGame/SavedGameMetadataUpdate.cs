@@ -31,12 +31,12 @@ namespace GooglePlayGames.BasicApi.SavedGame {
             UpdatedPlayedTime    = builder.UpdatedPlayedTime;
         }
 
-        public bool      IsCoverImageUpdated  { get; }
-        public bool      IsDescriptionUpdated { get; }
-        public bool      IsPlayedTimeUpdated  => UpdatedPlayedTime.HasValue;
-        public string    UpdatedDescription   { get; }
-        public TimeSpan? UpdatedPlayedTime    { get; }
-        public byte[]    UpdatedPngCoverImage { get; }
+        public bool      IsCoverImageUpdated  { get;                               }
+        public bool      IsDescriptionUpdated { get;                               }
+        public bool      IsPlayedTimeUpdated  { get => UpdatedPlayedTime.HasValue; }
+        public string    UpdatedDescription   { get;                               }
+        public TimeSpan? UpdatedPlayedTime    { get;                               }
+        public byte[]    UpdatedPngCoverImage { get;                               }
 
         public struct Builder {
 
