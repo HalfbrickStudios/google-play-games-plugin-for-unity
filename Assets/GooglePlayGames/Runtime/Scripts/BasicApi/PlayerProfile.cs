@@ -16,17 +16,14 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.BasicApi
-{
-    /// <summary>
-    /// Represents a player, a real-world person (tied to a Games account).
-    /// </summary>
-    public class PlayerProfile : PlayGamesUserProfile
-    {
-        internal PlayerProfile(string displayName, string playerId, string avatarUrl, bool isFriend) : base(displayName,
-            playerId, avatarUrl, isFriend)
-        {
-        }
+namespace GooglePlayGames.BasicApi {
+
+    public class PlayerProfile : PlayGamesUserProfile {
+
+        internal PlayerProfile(string displayName, string playerId, string avatarUrl, bool isFriend) : base(displayName, playerId, avatarUrl, isFriend) { }
+
     }
+
 }
+
 #endif

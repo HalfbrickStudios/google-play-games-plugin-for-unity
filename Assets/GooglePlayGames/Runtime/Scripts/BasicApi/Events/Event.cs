@@ -1,6 +1,6 @@
 ﻿namespace GooglePlayGames.BasicApi.Events {
 
-    internal class Event : IEvent {
+    internal sealed class Event : IEvent {
 
         internal Event(string id, string name, string description, string imageUrl, ulong currentCount, EventVisibility visibility)
         {

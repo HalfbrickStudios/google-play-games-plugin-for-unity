@@ -28,8 +28,8 @@ namespace GooglePlayGames.BasicApi.Nearby {
 
     public readonly struct NearbyConnectionConfiguration {
 
-        public const int MaxUnreliableMessagePayloadLength = 1168;
         public const int MaxReliableMessagePayloadLength   = 4096;
+        public const int MaxUnreliableMessagePayloadLength = 1168;
 
         public NearbyConnectionConfiguration(Action<InitializationStatus> callback, long localClientId)
         {

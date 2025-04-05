@@ -16,63 +16,32 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.BasicApi
-{
-    public enum ScorePageDirection
-    {
-        Forward = 1,
+namespace GooglePlayGames.BasicApi {
+
+    public enum ScorePageDirection {
         Backward = 2,
+        Forward  = 1,
     }
 
-    /// <summary>
-    /// Score page token. This holds the internal token used
-    /// to page through the score pages.  The id, collection, and
-    /// timespan are added as a convience, and not actually part of the
-    /// page token returned from the SDK.
-    /// </summary>
-    public class ScorePageToken
-    {
-        private string mId;
-        private object mInternalObject;
-        private LeaderboardCollection mCollection;
-        private LeaderboardTimeSpan mTimespan;
-        private ScorePageDirection mDirection;
+    public sealed class ScorePageToken {
 
-        internal ScorePageToken(object internalObject, string id,
-            LeaderboardCollection collection, LeaderboardTimeSpan timespan,
-            ScorePageDirection direction)
+        internal ScorePageToken(object internalObject, string id, LeaderboardCollection collection, LeaderboardTimeSpan timespan, ScorePageDirection direction)
         {
-            mInternalObject = internalObject;
-            mId = id;
-            mCollection = collection;
-            mTimespan = timespan;
-            mDirection = direction;
+            Collection     = collection;
+            Direction      = direction;
+            InternalObject = internalObject;
+            LeaderboardId  = id;
+            TimeSpan       = timespan;
         }
 
-        public LeaderboardCollection Collection
-        {
-            get { return mCollection; }
-        }
+        public   LeaderboardCollection Collection     { get; private set; }
+        public   ScorePageDirection    Direction      { get; private set; }
+        internal object                InternalObject { get; private set; }
+        public   string                LeaderboardId  { get; private set; }
+        public   LeaderboardTimeSpan   TimeSpan       { get; private set; }
 
-        public LeaderboardTimeSpan TimeSpan
-        {
-            get { return mTimespan; }
-        }
-
-        public ScorePageDirection Direction
-        {
-            get { return mDirection; }
-        }
-
-        public string LeaderboardId
-        {
-            get { return mId; }
-        }
-
-        internal object InternalObject
-        {
-            get { return mInternalObject; }
-        }
     }
+
 }
+
 #endif

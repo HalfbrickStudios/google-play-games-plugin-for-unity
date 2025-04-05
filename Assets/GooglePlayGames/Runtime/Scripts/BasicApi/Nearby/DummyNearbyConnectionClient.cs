@@ -23,7 +23,7 @@ using GooglePlayGames.OurUtils;
 
 namespace GooglePlayGames.BasicApi.Nearby {
 
-    public class DummyNearbyConnectionClient : INearbyConnectionClient {
+    public sealed class DummyNearbyConnectionClient : INearbyConnectionClient {
 
         public int MaxUnreliableMessagePayloadLength() => NearbyConnectionConfiguration.MaxUnreliableMessagePayloadLength;
 

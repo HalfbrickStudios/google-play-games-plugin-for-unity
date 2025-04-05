@@ -16,32 +16,27 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.BasicApi
-{
-    using System.Collections.Generic;
-    using UnityEngine.SocialPlatforms;
+using System;
 
-    /// <summary>
-    /// Recall Access data. This is the callback data
-    /// when requesting Recall Access. 
-    /// </summary>
+namespace GooglePlayGames.BasicApi {
 
-    public class RecallAccess
-    {
+    public class RecallAccess {
 
-      private string mSessionId;
+        internal RecallAccess(string sessionId)
+        {
+            SessionId = sessionId;
+        }
 
-      internal RecallAccess(string sessionId)
-      {
-        mSessionId = sessionId;
-      }
+        [Obsolete("Use SessionId instead.")]
+        public string sessionId {
+            get => SessionId;
+            internal set => SessionId = value;
+        }
 
-      public string sessionId
-      {
-          get { return mSessionId; }
+        public string SessionId { get; internal set; }
 
-          internal set { mSessionId = value; }
-      }
     }
+
 }
+
 #endif

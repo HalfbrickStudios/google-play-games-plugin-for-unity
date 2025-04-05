@@ -20,12 +20,12 @@ using System.Collections.Generic;
 namespace GooglePlayGames.BasicApi.SavedGame {
 
     public enum ConflictResolutionStrategy {
-        UseLongestPlaytime,
-        UseOriginal,
-        UseUnmerged,
-        UseManual,
-        UseLastKnownGood,
-        UseMostRecentlySaved
+        UseLastKnownGood     = 4,
+        UseLongestPlaytime   = 0,
+        UseManual            = 3,
+        UseMostRecentlySaved = 5,
+        UseOriginal          = 1,
+        UseUnmerged          = 2,
     }
 
     public enum SavedGameRequestStatus {
@@ -33,7 +33,7 @@ namespace GooglePlayGames.BasicApi.SavedGame {
         TimeoutError        = -1,
         InternalError       = -2,
         AuthenticationError = -3,
-        BadInputError       = -4
+        BadInputError       = -4,
     }
 
     public enum SelectUIStatus {
@@ -43,7 +43,7 @@ namespace GooglePlayGames.BasicApi.SavedGame {
         TimeoutError        = -2,
         AuthenticationError = -3,
         BadInputError       = -4,
-        UiBusy              = -5
+        UiBusy              = -5,
     }
 
     public delegate void ConflictCallback(IConflictResolver resolver, ISavedGameMetadata original, byte[] originalData, ISavedGameMetadata unmerged, byte[] unmergedData);

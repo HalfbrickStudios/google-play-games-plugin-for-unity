@@ -16,186 +16,35 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.BasicApi
-{
-    using System;
+using System;
 
-    /// <summary>Data interface for retrieving achievement information.</summary>
-    /// <remarks>
-    /// There are 3 states an achievement can be in:
-    /// <para>
-    ///    Hidden - indicating the name and description of the achievement is
-    ///     not visible to the player.
-    /// </para><para>
-    ///    Revealed - indicating the name and description of the achievement is
-    ///     visible to the player.
-    ///    Unlocked - indicating the player has unlocked, or achieved, the achievment.
-    /// </para><para>
-    /// Achievements has two types, standard which is unlocked in one step,
-    /// and incremental, which require multiple steps to unlock.
-    /// </para>
-    /// </remarks>
-    public class Achievement
-    {
-        static readonly DateTime UnixEpoch =
-            new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+namespace GooglePlayGames.BasicApi {
 
-        private string mId = string.Empty;
-        private bool mIsIncremental = false;
-        private bool mIsRevealed = false;
-        private bool mIsUnlocked = false;
-        private int mCurrentSteps = 0;
-        private int mTotalSteps = 0;
-        private string mDescription = string.Empty;
-        private string mName = string.Empty;
-        private long mLastModifiedTime = 0;
-        private ulong mPoints;
-        private string mRevealedImageUrl;
-        private string mUnlockedImageUrl;
+    public sealed class Achievement {
 
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="GooglePlayGames.BasicApi.Achievement"/>.
-        /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="GooglePlayGames.BasicApi.Achievement"/>.</returns>
+        public Achievement() { }
+
+        public int      CurrentSteps     { get; set; }
+        public string   Description      { get; set; }
+        public string   Id               { get; set; }
+        public bool     IsIncremental    { get; set; }
+        public bool     IsRevealed       { get; set; }
+        public bool     IsUnlocked       { get; set; }
+        public DateTime LastModifiedTime { get; set; }
+        public string   Name             { get; set; }
+        public ulong    Points           { get; set; }
+        public string   RevealedImageUrl { get; set; }
+        public int      TotalSteps       { get; set; }
+        public string   UnlockedImageUrl { get; set; }
+
         public override string ToString()
         {
-            return string.Format(
-                "[Achievement] id={0}, name={1}, desc={2}, type={3}, revealed={4}, unlocked={5}, steps={6}/{7}",
-                mId, mName, mDescription, mIsIncremental ? "INCREMENTAL" : "STANDARD",
-                mIsRevealed, mIsUnlocked, mCurrentSteps, mTotalSteps);
+            var type = IsIncremental ? "INCREMENTAL" : "STANDARD";
+            return $"[Achievement] id={Id}, name={Name}, desc={Description}, type={type}, revealed={IsRevealed}, unlocked={IsUnlocked}, steps={CurrentSteps}/{TotalSteps}";
         }
 
-        public Achievement()
-        {
-        }
-
-        /// <summary>
-        /// Indicates whether this achievement is incremental.
-        /// </summary>
-        public bool IsIncremental
-        {
-            get { return mIsIncremental; }
-
-            set { mIsIncremental = value; }
-        }
-
-        /// <summary>
-        /// The number of steps the user has gone towards unlocking this achievement.
-        /// </summary>
-        public int CurrentSteps
-        {
-            get { return mCurrentSteps; }
-
-            set { mCurrentSteps = value; }
-        }
-
-        /// <summary>
-        /// The total number of steps needed to unlock this achievement.
-        /// </summary>
-        public int TotalSteps
-        {
-            get { return mTotalSteps; }
-
-            set { mTotalSteps = value; }
-        }
-
-        /// <summary>
-        /// Indicates whether the achievement is unlocked or not.
-        /// </summary>
-        public bool IsUnlocked
-        {
-            get { return mIsUnlocked; }
-
-            set { mIsUnlocked = value; }
-        }
-
-        /// <summary>
-        /// Indicates whether the achievement is revealed or not (hidden).
-        /// </summary>
-        public bool IsRevealed
-        {
-            get { return mIsRevealed; }
-
-            set { mIsRevealed = value; }
-        }
-
-        /// <summary>
-        /// The ID string of this achievement.
-        /// </summary>
-        public string Id
-        {
-            get { return mId; }
-
-            set { mId = value; }
-        }
-
-        /// <summary>
-        /// The description of this achievement.
-        /// </summary>
-        public string Description
-        {
-            get { return this.mDescription; }
-
-            set { mDescription = value; }
-        }
-
-        /// <summary>
-        /// The name of this achievement.
-        /// </summary>
-        public string Name
-        {
-            get { return this.mName; }
-
-            set { mName = value; }
-        }
-
-        /// <summary>
-        /// The date and time the state of the achievement was modified.
-        /// </summary>
-        /// <remarks>
-        /// The value is invalid (-1 long) if the achievement state has
-        /// never been updated.
-        /// </remarks>
-        public DateTime LastModifiedTime
-        {
-            get { return UnixEpoch.AddMilliseconds(mLastModifiedTime); }
-
-            set
-            {
-                TimeSpan ts = value - UnixEpoch;
-                mLastModifiedTime = (long) ts.TotalMilliseconds;
-            }
-        }
-
-        /// <summary>
-        /// The number of experience points earned for unlocking this Achievement.
-        /// </summary>
-        public ulong Points
-        {
-            get { return mPoints; }
-
-            set { mPoints = value; }
-        }
-
-        /// <summary>
-        /// The URL to the image to display when the achievement is revealed.
-        /// </summary>
-        public string RevealedImageUrl
-        {
-            get { return mRevealedImageUrl; }
-
-            set { mRevealedImageUrl = value; }
-        }
-
-        /// <summary>
-        /// The URL to the image to display when the achievement is unlocked.
-        /// </summary>
-        public string UnlockedImageUrl
-        {
-            get { return mUnlockedImageUrl; }
-
-            set { mUnlockedImageUrl = value; }
-        }
     }
+
 }
+
 #endif

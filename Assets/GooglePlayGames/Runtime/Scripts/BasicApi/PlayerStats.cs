@@ -16,253 +16,56 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.BasicApi
-{
-    using System;
+namespace GooglePlayGames.BasicApi {
 
-    /// <summary>
-    /// Player stats. See https://developers.google.com/games/services/android/stats
-    /// </summary>
-    public class PlayerStats
-    {
-        private static float UNSET_VALUE = -1.0f;
+    public sealed class PlayerStats {
 
-        public PlayerStats(
-            int numberOfPurchases,
-            float avgSessionLength,
-            int daysSinceLastPlayed,
-            int numberOfSessions,
-            float sessPercentile,
-            float spendPercentile,
-            float spendProbability,
-            float churnProbability,
-            float highSpenderProbability,
-            float totalSpendNext28Days)
+        private static readonly float UNSET_VALUE = -1.0f;
+
+        public PlayerStats(int numberOfPurchases, float avgSessionLength, int daysSinceLastPlayed, int numberOfSessions, float sessPercentile, float spendPercentile, float spendProbability, float churnProbability, float highSpenderProbability, float totalSpendNext28Days)
         {
-            mValid = true;
-            mNumberOfPurchases = numberOfPurchases;
-            mAvgSessionLength = avgSessionLength;
-            mDaysSinceLastPlayed = daysSinceLastPlayed;
-            mNumberOfSessions = numberOfSessions;
-            mSessPercentile = sessPercentile;
-            mSpendPercentile = spendPercentile;
-            mSpendProbability = spendProbability;
-            mChurnProbability = churnProbability;
-            mHighSpenderProbability = highSpenderProbability;
-            mTotalSpendNext28Days = totalSpendNext28Days;
+            AvgSessionLength       = avgSessionLength;
+            ChurnProbability       = churnProbability;
+            DaysSinceLastPlayed    = daysSinceLastPlayed;
+            HighSpenderProbability = highSpenderProbability;
+            NumberOfPurchases      = numberOfPurchases;
+            NumberOfSessions       = numberOfSessions;
+            SessPercentile         = sessPercentile;
+            SpendPercentile        = spendPercentile;
+            SpendProbability       = spendProbability;
+            TotalSpendNext28Days   = totalSpendNext28Days;
+            Valid                  = true;
         }
 
         public PlayerStats()
         {
-            mValid = false;
+            Valid = false;
         }
 
-        private bool mValid;
-        private int mNumberOfPurchases;
-        private float mAvgSessionLength;
-        private int mDaysSinceLastPlayed;
-        private int mNumberOfSessions;
-        private float mSessPercentile;
-        private float mSpendPercentile;
-        private float mSpendProbability;
-        private float mChurnProbability;
-        private float mHighSpenderProbability;
-        private float mTotalSpendNext28Days;
+        public float AvgSessionLength       { get; private set; }
+        public float ChurnProbability       { get; private set; }
+        public int   DaysSinceLastPlayed    { get; private set; }
+        public float HighSpenderProbability { get; private set; }
+        public int   NumberOfPurchases      { get; private set; }
+        public int   NumberOfSessions       { get; private set; }
+        public float SessPercentile         { get; private set; }
+        public float SpendPercentile        { get; private set; }
+        public float SpendProbability       { get; private set; }
+        public float TotalSpendNext28Days   { get; private set; }
+        public bool  Valid                  { get; private set; }
 
-        /// <summary>
-        /// If this PlayerStats object is valid (i.e. successfully retrieved from games services).
-        /// </summary>
-        /// <remarks>
-        /// Note that a PlayerStats with all stats unset may still be valid.
-        /// </remarks>
-        public bool Valid
-        {
-            get { return mValid; }
-        }
+        public bool HasAvgSessionLength()       => AvgSessionLength       !=       UNSET_VALUE;
+        public bool HasChurnProbability()       => ChurnProbability       !=       UNSET_VALUE;
+        public bool HasDaysSinceLastPlayed()    => DaysSinceLastPlayed    != (int) UNSET_VALUE;
+        public bool HasHighSpenderProbability() => HighSpenderProbability !=       UNSET_VALUE;
+        public bool HasNumberOfPurchases()      => NumberOfPurchases      != (int) UNSET_VALUE;
+        public bool HasNumberOfSessions()       => NumberOfSessions       != (int) UNSET_VALUE;
+        public bool HasSessPercentile()         => SessPercentile         !=       UNSET_VALUE;
+        public bool HasSpendPercentile()        => SpendPercentile        !=       UNSET_VALUE;
+        public bool HasTotalSpendNext28Days()   => TotalSpendNext28Days   !=       UNSET_VALUE;
 
-        /// <summary>
-        /// The number of in-app purchases.
-        /// </summary>
-        public int NumberOfPurchases
-        {
-            get { return mNumberOfPurchases; }
-        }
-
-        /// <summary>
-        /// The length of the avg session in minutes.
-        /// </summary>
-        public float AvgSessionLength
-        {
-            get { return mAvgSessionLength; }
-        }
-
-        /// <summary>
-        /// The days since last played.
-        /// </summary>
-        public int DaysSinceLastPlayed
-        {
-            get { return mDaysSinceLastPlayed; }
-        }
-
-        /// <summary>
-        /// The number of sessions based on sign-ins.
-        /// </summary>
-        public int NumberOfSessions
-        {
-            get { return mNumberOfSessions; }
-        }
-
-        /// <summary>
-        /// The approximation of sessions percentile for the player.
-        /// </summary>
-        /// <remarks>
-        /// This value is given as a decimal value between 0 and 1 (inclusive).
-        /// It indicates how many sessions the current player has
-        /// played in comparison to the rest of this game's player base.
-        /// Higher numbers indicate that this player has played more sessions.
-        /// A return value less than zero indicates this value is not available.
-        /// </remarks>
-        public float SessPercentile
-        {
-            get { return mSessPercentile; }
-        }
-
-        /// <summary>
-        /// The approximate spend percentile of the player.
-        /// </summary>
-        /// <remarks>
-        /// This value is given as a decimal value between 0 and 1 (inclusive).
-        /// It indicates how much the current player has spent in
-        /// comparison to the rest of this game's player base. Higher
-        /// numbers indicate that this player has spent more.
-        /// A return value less than zero indicates this value is not available.
-        /// </remarks>
-        public float SpendPercentile
-        {
-            get { return mSpendPercentile; }
-        }
-
-        /// <summary>
-        /// The approximate probability of the player choosing to spend in this game.
-        /// </summary>
-        /// <remarks>
-        /// This value is given as a decimal value between 0 and 1 (inclusive).
-        ///  Higher values indicate that a player is more likely to spend.
-        /// A return value less than zero indicates this value is not available.
-        /// </remarks>
-        public float SpendProbability
-        {
-            get { return mSpendProbability; }
-        }
-
-        /// <summary>
-        /// The approximate probability of the player not returning to play the game.
-        /// </summary>
-        /// <remarks>
-        /// Higher values indicate that a player is less likely to return.
-        /// A return value less than zero indicates this value is not available.
-        /// </remarks>
-        public float ChurnProbability
-        {
-            get { return mChurnProbability; }
-        }
-
-        /// <summary>
-        /// The high spender probability of this player.
-        /// </summary>
-        public float HighSpenderProbability
-        {
-            get { return mHighSpenderProbability; }
-        }
-
-        /// <summary>
-        /// The predicted total spend of this player over the next 28 days.
-        /// </summary>
-        public float TotalSpendNext28Days
-        {
-            get { return mTotalSpendNext28Days; }
-        }
-
-        /// <summary>
-        /// Determines whether this instance has NumberOfPurchases.
-        /// </summary>
-        /// <returns><c>true</c> if this instance has NumberOfPurchases; otherwise, <c>false</c>.</returns>
-        public bool HasNumberOfPurchases()
-        {
-            return NumberOfPurchases != (int) UNSET_VALUE;
-        }
-
-        /// <summary>
-        /// Determines whether this instance has AvgSessionLength.
-        /// </summary>
-        /// <returns><c>true</c> if this instance has AvgSessionLength; otherwise, <c>false</c>.</returns>
-        public bool HasAvgSessionLength()
-        {
-            return AvgSessionLength != UNSET_VALUE;
-        }
-
-        /// <summary>
-        /// Determines whether this instance has DaysSinceLastPlayed.
-        /// </summary>
-        /// <returns><c>true</c> if this instance has DaysSinceLastPlayed; otherwise, <c>false</c>.</returns>
-        public bool HasDaysSinceLastPlayed()
-        {
-            return DaysSinceLastPlayed != (int) UNSET_VALUE;
-        }
-
-        /// <summary>
-        /// Determines whether this instance has NumberOfSessions.
-        /// </summary>
-        /// <returns><c>true</c> if this instance has NumberOfSessions; otherwise, <c>false</c>.</returns>
-        public bool HasNumberOfSessions()
-        {
-            return NumberOfSessions != (int) UNSET_VALUE;
-        }
-
-        /// <summary>
-        /// Determines whether this instance has SessPercentile.
-        /// </summary>
-        /// <returns><c>true</c> if this instance has SessPercentile; otherwise, <c>false</c>.</returns>
-        public bool HasSessPercentile()
-        {
-            return SessPercentile != UNSET_VALUE;
-        }
-
-        /// <summary>
-        /// Determines whether this instance has SpendPercentile.
-        /// </summary>
-        /// <returns><c>true</c> if this instance has SpendPercentile; otherwise, <c>false</c>.</returns>
-        public bool HasSpendPercentile()
-        {
-            return SpendPercentile != UNSET_VALUE;
-        }
-
-        /// <summary>
-        /// Determines whether this instance has ChurnProbability.
-        /// </summary>
-        /// <returns><c>true</c> if this instance has ChurnProbability; otherwise, <c>false</c>.</returns>
-        public bool HasChurnProbability()
-        {
-            return ChurnProbability != UNSET_VALUE;
-        }
-
-        /// <summary>
-        /// Determines whether this instance has HighSpenderProbability.
-        /// </summary>
-        /// <returns><c>true</c> if this instance has HighSpenderProbability; otherwise, <c>false</c>.</returns>
-        public bool HasHighSpenderProbability()
-        {
-            return HighSpenderProbability != UNSET_VALUE;
-        }
-
-        /// <summary>
-        /// Determines whether this instance has TotalSpendNext28Days.
-        /// </summary>
-        /// <returns><c>true</c> if this instance has TotalSpendNext28Days; otherwise, <c>false</c>.</returns>
-        public bool HasTotalSpendNext28Days()
-        {
-            return TotalSpendNext28Days != UNSET_VALUE;
-        }
     }
+
 }
+
 #endif

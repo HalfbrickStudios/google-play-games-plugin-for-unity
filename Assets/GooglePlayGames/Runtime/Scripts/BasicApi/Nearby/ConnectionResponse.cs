@@ -23,12 +23,12 @@ namespace GooglePlayGames.BasicApi.Nearby {
         private static readonly byte[] EmptyPayload = new byte[0];
 
         public enum Status {
-            Accepted,
-            Rejected,
-            ErrorInternal,
-            ErrorNetworkNotConnected,
-            ErrorEndpointNotConnected,
-            ErrorAlreadyConnected
+            Accepted                  = 0,
+            ErrorAlreadyConnected     = 5,
+            ErrorEndpointNotConnected = 4,
+            ErrorInternal             = 2,
+            ErrorNetworkNotConnected  = 3,
+            Rejected                  = 1,
         }
 
         private ConnectionResponse(long localClientId, string remoteEndpointId, Status code, byte[] payload)
