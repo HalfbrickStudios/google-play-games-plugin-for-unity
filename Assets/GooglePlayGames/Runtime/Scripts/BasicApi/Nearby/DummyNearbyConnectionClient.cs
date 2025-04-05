@@ -16,106 +16,62 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.BasicApi.Nearby
-{
-    using UnityEngine;
+using System;
+using System.Collections.Generic;
 
-    public class DummyNearbyConnectionClient : INearbyConnectionClient
-    {
-        public int MaxUnreliableMessagePayloadLength()
-        {
-            return NearbyConnectionConfiguration.MaxUnreliableMessagePayloadLength;
-        }
+using GooglePlayGames.OurUtils;
 
-        public int MaxReliableMessagePayloadLength()
-        {
-            return NearbyConnectionConfiguration.MaxReliableMessagePayloadLength;
-        }
+namespace GooglePlayGames.BasicApi.Nearby {
 
-        public void SendReliable(System.Collections.Generic.List<string> recipientEndpointIds, byte[] payload)
-        {
-            OurUtils.Logger.d("SendReliable called from dummy implementation");
-        }
+    public class DummyNearbyConnectionClient : INearbyConnectionClient {
 
-        public void SendUnreliable(System.Collections.Generic.List<string> recipientEndpointIds, byte[] payload)
-        {
-            OurUtils.Logger.d("SendUnreliable called from dummy implementation");
-        }
+        public int MaxUnreliableMessagePayloadLength() => NearbyConnectionConfiguration.MaxUnreliableMessagePayloadLength;
 
-        public void StartAdvertising(string name, System.Collections.Generic.List<string> appIdentifiers,
-            System.TimeSpan? advertisingDuration, System.Action<AdvertisingResult> resultCallback,
-            System.Action<ConnectionRequest> connectionRequestCallback)
+        public int MaxReliableMessagePayloadLength() => NearbyConnectionConfiguration.MaxReliableMessagePayloadLength;
+
+        public void SendReliable(List<string> recipientEndpointIds, byte[] payload) => Logger.d("SendReliable called from dummy implementation");
+
+        public void SendUnreliable(List<string> recipientEndpointIds, byte[] payload) => Logger.d("SendUnreliable called from dummy implementation");
+
+        public void StartAdvertising(string name, List<string> appIdentifiers, TimeSpan? advertisingDuration, Action<AdvertisingResult> resultCallback, Action<ConnectionRequest> connectionRequestCallback)
         {
-            AdvertisingResult obj = new AdvertisingResult(ResponseStatus.LicenseCheckFailed, string.Empty);
+            var obj = new AdvertisingResult(ResponseStatus.LicenseCheckFailed, string.Empty);
             resultCallback.Invoke(obj);
         }
 
-        public void StopAdvertising()
-        {
-            OurUtils.Logger.d("StopAvertising in dummy implementation called");
-        }
+        public void StopAdvertising() => Logger.d("StopAvertising in dummy implementation called");
 
-        public void SendConnectionRequest(string name, string remoteEndpointId, byte[] payload,
-            System.Action<ConnectionResponse> responseCallback, IMessageListener listener)
+        public void SendConnectionRequest(string name, string remoteEndpointId, byte[] payload, Action<ConnectionResponse> responseCallback, IMessageListener listener)
         {
-            OurUtils.Logger.d("SendConnectionRequest called from dummy implementation");
-
-            if (responseCallback != null)
-            {
-                ConnectionResponse obj = ConnectionResponse.Rejected(0, string.Empty);
+            Logger.d("SendConnectionRequest called from dummy implementation");
+            if (responseCallback != null) {
+                var obj = ConnectionResponse.Rejected(0, string.Empty);
                 responseCallback.Invoke(obj);
             }
         }
 
-        public void AcceptConnectionRequest(string remoteEndpointId, byte[] payload, IMessageListener listener)
-        {
-            OurUtils.Logger.d("AcceptConnectionRequest in dummy implementation called");
-        }
+        public void AcceptConnectionRequest(string remoteEndpointId, byte[] payload, IMessageListener listener) => Logger.d("AcceptConnectionRequest in dummy implementation called");
 
-        public void StartDiscovery(string serviceId, System.TimeSpan? advertisingTimeout, IDiscoveryListener listener)
-        {
-            OurUtils.Logger.d("StartDiscovery in dummy implementation called");
-        }
+        public void StartDiscovery(string serviceId, TimeSpan? advertisingTimeout, IDiscoveryListener listener) => Logger.d("StartDiscovery in dummy implementation called");
 
-        public void StopDiscovery(string serviceId)
-        {
-            OurUtils.Logger.d("StopDiscovery in dummy implementation called");
-        }
+        public void StopDiscovery(string serviceId) => Logger.d("StopDiscovery in dummy implementation called");
 
-        public void RejectConnectionRequest(string requestingEndpointId)
-        {
-            OurUtils.Logger.d("RejectConnectionRequest in dummy implementation called");
-        }
+        public void RejectConnectionRequest(string requestingEndpointId) => Logger.d("RejectConnectionRequest in dummy implementation called");
 
-        public void DisconnectFromEndpoint(string remoteEndpointId)
-        {
-            OurUtils.Logger.d("DisconnectFromEndpoint in dummy implementation called");
-        }
+        public void DisconnectFromEndpoint(string remoteEndpointId) => Logger.d("DisconnectFromEndpoint in dummy implementation called");
 
-        public void StopAllConnections()
-        {
-            OurUtils.Logger.d("StopAllConnections in dummy implementation called");
-        }
+        public void StopAllConnections() => Logger.d("StopAllConnections in dummy implementation called");
 
-        public string LocalEndpointId()
-        {
-            return string.Empty;
-        }
+        public string LocalEndpointId() => string.Empty;
 
-        public string LocalDeviceId()
-        {
-            return "DummyDevice";
-        }
+        public string LocalDeviceId() => "DummyDevice";
 
-        public string GetAppBundleId()
-        {
-            return "dummy.bundle.id";
-        }
+        public string GetAppBundleId() => "dummy.bundle.id";
 
-        public string GetServiceId()
-        {
-            return "dummy.service.id";
-        }
+        public string GetServiceId() => "dummy.service.id";
+
     }
+
 }
+
 #endif

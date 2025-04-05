@@ -14,36 +14,23 @@
 //    limitations under the License.
 // </copyright>
 
-namespace GooglePlayGames.BasicApi.Nearby
-{
-    using System;
-    using System.Collections.Generic;
-    using GooglePlayGames.OurUtils;
+using GooglePlayGames.OurUtils;
 
-    public struct AdvertisingResult
-    {
-        private readonly ResponseStatus mStatus;
-        private readonly string mLocalEndpointName;
+namespace GooglePlayGames.BasicApi.Nearby {
+
+    public readonly struct AdvertisingResult {
 
         public AdvertisingResult(ResponseStatus status, string localEndpointName)
         {
-            this.mStatus = status;
-            this.mLocalEndpointName = Misc.CheckNotNull(localEndpointName);
+            LocalEndpointName = Misc.CheckNotNull(localEndpointName);
+            Status            = status;
         }
 
-        public bool Succeeded
-        {
-            get { return mStatus == ResponseStatus.Success; }
-        }
+        public string         LocalEndpointName { get; }
+        public ResponseStatus Status            { get; }
 
-        public ResponseStatus Status
-        {
-            get { return mStatus; }
-        }
+        public bool Succeeded => Status == ResponseStatus.Success;
 
-        public string LocalEndpointName
-        {
-            get { return mLocalEndpointName; }
-        }
     }
+
 }

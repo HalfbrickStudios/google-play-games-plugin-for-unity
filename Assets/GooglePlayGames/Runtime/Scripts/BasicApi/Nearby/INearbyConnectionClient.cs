@@ -14,16 +14,15 @@
 //    limitations under the License.
 // </copyright>
 
-namespace GooglePlayGames.BasicApi.Nearby
-{
-    using System;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-    // move this inside IMessageListener and IDiscoveryListener are always declared.
+namespace GooglePlayGames.BasicApi.Nearby {
+
 #if UNITY_ANDROID
 
-    public interface INearbyConnectionClient
-    {
+    public interface INearbyConnectionClient {
+
         int MaxUnreliableMessagePayloadLength();
 
         int MaxReliableMessagePayloadLength();
@@ -32,20 +31,15 @@ namespace GooglePlayGames.BasicApi.Nearby
 
         void SendUnreliable(List<string> recipientEndpointIds, byte[] payload);
 
-        void StartAdvertising(string name, List<string> appIdentifiers,
-            TimeSpan? advertisingDuration, Action<AdvertisingResult> resultCallback,
-            Action<ConnectionRequest> connectionRequestCallback);
+        void StartAdvertising(string name, List<string> appIdentifiers, TimeSpan? advertisingDuration, Action<AdvertisingResult> resultCallback, Action<ConnectionRequest> connectionRequestCallback);
 
         void StopAdvertising();
 
-        void SendConnectionRequest(string name, string remoteEndpointId, byte[] payload,
-            Action<ConnectionResponse> responseCallback, IMessageListener listener);
+        void SendConnectionRequest(string name, string remoteEndpointId, byte[] payload, Action<ConnectionResponse> responseCallback, IMessageListener listener);
 
-        void AcceptConnectionRequest(string remoteEndpointId, byte[] payload,
-            IMessageListener listener);
+        void AcceptConnectionRequest(string remoteEndpointId, byte[] payload, IMessageListener listener);
 
-        void StartDiscovery(string serviceId, TimeSpan? advertisingTimeout,
-            IDiscoveryListener listener);
+        void StartDiscovery(string serviceId, TimeSpan? advertisingTimeout, IDiscoveryListener listener);
 
         void StopDiscovery(string serviceId);
 
@@ -61,18 +55,20 @@ namespace GooglePlayGames.BasicApi.Nearby
     }
 #endif
 
-    public interface IMessageListener
-    {
-        void OnMessageReceived(string remoteEndpointId, byte[] data,
-            bool isReliableMessage);
+    public interface IMessageListener {
+
+        void OnMessageReceived(string remoteEndpointId, byte[] data, bool isReliableMessage);
 
         void OnRemoteEndpointDisconnected(string remoteEndpointId);
+
     }
 
-    public interface IDiscoveryListener
-    {
+    public interface IDiscoveryListener {
+
         void OnEndpointFound(EndpointDetails discoveredEndpoint);
 
         void OnEndpointLost(string lostEndpointId);
+
     }
+
 }
