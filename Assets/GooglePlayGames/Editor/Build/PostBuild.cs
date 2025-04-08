@@ -16,20 +16,24 @@
 
 #if UNITY_EDITOR && UNITY_ANDROID
 
+using System.Diagnostics.CodeAnalysis;
+
 using UnityEditor;
 using UnityEditor.Callbacks;
 
-using static GooglePlayGames.Editor.GpgEditorStrings;
-using static GooglePlayGames.Editor.GpgEditorUtils;
+using static GooglePlayGames.Editor.Strings;
+using static GooglePlayGames.Editor.Utils;
+using static GooglePlayGames.Editor.UI.Utils;
 
 namespace GooglePlayGames.Editor.Build {
 
     public static class GpgEditorBuildCheck {
 
         [PostProcessBuild(99999)]
-        private static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
+        [SuppressMessage("Style", "IDE0060", Justification = "Required by the Unity's signature")]
+        internal static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
         {
-            var done = GpgEditorProjectSettings.Instance.GetBool(KEY_ANDROID_SETUP_DONE, false);
+            var done = ProjectSettings.Instance.GetBool(KEY_ANDROID_SETUP_DONE, false);
             if (done) return;
             Alert($"Warning: The {Title} package was not configured; Google Play Game Services will not work correctly");
         }

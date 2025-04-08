@@ -16,11 +16,15 @@
 
 #if UNITY_EDITOR
 
-namespace GooglePlayGames.Editor {
+using static GooglePlayGames.Editor.Strings;
 
-    public static class GpgEditorStrings {
+using EditorStrings = GooglePlayGames.Editor.Strings;
 
-        public static string Title = TplGPG;
+namespace GooglePlayGames.Editor.UI {
+
+    public static class Strings {
+
+        public static string Title = EditorStrings.Title;
 
         public static string AboutText =  "Copyright (C) 2014 Google Inc.\n\n" +
                                          $"This is an open-source plugin that allows cross-platform integration with {TplGPG} services. " +
@@ -164,8 +168,6 @@ namespace GooglePlayGames.Editor {
         internal const  string TplAppId  = "Application ID";
         internal const  string TplASL    = "Android Support Library";
         internal const  string TplCID    = "Client ID";
-        internal const  string TplGP     = "Google Play";
-        internal static string TplGPG    = $"{TplGP} Games";
         internal static string TplGPP    = $"{TplGPG} Plugin";
         internal static string TplGPGP4U = $"{TplGPP} for Unity";
         internal static string TplGPS    = $"{TplGP} Services";

@@ -19,19 +19,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using Google;
 using UnityEditor;
 
-using static GooglePlayGames.Editor.GpgEditorStrings;
-
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
 namespace GooglePlayGames.Editor {
 
-    public static class GpgEditorUtils {
+    public static class Utils {
 
         public   const string KEY_ANDROID_BUNDLE_ID  = "and.BundleId";
         public   const string KEY_ANDROID_RESOURCE   = "and.ResourceData";
@@ -103,7 +102,7 @@ namespace GooglePlayGames.Editor {
                 var matches = combined.ToList();
                 switch (matches.Count) {
                     case 0:
-                        Error(0x141, "cannot find the root path of the package");
+                        // Error(0x141, "cannot find the root path of the package");
                         throw new Exception($"Not a single directory named {ROOT_DIRECTORY_NAME} was found");
                     case 1:
                         RootPathInternal = SlashesToPlatformSeparator(matches.First());
@@ -117,7 +116,7 @@ namespace GooglePlayGames.Editor {
                             }
                         }
                         if (string.IsNullOrEmpty(RootPathInternal)) {
-                            Error(0x142, "cannot find the root path of the package");
+                            // Error(0x142, "cannot find the root path of the package");
                             throw new Exception($"Within the listed packages, not a single directory named {ROOT_DIRECTORY_NAME} was found");
                         }
                         break;
@@ -125,10 +124,6 @@ namespace GooglePlayGames.Editor {
                 return RootPathInternal;
             }
         }
-
-        public static void Alert(string title, string message) => EditorUtility.DisplayDialog(title, message, Ok);
-
-        public static void Alert(string message) => Alert(Title, message);
 
         internal static bool AndroidManifestExists() => File.Exists(ManifestPath);
 
@@ -196,17 +191,11 @@ namespace GooglePlayGames.Editor {
             }
         }
 
-        public static void Error(int code, string message)
-        {
-            var hex = code.ToString("X");
-            Alert($"{Title} Error", $"Code: 0x{hex}\nMessage: {message}");
-        }
-
         public static void GenerateAndroidManifest()
         {
             var content = ReadEditorTemplate("template-AndroidManifest");
             var extend = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(GpgEditorProjectSettings.Instance.Get(KEY_SERVICE_ID))) {
+            if (!string.IsNullOrEmpty(ProjectSettings.Instance.Get(KEY_SERVICE_ID))) {
                 extend[PLACEHOLDER_NEARBY_PERMISSIONS] = string.Join("\n", new[] {
                         "<!-- Required for Nearby Connections -->\n",
                         "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
@@ -227,7 +216,7 @@ namespace GooglePlayGames.Editor {
             }
 
             foreach (var entry in s_replacements) {
-                var value = GpgEditorProjectSettings.Instance.Get(entry.Value, extend);
+                var value = ProjectSettings.Instance.Get(entry.Value, extend);
                 content = content.Replace(entry.Key, value);
             }
 
@@ -316,7 +305,7 @@ namespace GooglePlayGames.Editor {
         {
             path = SlashesToPlatformSeparator(path);
             if (!File.Exists(path)) {
-                Error(0x143, "file not found @ " + path);
+                // Error(0x143, "file not found @ " + path);
                 return null;
             }
             using var sr = new StreamReader(path);
@@ -344,7 +333,7 @@ namespace GooglePlayGames.Editor {
         {
             var contents = ReadEditorTemplate("template-GameInfo");
             foreach (var ent in s_replacements) {
-                var value = GpgEditorProjectSettings.Instance.Get(ent.Value);
+                var value = ProjectSettings.Instance.Get(ent.Value);
                 contents = contents.Replace(ent.Key, value);
             }
             WriteFile(GameInfoPath, contents);

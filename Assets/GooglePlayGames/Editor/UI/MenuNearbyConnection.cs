@@ -19,12 +19,16 @@
 using UnityEngine;
 using UnityEditor;
 
-using static GooglePlayGames.Editor.GpgEditorStrings;
-using static GooglePlayGames.Editor.GpgEditorUtils;
+using static GooglePlayGames.Editor.Utils;
+using static GooglePlayGames.Editor.UI.Strings;
 
 namespace GooglePlayGames.Editor.UI {
 
-    internal sealed class GpgEditorUiNearbyConnection : EditorWindow {
+    internal sealed class MenuNearbyConnection : EditorWindow {
+
+        private string m_id = string.Empty;
+
+        #region MenuItem implementation
 
         [MenuItem("Google/Play Games/Setup/Nearby Connections...", true)]
 #if UNITY_ANDROID
@@ -36,62 +40,17 @@ namespace GooglePlayGames.Editor.UI {
         [MenuItem("Google/Play Games/Setup/Nearby Connections...", false, 3)]
         private static void MenuItemNearbySetup()
         {
-            var window = GetWindow(typeof(GpgEditorUiNearbyConnection), true, NearbyConnections.Title);
+            var window = GetWindow(typeof(MenuNearbyConnection), true, NearbyConnections.Title);
             window.minSize = new Vector2(400, 200);
         }
 
-        /// Provide static access to setup for facilitating automated builds.
-        /// <param name="id">nearby connections service id</param>
-        /// <param name="android">true if building android</param>
-        internal static bool PerformSetup(string id, bool android)
-        {
-            // check for valid app id
-            if (!LooksLikeValidServiceId(id)) {
-                var title = "Remove Nearby connection permissions?  ";
-                var message = "The service Id is invalid.  It must follow package naming rules.  " +
-                              "Do you want to remove the AndroidManifest entries for Nearby connections?";
-                var dialog = EditorUtility.DisplayDialog(title, message, Yes, No);
-                if (!dialog) return false;
-                GpgEditorProjectSettings.Instance.Set(KEY_SERVICE_ID, null);
-                GpgEditorProjectSettings.Instance.Save();
-            } else {
-                GpgEditorProjectSettings.Instance.Set(KEY_SERVICE_ID, id);
-                GpgEditorProjectSettings.Instance.Save();
-            }
-
-            if (!android) return true;
-
-            EnsureDirExists("Assets/Plugins");
-            EnsureDirExists("Assets/Plugins/Android");
-
-            GenerateAndroidManifest();
-
-            GpgEditorProjectSettings.Instance.Set(KEY_NEARBY_SETUP_DONE, true);
-            GpgEditorProjectSettings.Instance.Save();
-
-            EnableExternalDependencyResolverFlags(verbose: true);
-            UpdateExternalDependencyResolverAssets(force: true);
-            EnableExternalDependencyResolverFlags(enable: true);
-            AssetDatabase.Refresh();
-
-            ResolveExternalDependencies();
-            return true;
-        }
-
-        private string m_id = string.Empty;
-
-        private void DoSetup()
-        {
-            if (!PerformSetup(m_id, true)) return;
-            EditorUtility.DisplayDialog(Success, NearbyConnections.SetupComplete, Ok);
-            Close();
-        }
+        #endregion MenuItem implementation
 
         #region EditorWindow implementation
 
         private void OnEnable()
         {
-            m_id = GpgEditorProjectSettings.Instance.Get(KEY_SERVICE_ID);
+            m_id = ProjectSettings.Instance.Get(KEY_SERVICE_ID);
         }
 
         private void OnGUI()
@@ -121,6 +80,51 @@ namespace GooglePlayGames.Editor.UI {
         }
 
         #endregion EditorWindow implementation
+
+        /// Provide static access to setup for facilitating automated builds.
+        /// <param name="id">nearby connections service id</param>
+        /// <param name="android">true if building android</param>
+        internal static bool PerformSetup(string id, bool android)
+        {
+            // check for valid app id
+            if (!LooksLikeValidServiceId(id)) {
+                var title = "Remove Nearby connection permissions?  ";
+                var message = "The service Id is invalid.  It must follow package naming rules.  " +
+                              "Do you want to remove the AndroidManifest entries for Nearby connections?";
+                var dialog = EditorUtility.DisplayDialog(title, message, Yes, No);
+                if (!dialog) return false;
+                ProjectSettings.Instance.Set(KEY_SERVICE_ID, null);
+                ProjectSettings.Instance.Save();
+            } else {
+                ProjectSettings.Instance.Set(KEY_SERVICE_ID, id);
+                ProjectSettings.Instance.Save();
+            }
+
+            if (!android) return true;
+
+            EnsureDirExists("Assets/Plugins");
+            EnsureDirExists("Assets/Plugins/Android");
+
+            GenerateAndroidManifest();
+
+            ProjectSettings.Instance.Set(KEY_NEARBY_SETUP_DONE, true);
+            ProjectSettings.Instance.Save();
+
+            EnableExternalDependencyResolverFlags(verbose: true);
+            UpdateExternalDependencyResolverAssets(force: true);
+            EnableExternalDependencyResolverFlags(enable: true);
+            AssetDatabase.Refresh();
+
+            ResolveExternalDependencies();
+            return true;
+        }
+
+        private void DoSetup()
+        {
+            if (!PerformSetup(m_id, true)) return;
+            EditorUtility.DisplayDialog(Success, NearbyConnections.SetupComplete, Ok);
+            Close();
+        }
 
     }
 

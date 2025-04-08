@@ -22,21 +22,21 @@ using System.IO;
 
 using UnityEngine.Networking;
 
-using static GooglePlayGames.Editor.GpgEditorUtils;
+using static GooglePlayGames.Editor.Utils;
 
 namespace GooglePlayGames.Editor {
 
-    public class GpgEditorProjectSettings {
+    public sealed class ProjectSettings {
 
-        private static GpgEditorProjectSettings s_instance = null;
+        private static ProjectSettings s_instance = null;
 
-        public static GpgEditorProjectSettings Instance => s_instance ??= new GpgEditorProjectSettings();
+        private          bool                       m_dirty = false;
+        private readonly string                     m_file  = null;
+        private readonly Dictionary<string, string> m_dict  = new();
 
-        private bool m_dirty = false;
-        private readonly string m_file;
-        private Dictionary<string, string> m_dict = new();
+        public static ProjectSettings Instance => s_instance ??= new ProjectSettings();
 
-        private GpgEditorProjectSettings()
+        private ProjectSettings()
         {
             m_file = SlashesToPlatformSeparator("ProjectSettings/GooglePlayGameSettings.txt");
 

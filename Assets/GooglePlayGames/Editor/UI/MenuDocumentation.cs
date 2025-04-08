@@ -19,12 +19,14 @@
 using UnityEngine;
 using UnityEditor;
 
-using static GooglePlayGames.Editor.GpgEditorStrings;
-using static GooglePlayGames.Editor.GpgEditorUtils;
+using static GooglePlayGames.Editor.UI.Strings;
+using static GooglePlayGames.Editor.UI.Utils;
 
 namespace GooglePlayGames.Editor.UI {
 
-    internal static class GpgEditorUiDocumentation {
+    internal static class MenuDocumentation {
+
+        #region MenuItem implementation
 
         [MenuItem("Google/Play Games/About/Plugin...", false, 300)]
         private static void MenuItemAbout()
@@ -43,6 +45,8 @@ namespace GooglePlayGames.Editor.UI {
 
         [MenuItem("Google/Play Games/Documentation/API...", false, 101)]
         private static void MenuItemPlayGamesServicesAPI() => Application.OpenURL(ExternalLinks.PlayGamesServicesApiURL);
+
+        #endregion MenuItem implementation
 
     }
 

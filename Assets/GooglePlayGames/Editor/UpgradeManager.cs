@@ -18,23 +18,23 @@
 
 using UnityEditor;
 
-using static GooglePlayGames.Editor.GpgEditorUtils;
+using static GooglePlayGames.Editor.Utils;
 
 namespace GooglePlayGames.Editor {
 
     [InitializeOnLoad]
-    internal class GpgEditorUpgradeManager {
+    internal class UpgradeManager {
 
-        static GpgEditorUpgradeManager()
+        static UpgradeManager()
         {
             // TODO: review this build script
             return;
 
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
-            GpgEditorProjectSettings.Instance.Set(KEY_LAST_UPGRADE, Version.VersionKey);
-            GpgEditorProjectSettings.Instance.Set(KEY_PLUGIN_VERSION, Version.VersionString);
-            GpgEditorProjectSettings.Instance.Save();
+            ProjectSettings.Instance.Set(KEY_LAST_UPGRADE, Version.VersionKey);
+            ProjectSettings.Instance.Set(KEY_PLUGIN_VERSION, Version.VersionString);
+            ProjectSettings.Instance.Save();
 
             var changed = false;
             if (!AndroidManifestExists()) {
