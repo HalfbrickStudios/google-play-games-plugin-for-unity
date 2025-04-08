@@ -10,12 +10,10 @@ namespace GooglePlayGames.OurUtils {
 
     public sealed class NearbyHelperObject : MonoBehaviour {
 
-        private static NearbyHelperObject s_instance = null;
-
-        private static double s_advertisingRemaining = 0;
-        private static double s_discoveryRemaining   = 0;
-
-        private static INearbyConnectionClient s_client = null;
+        private static double                  s_advertisingRemaining = 0;
+        private static INearbyConnectionClient s_client               = null;
+        private static double                  s_discoveryRemaining   = 0;
+        private static NearbyHelperObject      s_instance             = null;
 
         public static void CreateObject(INearbyConnectionClient client)
         {
@@ -30,6 +28,9 @@ namespace GooglePlayGames.OurUtils {
             }
         }
 
+        public static void StartAdvertisingTimer(TimeSpan? span) => s_advertisingRemaining = ToSeconds(span);
+        public static void StartDiscoveryTimer(TimeSpan? span)   => s_discoveryRemaining   = ToSeconds(span);
+
         private static double ToSeconds(TimeSpan? span)
         {
             if (!span.HasValue) return 0;
@@ -37,18 +38,17 @@ namespace GooglePlayGames.OurUtils {
             return span.Value.TotalSeconds;
         }
 
-        public static void StartAdvertisingTimer(TimeSpan? span) => s_advertisingRemaining = ToSeconds(span);
-        public static void StartDiscoveryTimer(TimeSpan? span)   => s_discoveryRemaining   = ToSeconds(span);
+        #region MonoBehaviour implementation
 
-        public void Awake() => DontDestroyOnLoad(gameObject);
+        private void Awake() => DontDestroyOnLoad(gameObject);
 
-        public void OnDisable()
+        private void OnDisable()
         {
             if (s_instance != this) return;
             s_instance = null;
         }
 
-        public void Update()
+        private void Update()
         {
             if (s_advertisingRemaining > 0) {
                 s_advertisingRemaining -= Time.deltaTime;
@@ -63,6 +63,8 @@ namespace GooglePlayGames.OurUtils {
                 }
             }
         }
+
+        #endregion MonoBehaviour implementation
 
     }
 

@@ -16,11 +16,18 @@
 
 #if UNITY_ANDROID
 
+using System;
+
 namespace GooglePlayGames.BasicApi {
 
     public sealed class PlayerStats {
 
         private static readonly float UNSET_VALUE = -1.0f;
+
+        public PlayerStats()
+        {
+            IsValid = false;
+        }
 
         public PlayerStats(int numberOfPurchases, float avgSessionLength, int daysSinceLastPlayed, int numberOfSessions, float sessPercentile, float spendPercentile, float spendProbability, float churnProbability, float highSpenderProbability, float totalSpendNext28Days)
         {
@@ -34,25 +41,23 @@ namespace GooglePlayGames.BasicApi {
             SpendPercentile        = spendPercentile;
             SpendProbability       = spendProbability;
             TotalSpendNext28Days   = totalSpendNext28Days;
-            Valid                  = true;
+            IsValid                = true;
         }
 
-        public PlayerStats()
-        {
-            Valid = false;
-        }
+        public float AvgSessionLength       { get; }
+        public float ChurnProbability       { get; }
+        public int   DaysSinceLastPlayed    { get; }
+        public float HighSpenderProbability { get; }
+        public bool  IsValid                { get; }
+        public int   NumberOfPurchases      { get; }
+        public int   NumberOfSessions       { get; }
+        public float SessPercentile         { get; }
+        public float SpendPercentile        { get; }
+        public float SpendProbability       { get; }
+        public float TotalSpendNext28Days   { get; }
 
-        public float AvgSessionLength       { get; private set; }
-        public float ChurnProbability       { get; private set; }
-        public int   DaysSinceLastPlayed    { get; private set; }
-        public float HighSpenderProbability { get; private set; }
-        public int   NumberOfPurchases      { get; private set; }
-        public int   NumberOfSessions       { get; private set; }
-        public float SessPercentile         { get; private set; }
-        public float SpendPercentile        { get; private set; }
-        public float SpendProbability       { get; private set; }
-        public float TotalSpendNext28Days   { get; private set; }
-        public bool  Valid                  { get; private set; }
+        [Obsolete("Use IsValid instead")]
+        public bool Valid => IsValid;
 
         public bool HasAvgSessionLength()       => AvgSessionLength       !=       UNSET_VALUE;
         public bool HasChurnProbability()       => ChurnProbability       !=       UNSET_VALUE;

@@ -15,6 +15,8 @@
 // </copyright>
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+
 using UnityEngine;
 
 namespace GooglePlayGames.OurUtils {
@@ -26,24 +28,28 @@ namespace GooglePlayGames.OurUtils {
         public static bool DebugLogEnabled   { get; set; }
         public static bool WarningLogEnabled { get; set; }
 
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
         public static void d(string msg)
         {
             if (!DebugLogEnabled) return;
             PlayGamesHelperObject.RunOnGameThread(() => Debug.Log(ToLogMessage(string.Empty, "DEBUG", msg)));
         }
 
-        public static void w(string msg)
-        {
-            if (!WarningLogEnabled) return;
-            PlayGamesHelperObject.RunOnGameThread(() => Debug.LogWarning(ToLogMessage("!!!", "WARNING", msg)));
-        }
-
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
         public static void e(string msg)
         {
             if (!WarningLogEnabled) return;
             PlayGamesHelperObject.RunOnGameThread(() => Debug.LogWarning(ToLogMessage("***", "ERROR", msg)));
         }
 
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
+        public static void w(string msg)
+        {
+            if (!WarningLogEnabled) return;
+            PlayGamesHelperObject.RunOnGameThread(() => Debug.LogWarning(ToLogMessage("!!!", "WARNING", msg)));
+        }
+
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
         public static string describe(byte[] b) => b == null ? "(null)" : $"byte[{b.Length}]";
 
         private static string ToLogMessage(string prefix, string logType, string msg)

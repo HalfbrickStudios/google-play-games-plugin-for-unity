@@ -26,12 +26,6 @@ namespace GooglePlayGames.Editor.UI {
 
     internal static class GpgEditorUiDocumentation {
 
-        [MenuItem("Google/Play Games/Documentation/Getting Started Guide...", false, 100)]
-        private static void MenuItemGettingStartedGuide() => Application.OpenURL(ExternalLinks.GettingStartedGuideURL);
-
-        [MenuItem("Google/Play Games/Documentation/API...", false, 101)]
-        private static void MenuItemPlayGamesServicesAPI() => Application.OpenURL(ExternalLinks.PlayGamesServicesApiURL);
-
         [MenuItem("Google/Play Games/About/Plugin...", false, 300)]
         private static void MenuItemAbout()
         {
@@ -41,8 +35,14 @@ namespace GooglePlayGames.Editor.UI {
             Alert(AboutTitle, message);
         }
 
+        [MenuItem("Google/Play Games/Documentation/Getting Started Guide...", false, 100)]
+        private static void MenuItemGettingStartedGuide() => Application.OpenURL(ExternalLinks.GettingStartedGuideURL);
+
         [MenuItem("Google/Play Games/About/License...", false, 301)]
         private static void MenuItemLicense() => EditorUtility.DisplayDialog(LicenseTitle, LicenseText, Ok);
+
+        [MenuItem("Google/Play Games/Documentation/API...", false, 101)]
+        private static void MenuItemPlayGamesServicesAPI() => Application.OpenURL(ExternalLinks.PlayGamesServicesApiURL);
 
     }
 

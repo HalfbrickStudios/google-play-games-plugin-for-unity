@@ -20,6 +20,7 @@ using System;
 
 using UnityEngine.SocialPlatforms;
 
+using GooglePlayGames.BasicApi.Events;
 using GooglePlayGames.BasicApi.SavedGame;
 using GooglePlayGames.OurUtils;
 
@@ -27,40 +28,44 @@ namespace GooglePlayGames.BasicApi {
 
     public sealed class DummyClient : IPlayGamesClient {
 
+        private static void LogUsage() => Logger.d("Received method call on DummyClient - using stub implementation.");
+
+        #region IPlayGamesClient implementation
+
+        public void AskForLoadFriendsResolution(Action<UIStatus> callback)
+        {
+            LogUsage();
+            callback?.Invoke(UIStatus.VersionUpdateRequired);
+        }
+
         public void Authenticate(Action<SignInStatus> callback)
         {
             LogUsage();
             callback?.Invoke(SignInStatus.Canceled);
         }
 
-        public void ManuallyAuthenticate(Action<SignInStatus> callback)
+        public IEventsClient GetEventsClient()
         {
             LogUsage();
-            callback?.Invoke(SignInStatus.Canceled);
+            return null;
         }
 
-        public bool IsAuthenticated()
+        public IUserProfile[] GetFriends()
         {
             LogUsage();
-            return false;
+            return new IUserProfile[0];
         }
 
-        public void RequestServerSideAccess(bool forceRefreshToken, Action<string> callback)
+        public void GetFriendsListVisibility(bool forceReload, Action<FriendsListVisibilityStatus> callback)
         {
             LogUsage();
-            callback?.Invoke(null);
+            callback?.Invoke(FriendsListVisibilityStatus.Unknown);
         }
 
-        public void RequestRecallAccessToken(Action<RecallAccess> callback)
+        public LoadFriendsStatus GetLastLoadFriendsStatus()
         {
             LogUsage();
-            callback?.Invoke(null);
-        }
-
-        public string GetUserId()
-        {
-            LogUsage();
-            return "DummyID";
+            return LoadFriendsStatus.Unknown;
         }
 
         public void GetPlayerStats(Action<CommonStatusCodes, PlayerStats> callback)
@@ -69,10 +74,22 @@ namespace GooglePlayGames.BasicApi {
             callback?.Invoke(CommonStatusCodes.ApiNotConnected, new PlayerStats());
         }
 
+        public ISavedGameClient GetSavedGameClient()
+        {
+            LogUsage();
+            return null;
+        }
+
         public string GetUserDisplayName()
         {
             LogUsage();
             return "Player";
+        }
+
+        public string GetUserId()
+        {
+            LogUsage();
+            return "DummyID";
         }
 
         public string GetUserImageUrl()
@@ -81,11 +98,19 @@ namespace GooglePlayGames.BasicApi {
             return null;
         }
 
-        public void LoadUsers(string[] userIds, Action<IUserProfile[]> callback)
+        public void IncrementAchievement(string achId, int steps, Action<bool> callback)
         {
             LogUsage();
-            callback?.Invoke(null);
+            callback?.Invoke(false);
         }
+
+        public bool IsAuthenticated()
+        {
+            LogUsage();
+            return false;
+        }
+
+        public int LeaderboardMaxResults() => 25;
 
         public void LoadAchievements(Action<Achievement[]> callback)
         {
@@ -93,19 +118,61 @@ namespace GooglePlayGames.BasicApi {
             callback?.Invoke(null);
         }
 
-        public void UnlockAchievement(string achId, Action<bool> callback)
+        public void LoadFriends(Action<bool> callback)
         {
             LogUsage();
             callback?.Invoke(false);
+        }
+
+        public void LoadFriends(int pageSize, bool forceReload, Action<LoadFriendsStatus> callback)
+        {
+            LogUsage();
+            callback?.Invoke(LoadFriendsStatus.Unknown);
+        }
+
+        public void LoadMoreFriends(int pageSize, Action<LoadFriendsStatus> callback)
+        {
+            LogUsage();
+            callback?.Invoke(LoadFriendsStatus.Unknown);
+        }
+
+        public void LoadMoreScores(ScorePageToken token, int rowCount, Action<LeaderboardScoreData> callback)
+        {
+            LogUsage();
+            callback?.Invoke(new LeaderboardScoreData(token.LeaderboardId, ResponseStatus.LicenseCheckFailed));
+        }
+
+        public void LoadScores(string leaderboardId, LeaderboardStart start, int rowCount, LeaderboardCollection collection, LeaderboardTimeSpan timeSpan, Action<LeaderboardScoreData> callback)
+        {
+            LogUsage();
+            callback?.Invoke(new LeaderboardScoreData(leaderboardId, ResponseStatus.LicenseCheckFailed));
+        }
+
+        public void LoadUsers(string[] userIds, Action<IUserProfile[]> callback)
+        {
+            LogUsage();
+            callback?.Invoke(null);
+        }
+
+        public void ManuallyAuthenticate(Action<SignInStatus> callback)
+        {
+            LogUsage();
+            callback?.Invoke(SignInStatus.Canceled);
+        }
+
+        public void RequestRecallAccessToken(Action<RecallAccess> callback)
+        {
+            LogUsage();
+            callback?.Invoke(null);
+        }
+
+        public void RequestServerSideAccess(bool forceRefreshToken, Action<string> callback)
+        {
+            LogUsage();
+            callback?.Invoke(null);
         }
 
         public void RevealAchievement(string achId, Action<bool> callback)
-        {
-            LogUsage();
-            callback?.Invoke(false);
-        }
-
-        public void IncrementAchievement(string achId, int steps, Action<bool> callback)
         {
             LogUsage();
             callback?.Invoke(false);
@@ -123,60 +190,16 @@ namespace GooglePlayGames.BasicApi {
             callback?.Invoke(UIStatus.VersionUpdateRequired);
         }
 
-        public void AskForLoadFriendsResolution(Action<UIStatus> callback)
-        {
-            LogUsage();
-            callback?.Invoke(UIStatus.VersionUpdateRequired);
-        }
-
-        public LoadFriendsStatus GetLastLoadFriendsStatus()
-        {
-            LogUsage();
-            return LoadFriendsStatus.Unknown;
-        }
-
-        public void LoadFriends(int pageSize, bool forceReload, Action<LoadFriendsStatus> callback)
-        {
-            LogUsage();
-            callback?.Invoke(LoadFriendsStatus.Unknown);
-        }
-
-        public void LoadMoreFriends(int pageSize, Action<LoadFriendsStatus> callback)
-        {
-            LogUsage();
-            callback?.Invoke(LoadFriendsStatus.Unknown);
-        }
-
         public void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UIStatus> callback)
         {
             LogUsage();
             callback?.Invoke(UIStatus.VersionUpdateRequired);
         }
 
-        public void GetFriendsListVisibility(bool forceReload, Action<FriendsListVisibilityStatus> callback)
-        {
-            LogUsage();
-            callback?.Invoke(FriendsListVisibilityStatus.Unknown);
-        }
-
         public void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UIStatus> callback)
         {
             LogUsage();
             callback?.Invoke(UIStatus.VersionUpdateRequired);
-        }
-
-        public int LeaderboardMaxResults() => 25;
-
-        public void LoadScores(string leaderboardId, LeaderboardStart start, int rowCount, LeaderboardCollection collection, LeaderboardTimeSpan timeSpan, Action<LeaderboardScoreData> callback)
-        {
-            LogUsage();
-            callback?.Invoke(new LeaderboardScoreData(leaderboardId, ResponseStatus.LicenseCheckFailed));
-        }
-
-        public void LoadMoreScores(ScorePageToken token, int rowCount, Action<LeaderboardScoreData> callback)
-        {
-            LogUsage();
-            callback?.Invoke(new LeaderboardScoreData(token.LeaderboardId, ResponseStatus.LicenseCheckFailed));
         }
 
         public void SubmitScore(string leaderboardId, long score, Action<bool> callback)
@@ -191,31 +214,13 @@ namespace GooglePlayGames.BasicApi {
             callback?.Invoke(false);
         }
 
-        public ISavedGameClient GetSavedGameClient()
-        {
-            LogUsage();
-            return null;
-        }
-
-        public Events.IEventsClient GetEventsClient()
-        {
-            LogUsage();
-            return null;
-        }
-
-        public void LoadFriends(Action<bool> callback)
+        public void UnlockAchievement(string achId, Action<bool> callback)
         {
             LogUsage();
             callback?.Invoke(false);
         }
 
-        public IUserProfile[] GetFriends()
-        {
-            LogUsage();
-            return new IUserProfile[0];
-        }
-
-        private static void LogUsage() => Logger.d("Received method call on DummyClient - using stub implementation.");
+        #endregion IPlayGamesClient implementation
 
     }
 

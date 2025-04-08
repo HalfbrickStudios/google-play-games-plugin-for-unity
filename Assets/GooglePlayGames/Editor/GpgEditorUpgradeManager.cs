@@ -22,7 +22,6 @@ using static GooglePlayGames.Editor.GpgEditorUtils;
 
 namespace GooglePlayGames.Editor {
 
-    // GPGS upgrader handles performing and upgrade tasks.
     [InitializeOnLoad]
     internal class GpgEditorUpgradeManager {
 

@@ -16,271 +16,131 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames
-{
-    using System;
-    using GooglePlayGames.BasicApi;
-    using UnityEngine;
+using System;
+
+using UnityEngine;
 #if UNITY_2017_1_OR_NEWER
-    using UnityEngine.Networking;
+using UnityEngine.Networking;
 #endif
-    using UnityEngine.SocialPlatforms;
+using UnityEngine.SocialPlatforms;
 
-    internal delegate void ReportProgress(string id, double progress, Action<bool> callback);
+using GooglePlayGames.BasicApi;
 
-    /// <summary>
-    /// Represents a Google Play Games achievement. It can be used to report an achievement
-    /// to the API, offering identical functionality as <see cref="PlayGamesPlatform.ReportProgress" />.
-    /// </summary>
-    internal class PlayGamesAchievement : IAchievement, IAchievementDescription
-    {
-        private readonly ReportProgress mProgressCallback;
-        private string mId = string.Empty;
-        private bool mIsIncremental = false;
-        private int mCurrentSteps = 0;
-        private int mTotalSteps = 0;
-        private double mPercentComplete = 0.0;
-        private bool mCompleted = false;
-        private bool mHidden = false;
-        private DateTime mLastModifiedTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-        private string mTitle = string.Empty;
-        private string mRevealedImageUrl = string.Empty;
-        private string mUnlockedImageUrl = string.Empty;
-#if UNITY_2017_1_OR_NEWER
-        private UnityWebRequest mImageFetcher = null;
-#else
-        private WWW mImageFetcher = null;
-#endif
-        private Texture2D mImage = null;
-        private string mDescription = string.Empty;
-        private ulong mPoints = 0;
+namespace GooglePlayGames {
 
-        internal PlayGamesAchievement()
-            : this(PlayGamesPlatform.Instance.ReportProgress)
-        {
-        }
+    internal sealed class PlayGamesAchievement : IAchievement, IAchievementDescription {
+
+        internal PlayGamesAchievement() : this(PlayGamesPlatform.Instance.ReportProgress) { }
 
         internal PlayGamesAchievement(ReportProgress progressCallback)
         {
-            mProgressCallback = progressCallback;
+            m_progressCallback = progressCallback;
         }
 
         internal PlayGamesAchievement(Achievement ach) : this()
         {
-            this.mId = ach.Id;
-            this.mIsIncremental = ach.IsIncremental;
-            this.mCurrentSteps = ach.CurrentSteps;
-            this.mTotalSteps = ach.TotalSteps;
-            if (ach.IsIncremental)
-            {
-                if (ach.TotalSteps > 0)
-                {
-                    this.mPercentComplete =
-                        ((double) ach.CurrentSteps / (double) ach.TotalSteps) * 100.0;
-                }
-                else
-                {
-                    this.mPercentComplete = 0.0;
-                }
-            }
-            else
-            {
-                this.mPercentComplete = ach.IsUnlocked ? 100.0 : 0.0;
-            }
+            m_description      = ach.Description;
+            m_revealedImageUrl = ach.RevealedImageUrl;
+            m_unlockedImageUrl = ach.UnlockedImageUrl;
 
-            this.mCompleted = ach.IsUnlocked;
-            this.mHidden = !ach.IsRevealed;
-            this.mLastModifiedTime = ach.LastModifiedTime;
-            this.mTitle = ach.Name;
-            this.mDescription = ach.Description;
-            this.mPoints = ach.Points;
-            this.mRevealedImageUrl = ach.RevealedImageUrl;
-            this.mUnlockedImageUrl = ach.UnlockedImageUrl;
+            IsCompleted        =  ach.IsUnlocked;
+            CurrentSteps     =  ach.CurrentSteps;
+            IsHidden           = !ach.IsRevealed;
+            Id               =  ach.Id;
+            IsIncremental    =  ach.IsIncremental;
+            LastReportedDate =  ach.LastModifiedTime;
+            Points           =  ach.Points;
+            Title            =  ach.Name;
+            TotalSteps       =  ach.TotalSteps;
+
+            if (ach.IsIncremental) {
+                if (ach.TotalSteps > 0) {
+                    PercentCompleted = ach.CurrentSteps / ach.TotalSteps * 100.0;
+                } else {
+                    PercentCompleted = 0.0;
+                }
+            } else {
+                PercentCompleted = ach.IsUnlocked ? 100.0 : 0.0;
+            }
         }
 
-        /// <summary>
-        /// Reveals, unlocks or increment achievement.
-        /// </summary>
-        /// <remarks>
-        /// Call after setting <see cref="id" />, <see cref="completed" />,
-        /// as well as <see cref="currentSteps" /> and <see cref="totalSteps" />
-        /// for incremental achievements. Equivalent to calling
-        /// <see cref="PlayGamesPlatform.ReportProgress" />.
-        /// </remarks>
-        public void ReportProgress(Action<bool> callback)
-        {
-            mProgressCallback.Invoke(mId, mPercentComplete, callback);
-        }
+        private readonly string          m_description      = string.Empty;
+        private          Texture2D       m_image            = null;
+#if UNITY_2017_1_OR_NEWER
+        private          UnityWebRequest m_imageFetcher     = null;
+#else
+        private          WWW             m_imageFetcher     = null;
+#endif
+        private readonly ReportProgress  m_progressCallback = null;
 
-        /// <summary>
-        /// Loads the local user's image from the url.  Loading urls
-        /// is asynchronous so the return from this call is fast,
-        /// the image is returned once it is loaded.  null is returned
-        /// up to that point.
-        /// </summary>
+        private readonly string          m_revealedImageUrl = null;
+        private readonly string          m_unlockedImageUrl = null;
+
+        public string    AchievedDescription   { get => m_description;                                 }
+        public int       CurrentSteps          { get;                                                  }
+        public string    Id                    { get;                  private set;                    }
+        public Texture2D Image                 { get => LoadImage();   private set => m_image = value; }
+        public bool      IsCompleted           { get;                                                  }
+        public bool      IsHidden              { get;                                                  }
+        public bool      IsIncremental         { get;                                                  }
+        public DateTime  LastReportedDate      { get;                                                  }
+        public double    PercentCompleted      { get;                  private set;                    }
+        public int       Points                { get;                                                  }
+        public string    Title                 { get;                                                  }
+        public int       TotalSteps            { get;                                                  }
+        public string    UnachievedDescription { get => m_description;                                 }
+
+        [Obsolete("Use IsCompleted instead")] public bool Completed => IsCompleted;
+        [Obsolete("Use IsHidden instead")]    public bool Hidden    => IsHidden;
+
         private Texture2D LoadImage()
         {
-            if (hidden)
-            {
-                // return null, we dont have images for hidden achievements.
-                return null;
-            }
-
-            string url = completed ? mUnlockedImageUrl : mRevealedImageUrl;
-
-            // the url can be null if the image is not configured.
-            if (!string.IsNullOrEmpty(url))
-            {
-                if (mImageFetcher == null || mImageFetcher.url != url)
-                {
+            if (IsHidden) return null;
+            var url = IsCompleted ? m_unlockedImageUrl : m_revealedImageUrl;
+            if (!string.IsNullOrEmpty(url)) return null;
+            if (m_imageFetcher == null || m_imageFetcher.url != url) {
 #if UNITY_2017_1_OR_NEWER
-                    mImageFetcher = UnityWebRequestTexture.GetTexture(url);
+                m_imageFetcher = UnityWebRequestTexture.GetTexture(url);
 #else
-                    mImageFetcher = new WWW(url);
+                ImageFetcherInternal = new WWW(url);
 #endif
-                    mImage = null;
-                }
-
-                // if we have the texture, just return, this avoids excessive
-                // memory usage calling www.texture repeatedly.
-                if (mImage != null)
-                {
-                    return mImage;
-                }
-
-                if (mImageFetcher.isDone)
-                {
-#if UNITY_2017_1_OR_NEWER
-                    mImage = DownloadHandlerTexture.GetContent(mImageFetcher);
-#else
-                    mImage = mImageFetcher.texture;
-#endif
-                    return mImage;
-                }
+                Image = null;
             }
-
-            // if there is no url, always return null.
-            return null;
+            if (Image != null) return Image;
+            if (m_imageFetcher.isDone) {
+#if UNITY_2017_1_OR_NEWER
+                Image = DownloadHandlerTexture.GetContent(m_imageFetcher);
+#else
+                Image = mImageFetcher.texture;
+#endif
+            }
+            return Image;
         }
 
+        #region IAchievement and IAchievementDescription implementation
 
-        /// <summary>
-        /// Gets or sets the id of this achievement.
-        /// </summary>
-        /// <returns>
-        /// The identifier.
-        /// </returns>
-        public string id
-        {
-            get { return mId; }
+        [Obsolete("Use AchievedDescription instead")]   public string    achievedDescription   { get => AchievedDescription;                                    }
+        [Obsolete("Use IsCompleted instead")]           public bool      completed             { get => IsCompleted;                                            }
+        [Obsolete("Use CurrentSteps instead")]          public int       currentSteps          { get => CurrentSteps;                                           }
+        [Obsolete("Use IsHidden instead")]              public bool      hidden                { get => IsHidden;                                               }
+        [Obsolete("Use Id instead")]                    public string    id                    { get => Id;                    set => Id               = value; }
+        [Obsolete("Use Image instead")]                 public Texture2D image                 { get => Image;                                                  }
+        [Obsolete("Use IsIncremental instead")]         public bool      isIncremental         { get => IsIncremental;                                          }
+        [Obsolete("Use LastReportedDate instead")]      public DateTime  lastReportedDate      { get => LastReportedDate;                                       }
+        [Obsolete("Use PercentCompleted instead")]      public double    percentCompleted      { get => PercentCompleted;      set => PercentCompleted = value; }
+        [Obsolete("Use Points instead")]                public int       points                { get => Points;                                                 }
+        [Obsolete("Use Title instead")]                 public string    title                 { get => Title;                                                  }
+        [Obsolete("Use TotalSteps instead")]            public int       totalSteps            { get => TotalSteps;                                             }
+        [Obsolete("Use UnachievedDescription instead")] public string    unachievedDescription { get => UnachievedDescription;                                  }
 
-            set { mId = value; }
-        }
+        public void ReportProgress(Action<bool> callback) => m_progressCallback.Invoke(Id, PercentCompleted, callback);
 
-        /// <summary>
-        /// Gets a value indicating whether this achievement is incremental.
-        /// </summary>
-        /// <remarks>
-        /// This value is only set by PlayGamesPlatform.LoadAchievements
-        /// </remarks>
-        /// <returns><c>true</c> if incremental; otherwise, <c>false</c>.</returns>
-        public bool isIncremental
-        {
-            get { return mIsIncremental; }
-        }
+        #endregion IAchievement and IAchievementDescription implementation
 
-        /// <summary>
-        /// Gets the current steps completed of this achievement.
-        /// </summary>
-        /// <remarks>
-        /// Undefined for standard (i.e. non-incremental) achievements.
-        /// This value is only set by PlayGamesPlatform.LoadAchievements, changing the
-        /// percentComplete will not affect this.
-        /// </remarks>
-        /// <returns>The current steps.</returns>
-        public int currentSteps
-        {
-            get { return mCurrentSteps; }
-        }
-
-        /// <summary>
-        /// Gets the total steps of this achievement.
-        /// </summary>
-        /// <remarks>
-        /// Undefined for standard (i.e. non-incremental) achievements.
-        /// This value is only set by PlayGamesPlatform.LoadAchievements, changing the
-        /// percentComplete will not affect this.
-        /// </remarks>
-        /// <returns>The total steps.</returns>
-        public int totalSteps
-        {
-            get { return mTotalSteps; }
-        }
-
-        /// <summary>
-        /// Gets or sets the percent completed.
-        /// </summary>
-        /// <returns>
-        /// The percent completed.
-        /// </returns>
-        public double percentCompleted
-        {
-            get { return mPercentComplete; }
-
-            set { mPercentComplete = value; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this achievement is completed.
-        /// </summary>
-        /// <remarks>
-        /// This value is only set by PlayGamesPlatform.LoadAchievements, changing the
-        /// percentComplete will not affect this.
-        /// </remarks>
-        /// <returns><c>true</c> if completed; otherwise, <c>false</c>.</returns>
-        public bool completed
-        {
-            get { return this.mCompleted; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this achievement is hidden.
-        /// </summary>
-        /// <value><c>true</c> if hidden; otherwise, <c>false</c>.</value>
-        public bool hidden
-        {
-            get { return this.mHidden; }
-        }
-
-        public DateTime lastReportedDate
-        {
-            get { return mLastModifiedTime; }
-        }
-
-        public String title
-        {
-            get { return mTitle; }
-        }
-
-        public Texture2D image
-        {
-            get { return LoadImage(); }
-        }
-
-        public string achievedDescription
-        {
-            get { return mDescription; }
-        }
-
-        public string unachievedDescription
-        {
-            get { return mDescription; }
-        }
-
-        public int points
-        {
-            get { return (int) mPoints; }
-        }
     }
+
+    internal delegate void ReportProgress(string id, double progress, Action<bool> callback);
+
 }
+
 #endif

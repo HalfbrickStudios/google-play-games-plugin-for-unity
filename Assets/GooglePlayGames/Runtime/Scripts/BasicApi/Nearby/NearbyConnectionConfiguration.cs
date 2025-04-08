@@ -21,9 +21,9 @@ using GooglePlayGames.OurUtils;
 namespace GooglePlayGames.BasicApi.Nearby {
 
     public enum InitializationStatus {
-        Success,
-        VersionUpdateRequired,
-        InternalError
+        InternalError         = 2,
+        Success               = 0,
+        VersionUpdateRequired = 1,
     }
 
     public readonly struct NearbyConnectionConfiguration {

@@ -16,7 +16,9 @@
 
 #if UNITY_ANDROID
 
+using System;
 using System.Collections.Generic;
+
 using UnityEngine.SocialPlatforms;
 
 namespace GooglePlayGames.BasicApi {
@@ -44,8 +46,11 @@ namespace GooglePlayGames.BasicApi {
         public ResponseStatus Status           { get; internal set; }
         public string         Title            { get; internal set; }
 
-        public IScore[] Scores => m_scores.ToArray();
-        public bool     Valid  => Status == ResponseStatus.Success || Status == ResponseStatus.SuccessWithStale;
+        public IScore[] Scores  => m_scores.ToArray();
+        public bool     IsValid => Status == ResponseStatus.Success || Status == ResponseStatus.SuccessWithStale;
+
+        [Obsolete("Use IsValid instead")]
+        public bool Valid => IsValid;
 
         internal int AddScore(PlayGamesScore score)
         {
@@ -53,7 +58,14 @@ namespace GooglePlayGames.BasicApi {
             return m_scores.Count;
         }
 
-        public override string ToString() => $"[LeaderboardScoreData: mId={Id}, mStatus={Status}, mApproxCount={ApproximateCount}, mTitle={Title}]";
+        #region Object implementation
+
+        public override string ToString()
+        {
+            return $"[LeaderboardScoreData: mId={Id}, mStatus={Status}, mApproxCount={ApproximateCount}, mTitle={Title}]";
+        }
+
+        #endregion Object implementation
 
     }
 

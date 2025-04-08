@@ -20,20 +20,24 @@ using System;
 
 namespace GooglePlayGames.BasicApi {
 
-    public class RecallAccess {
+    public sealed class RecallAccess {
 
         internal RecallAccess(string sessionId)
         {
             SessionId = sessionId;
         }
 
+        public string SessionId
+        {
+            get;
+            internal set;
+        }
+
         [Obsolete("Use SessionId instead.")]
         public string sessionId {
             get => SessionId;
-            internal set => SessionId = value;
+            set => SessionId = value;
         }
-
-        public string SessionId { get; internal set; }
 
     }
 

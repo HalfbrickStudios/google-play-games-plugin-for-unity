@@ -24,19 +24,20 @@ namespace GooglePlayGames.BasicApi.SavedGame {
 
         private SavedGameMetadataUpdate(Builder builder)
         {
+            IsCoverImageUpdated  = builder.IsCoverImageUpdated;
             IsDescriptionUpdated = builder.IsDescriptionUpdated;
             UpdatedDescription   = builder.UpdatedDescription;
-            IsCoverImageUpdated  = builder.IsCoverImageUpdated;
-            UpdatedPngCoverImage = builder.UpdatedPngCoverImage;
             UpdatedPlayedTime    = builder.UpdatedPlayedTime;
+            UpdatedPngCoverImage = builder.UpdatedPngCoverImage;
         }
 
-        public bool      IsCoverImageUpdated  { get;                               }
-        public bool      IsDescriptionUpdated { get;                               }
-        public bool      IsPlayedTimeUpdated  { get => UpdatedPlayedTime.HasValue; }
-        public string    UpdatedDescription   { get;                               }
-        public TimeSpan? UpdatedPlayedTime    { get;                               }
-        public byte[]    UpdatedPngCoverImage { get;                               }
+        public bool      IsCoverImageUpdated  { get; }
+        public bool      IsDescriptionUpdated { get; }
+        public string    UpdatedDescription   { get; }
+        public TimeSpan? UpdatedPlayedTime    { get; }
+        public byte[]    UpdatedPngCoverImage { get; }
+
+        public bool IsPlayedTimeUpdated => UpdatedPlayedTime.HasValue;
 
         public struct Builder {
 
@@ -48,14 +49,14 @@ namespace GooglePlayGames.BasicApi.SavedGame {
 
             public Builder WithUpdatedDescription(string description)
             {
-                UpdatedDescription = Misc.CheckNotNull(description);
                 IsDescriptionUpdated = true;
+                UpdatedDescription   = Misc.CheckNotNull(description);
                 return this;
             }
 
             public Builder WithUpdatedPngCoverImage(byte[] newPngCoverImage)
             {
-                IsCoverImageUpdated = true;
+                IsCoverImageUpdated  = true;
                 UpdatedPngCoverImage = newPngCoverImage;
                 return this;
             }
@@ -63,8 +64,7 @@ namespace GooglePlayGames.BasicApi.SavedGame {
             public Builder WithUpdatedPlayedTime(TimeSpan newPlayedTime)
             {
                 if (newPlayedTime.TotalMilliseconds > ulong.MaxValue) {
-                    const string reason = "Timespans longer than ulong.MaxValue milliseconds are not allowed";
-                    throw new InvalidOperationException(reason);
+                    throw new InvalidOperationException("Timespans longer than ulong.MaxValue milliseconds are not allowed");
                 }
                 UpdatedPlayedTime = newPlayedTime;
                 return this;

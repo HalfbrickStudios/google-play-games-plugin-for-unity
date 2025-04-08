@@ -30,17 +30,6 @@ namespace GooglePlayGames.OurUtils {
             return true;
         }
 
-        public static byte[] GetSubsetBytes(byte[] array, int offset, int length)
-        {
-            if (array == null                                 ) throw new ArgumentNullException("array");
-            if (offset < 0 || offset >= array.Length          ) throw new ArgumentOutOfRangeException("offset");
-            if (length < 0 || (array.Length - offset) < length) throw new ArgumentOutOfRangeException("length");
-            if (offset == 0 && length == array.Length         ) return array;
-            var piece = new byte[length];
-            Array.Copy(array, offset, piece, 0, length);
-            return piece;
-        }
-
         public static T CheckNotNull<T>(T value)
         {
             if (value == null) throw new ArgumentNullException();
@@ -51,6 +40,17 @@ namespace GooglePlayGames.OurUtils {
         {
             if (value == null) throw new ArgumentNullException(paramName);
             return value;
+        }
+
+        public static byte[] GetSubsetBytes(byte[] array, int offset, int length)
+        {
+            if (array == null) throw new ArgumentNullException("array");
+            if (offset < 0 || offset >= array.Length) throw new ArgumentOutOfRangeException("offset");
+            if (length < 0 || (array.Length - offset) < length) throw new ArgumentOutOfRangeException("length");
+            if (offset == 0 && length == array.Length) return array;
+            var piece = new byte[length];
+            Array.Copy(array, offset, piece, 0, length);
+            return piece;
         }
 
     }

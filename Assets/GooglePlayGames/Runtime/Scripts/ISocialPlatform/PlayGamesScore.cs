@@ -16,111 +16,49 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames
-{
-    using System;
-    using UnityEngine.SocialPlatforms;
+using System;
 
-    /// <summary>
-    /// Represents a Google Play Games score that can be sent to a leaderboard.
-    /// </summary>
-    public class PlayGamesScore : IScore
-    {
-        private string mLbId = null;
-        private long mValue = 0;
-        private ulong mRank = 0;
-        private string mPlayerId = string.Empty;
-        private string mMetadata = string.Empty;
+using UnityEngine.SocialPlatforms;
 
-        private DateTime mDate = new DateTime(1970, 1, 1, 0, 0, 0);
+namespace GooglePlayGames {
 
-        internal PlayGamesScore(DateTime date, string leaderboardId,
-            ulong rank, string playerId, ulong value, string metadata)
+    public sealed class PlayGamesScore : IScore {
+
+        internal PlayGamesScore(DateTime date, string leaderboardId, ulong rank, string playerId, ulong value, string metadata)
         {
-            this.mDate = date;
-            mLbId = leaderboardID;
-            this.mRank = rank;
-            this.mPlayerId = playerId;
-            this.mValue = (long) value;
-            this.mMetadata = metadata;
+            Date          = date;
+            LeaderboardId = leaderboardId;
+            MetaData      = metadata;
+            Rank          = (int)rank;
+            UserId        = playerId;
+            Value         = (long) value;
         }
 
-        /// <summary>
-        /// Reports the score. Equivalent to <see cref="PlayGamesPlatform.ReportScore" />.
-        /// </summary>
-        public void ReportScore(Action<bool> callback)
-        {
-            PlayGamesPlatform.Instance.ReportScore(mValue, mLbId, mMetadata, callback);
-        }
+        public DateTime Date           { get;      }
+        public string   LeaderboardId  { get; set; }
+        public string   MetaData       { get;      }
+        public int      Rank           { get;      }
+        public string   UserId         { get;      }
+        public long     Value          { get; set; }
 
-        /// <summary>
-        /// Gets or sets the leaderboard id.
-        /// </summary>
-        /// <returns>
-        /// The leaderboard id.
-        /// </returns>
-        public string leaderboardID
-        {
-            get { return mLbId; }
+        public string FormattedValue => Value.ToString();
 
-            set { mLbId = value; }
-        }
+        #region IScore implementation
 
-        /// <summary>
-        /// Gets or sets the score value.
-        /// </summary>
-        /// <returns>
-        /// The value.
-        /// </returns>
-        public long value
-        {
-            get { return mValue; }
+        [Obsolete("Use Date instead")]           public DateTime date           { get => Date;                                         }
+        [Obsolete("Use FormattedValue instead")] public string   formattedValue { get => FormattedValue;                               }
+        [Obsolete("Use LeaderboardId instead")]  public string   leaderboardID  { get => LeaderboardId;  set => LeaderboardId = value; }
+        [Obsolete("Use MetaData instead")]       public string   metaData       { get => MetaData;                                     }
+        [Obsolete("Use Rank instead")]           public int      rank           { get => Rank;                                         }
+        [Obsolete("Use UserId instead")]         public string   userID         { get => UserId;                                       }
+        [Obsolete("Use Value instead")]          public long     value          { get => Value;          set => Value         = value; }
 
-            set { mValue = value; }
-        }
+        public void ReportScore(Action<bool> callback) => PlayGamesPlatform.Instance.ReportScore(Value, LeaderboardId, MetaData, callback);
 
-        /// <summary>
-        /// Not implemented. Returns Jan 01, 1970, 00:00:00
-        /// </summary>
-        public DateTime date
-        {
-            get { return mDate; }
-        }
+        #endregion IScore implementation
 
-        /// <summary>
-        /// Not implemented. Returns the value converted to a string, unformatted.
-        /// </summary>
-        public string formattedValue
-        {
-            get { return mValue.ToString(); }
-        }
-
-        /// <summary>
-        /// Not implemented. Returns the empty string.
-        /// </summary>
-        public string userID
-        {
-            get { return mPlayerId; }
-        }
-
-        /// <summary>
-        /// Not implemented. Returns 1.
-        /// </summary>
-        public int rank
-        {
-            get { return (int) mRank; }
-        }
-
-        /// <summary>
-        /// Gets the metaData (scoreTag).
-        /// </summary>
-        /// <returns>
-        /// The metaData.
-        /// </returns>
-        public string metaData
-        {
-            get { return mMetadata; }
-        }
     }
+
 }
+
 #endif

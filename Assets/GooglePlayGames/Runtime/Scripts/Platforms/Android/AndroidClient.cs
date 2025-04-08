@@ -668,7 +668,7 @@ namespace GooglePlayGames.Android
                                     achievement.Id = javaAchievement.Call<string>("getAchievementId");
                                     achievement.Description = javaAchievement.Call<string>("getDescription");
                                     achievement.Name = javaAchievement.Call<string>("getName");
-                                    achievement.Points = javaAchievement.Call<ulong>("getXpValue");
+                                    achievement.Points = (int)javaAchievement.Call<ulong>("getXpValue");
 
                                     long timestamp = javaAchievement.Call<long>("getLastUpdatedTimestamp");
                                     achievement.LastModifiedTime = AndroidJavaConverter.ToDateTime(timestamp);

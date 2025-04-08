@@ -26,15 +26,6 @@ namespace GooglePlayGames.Editor.UI {
 
     internal sealed class GpgEditorUiNearbyConnection : EditorWindow {
 
-        private string m_id = string.Empty;
-
-        [MenuItem("Google/Play Games/Setup/Nearby Connections...", false, 3)]
-        private static void MenuItemNearbySetup()
-        {
-            var window = GetWindow(typeof(GpgEditorUiNearbyConnection), true, NearbyConnections.Title);
-            window.minSize = new Vector2(400, 200);
-        }
-
         [MenuItem("Google/Play Games/Setup/Nearby Connections...", true)]
 #if UNITY_ANDROID
         private static bool EnableNearbyMenuItem() => true;
@@ -42,42 +33,11 @@ namespace GooglePlayGames.Editor.UI {
         private static bool EnableNearbyMenuItem() => false;
 #endif
 
-        private void OnEnable()
+        [MenuItem("Google/Play Games/Setup/Nearby Connections...", false, 3)]
+        private static void MenuItemNearbySetup()
         {
-            m_id = GpgEditorProjectSettings.Instance.Get(KEY_SERVICE_ID);
-        }
-
-        private void OnGUI()
-        {
-            GUI.skin.label.wordWrap = true;
-            GUILayout.BeginVertical();
-            GUILayout.Space(10);
-            GUILayout.Label(NearbyConnections.Blurb);
-            GUILayout.Space(10);
-
-            GUILayout.Label(Setup.NearbyServiceId, EditorStyles.boldLabel);
-            GUILayout.Space(10);
-            GUILayout.Label(Setup.NearbyServiceBlurb);
-            m_id = EditorGUILayout.TextField(Setup.NearbyServiceId, m_id, GUILayout.Width(350));
-
-            GUILayout.FlexibleSpace();
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-
-            if (GUILayout.Button(Setup.SetupButton, GUILayout.Width(100))) DoSetup();
-            if (GUILayout.Button(Cancel, GUILayout.Width(100))) Close();
-
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            GUILayout.Space(20);
-            GUILayout.EndVertical();
-        }
-
-        private void DoSetup()
-        {
-            if (!PerformSetup(m_id, true)) return;
-            EditorUtility.DisplayDialog(Success, NearbyConnections.SetupComplete, Ok);
-            Close();
+            var window = GetWindow(typeof(GpgEditorUiNearbyConnection), true, NearbyConnections.Title);
+            window.minSize = new Vector2(400, 200);
         }
 
         /// Provide static access to setup for facilitating automated builds.
@@ -117,6 +77,50 @@ namespace GooglePlayGames.Editor.UI {
             ResolveExternalDependencies();
             return true;
         }
+
+        private string m_id = string.Empty;
+
+        private void DoSetup()
+        {
+            if (!PerformSetup(m_id, true)) return;
+            EditorUtility.DisplayDialog(Success, NearbyConnections.SetupComplete, Ok);
+            Close();
+        }
+
+        #region EditorWindow implementation
+
+        private void OnEnable()
+        {
+            m_id = GpgEditorProjectSettings.Instance.Get(KEY_SERVICE_ID);
+        }
+
+        private void OnGUI()
+        {
+            GUI.skin.label.wordWrap = true;
+            GUILayout.BeginVertical();
+            GUILayout.Space(10);
+            GUILayout.Label(NearbyConnections.Blurb);
+            GUILayout.Space(10);
+
+            GUILayout.Label(Setup.NearbyServiceId, EditorStyles.boldLabel);
+            GUILayout.Space(10);
+            GUILayout.Label(Setup.NearbyServiceBlurb);
+            m_id = EditorGUILayout.TextField(Setup.NearbyServiceId, m_id, GUILayout.Width(350));
+
+            GUILayout.FlexibleSpace();
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button(Setup.SetupButton, GUILayout.Width(100))) DoSetup();
+            if (GUILayout.Button(Cancel, GUILayout.Width(100))) Close();
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.Space(20);
+            GUILayout.EndVertical();
+        }
+
+        #endregion EditorWindow implementation
 
     }
 

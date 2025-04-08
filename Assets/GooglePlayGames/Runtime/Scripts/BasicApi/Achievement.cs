@@ -22,7 +22,18 @@ namespace GooglePlayGames.BasicApi {
 
     public sealed class Achievement {
 
-        public Achievement() { }
+        public Achievement()
+        {
+            CurrentSteps     = 0;
+            Description      = string.Empty;
+            Id               = string.Empty;
+            IsIncremental    = false;
+            IsRevealed       = false;
+            IsUnlocked       = false;
+            LastModifiedTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            Name             = string.Empty;
+            TotalSteps       = 0;
+        }
 
         public int      CurrentSteps     { get; set; }
         public string   Description      { get; set; }
@@ -32,16 +43,20 @@ namespace GooglePlayGames.BasicApi {
         public bool     IsUnlocked       { get; set; }
         public DateTime LastModifiedTime { get; set; }
         public string   Name             { get; set; }
-        public ulong    Points           { get; set; }
+        public int      Points           { get; set; }
         public string   RevealedImageUrl { get; set; }
         public int      TotalSteps       { get; set; }
         public string   UnlockedImageUrl { get; set; }
+
+        #region Object implementation
 
         public override string ToString()
         {
             var type = IsIncremental ? "INCREMENTAL" : "STANDARD";
             return $"[Achievement] id={Id}, name={Name}, desc={Description}, type={type}, revealed={IsRevealed}, unlocked={IsUnlocked}, steps={CurrentSteps}/{TotalSteps}";
         }
+
+        #endregion Object implementation
 
     }
 

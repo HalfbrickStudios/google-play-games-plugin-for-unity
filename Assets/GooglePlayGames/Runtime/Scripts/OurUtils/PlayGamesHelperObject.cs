@@ -24,16 +24,24 @@ namespace GooglePlayGames.OurUtils {
 
     public sealed class PlayGamesHelperObject : MonoBehaviour {
 
-        private static PlayGamesHelperObject s_instance = null;
-        private static bool                  s_dummy    = false;
+        private static          bool                  s_dummy          = false;
+        private static volatile bool                  s_empty          = true;
+        private static readonly List<Action<bool>>    s_focusCallbacks = new();
+        private static          PlayGamesHelperObject s_instance       = null;
+        private static readonly List<Action<bool>>    s_pauseCallbacks = new();
+        private static readonly List<Action>          s_queue          = new();
 
-        private static readonly List<Action>       s_queue          = new();
-        private static readonly List<Action<bool>> s_pauseCallbacks = new();
-        private static readonly List<Action<bool>> s_focusCallbacks = new();
+        public static void AddFocusCallback(Action<bool> callback)
+        {
+            if (s_focusCallbacks.Contains(callback)) return;
+            s_focusCallbacks.Add(callback);
+        }
 
-        private static volatile bool s_empty = true;
-
-        private readonly List<Action> m_queue = new();
+        public static void AddPauseCallback(Action<bool> callback)
+        {
+            if (s_pauseCallbacks.Contains(callback)) return;
+            s_pauseCallbacks.Add(callback);
+        }
 
         public static void CreateObject()
         {
@@ -48,16 +56,9 @@ namespace GooglePlayGames.OurUtils {
             }
         }
 
-        public void Awake()
-        {
-            DontDestroyOnLoad(gameObject);
-        }
+        public static bool RemoveFocusCallback(Action<bool> callback) => s_focusCallbacks.Remove(callback);
 
-        public void OnDisable()
-        {
-            if (s_instance != this) return;
-            s_instance = null;
-        }
+        public static bool RemovePauseCallback(Action<bool> callback) => s_pauseCallbacks.Remove(callback);
 
         public static void RunCoroutine(IEnumerator action)
         {
@@ -74,8 +75,23 @@ namespace GooglePlayGames.OurUtils {
                 s_empty = false;
             }
         }
+        
+        private readonly List<Action> m_queue = new();
 
-        public void Update()
+        #region MonoBehaviour implementation
+
+        private void Awake()
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnDisable()
+        {
+            if (s_instance != this) return;
+            s_instance = null;
+        }
+
+        private void Update()
         {
             if (s_dummy || s_empty) return;
             m_queue.Clear();
@@ -87,7 +103,7 @@ namespace GooglePlayGames.OurUtils {
             m_queue.ForEach(it => it.Invoke());
         }
 
-        public void OnApplicationFocus(bool focused)
+        private void OnApplicationFocus(bool focused)
         {
             foreach (var callback in s_focusCallbacks) {
                 try {
@@ -98,7 +114,7 @@ namespace GooglePlayGames.OurUtils {
             }
         }
 
-        public void OnApplicationPause(bool paused)
+        private void OnApplicationPause(bool paused)
         {
             foreach (var callback in s_pauseCallbacks) {
                 try {
@@ -109,21 +125,7 @@ namespace GooglePlayGames.OurUtils {
             }
         }
 
-        public static void AddFocusCallback(Action<bool> callback)
-        {
-            if (s_focusCallbacks.Contains(callback)) return;
-            s_focusCallbacks.Add(callback);
-        }
-
-        public static bool RemoveFocusCallback(Action<bool> callback) => s_focusCallbacks.Remove(callback);
-
-        public static void AddPauseCallback(Action<bool> callback)
-        {
-            if (s_pauseCallbacks.Contains(callback)) return;
-            s_pauseCallbacks.Add(callback);
-        }
-
-        public static bool RemovePauseCallback(Action<bool> callback) => s_pauseCallbacks.Remove(callback);
+        #endregion MonoBehaviour implementation
 
     }
 

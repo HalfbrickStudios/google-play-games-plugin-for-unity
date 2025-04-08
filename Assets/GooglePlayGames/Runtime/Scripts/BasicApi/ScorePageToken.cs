@@ -27,18 +27,20 @@ namespace GooglePlayGames.BasicApi {
 
         internal ScorePageToken(object internalObject, string id, LeaderboardCollection collection, LeaderboardTimeSpan timespan, ScorePageDirection direction)
         {
-            Collection     = collection;
-            Direction      = direction;
             InternalObject = internalObject;
+            
+            Collection = collection;
+            Direction      = direction;
             LeaderboardId  = id;
             TimeSpan       = timespan;
         }
 
-        public   LeaderboardCollection Collection     { get; private set; }
-        public   ScorePageDirection    Direction      { get; private set; }
-        internal object                InternalObject { get; private set; }
-        public   string                LeaderboardId  { get; private set; }
-        public   LeaderboardTimeSpan   TimeSpan       { get; private set; }
+        internal object InternalObject { get; }
+
+        public LeaderboardCollection Collection    { get; }
+        public ScorePageDirection    Direction     { get; }
+        public string                LeaderboardId { get; }
+        public LeaderboardTimeSpan   TimeSpan      { get; }
 
     }
 

@@ -27,69 +27,69 @@ namespace GooglePlayGames.BasicApi {
 
     public interface IPlayGamesClient {
       
+        void AskForLoadFriendsResolution(Action<UIStatus> callback);
+        
         void Authenticate(Action<SignInStatus> callback);
 
-        void ManuallyAuthenticate(Action<SignInStatus> callback);
+        IEventsClient GetEventsClient();
 
-        bool IsAuthenticated();
+        IUserProfile[] GetFriends();
 
-        void RequestServerSideAccess(bool forceRefreshToken, Action<string> callback);
-
-        void RequestRecallAccessToken(Action<RecallAccess> callback);
-
-        string GetUserId();
-
-        void LoadFriends(Action<bool> callback);
-
-        string GetUserDisplayName();
-
-        string GetUserImageUrl();
+        void GetFriendsListVisibility(bool forceReload, Action<FriendsListVisibilityStatus> callback);
+        
+        LoadFriendsStatus GetLastLoadFriendsStatus();
 
         void GetPlayerStats(Action<CommonStatusCodes, PlayerStats> callback);
 
-        void LoadUsers(string[] userIds, Action<IUserProfile[]> callback);
+        ISavedGameClient GetSavedGameClient();
+
+        string GetUserDisplayName();
+
+        string GetUserId();
+
+        string GetUserImageUrl();
+
+        int LeaderboardMaxResults();
 
         void LoadAchievements(Action<Achievement[]> callback);
 
-        void UnlockAchievement(string achievementId, Action<bool> successOrFailureCalllback);
-
-        void RevealAchievement(string achievementId, Action<bool> successOrFailureCalllback);
-
-        void IncrementAchievement(string achievementId, int steps, Action<bool> successOrFailureCalllback);
-
-        void SetStepsAtLeast(string achId, int steps, Action<bool> callback);
-
-        void ShowAchievementsUI(Action<UIStatus> callback);
-
-        void AskForLoadFriendsResolution(Action<UIStatus> callback);
-
-        LoadFriendsStatus GetLastLoadFriendsStatus();
-
-        void ShowCompareProfileWithAlternativeNameHintsUI(string otherUserId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UIStatus> callback);
-
-        void GetFriendsListVisibility(bool forceReload, Action<FriendsListVisibilityStatus> callback);
+        void LoadFriends(Action<bool> callback);
 
         void LoadFriends(int pageSize, bool forceReload, Action<LoadFriendsStatus> callback);
 
         void LoadMoreFriends(int pageSize, Action<LoadFriendsStatus> callback);
 
-        void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UIStatus> callback);
+        void LoadMoreScores(ScorePageToken token, int rowCount, Action<LeaderboardScoreData> callback);
 
         void LoadScores(string leaderboardId, LeaderboardStart start, int rowCount, LeaderboardCollection collection, LeaderboardTimeSpan timeSpan, Action<LeaderboardScoreData> callback);
 
-        void LoadMoreScores(ScorePageToken token, int rowCount, Action<LeaderboardScoreData> callback);
+        void LoadUsers(string[] userIds, Action<IUserProfile[]> callback);
 
-        int LeaderboardMaxResults();
+        void IncrementAchievement(string achievementId, int steps, Action<bool> successOrFailureCalllback);
+
+        bool IsAuthenticated();
+
+        void ManuallyAuthenticate(Action<SignInStatus> callback);
+
+        void RequestRecallAccessToken(Action<RecallAccess> callback);
+
+        void RequestServerSideAccess(bool forceRefreshToken, Action<string> callback);
+
+        void RevealAchievement(string achievementId, Action<bool> successOrFailureCalllback);
+
+        void SetStepsAtLeast(string achId, int steps, Action<bool> callback);
+
+        void ShowAchievementsUI(Action<UIStatus> callback);
+
+        void ShowCompareProfileWithAlternativeNameHintsUI(string otherUserId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UIStatus> callback);
+
+        void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UIStatus> callback);
 
         void SubmitScore(string leaderboardId, long score, Action<bool> successOrFailureCalllback);
 
         void SubmitScore(string leaderboardId, long score, string metadata, Action<bool> successOrFailureCalllback);
 
-        ISavedGameClient GetSavedGameClient();
-
-        IEventsClient GetEventsClient();
-
-        IUserProfile[] GetFriends();
+        void UnlockAchievement(string achievementId, Action<bool> successOrFailureCalllback);
 
     }
 

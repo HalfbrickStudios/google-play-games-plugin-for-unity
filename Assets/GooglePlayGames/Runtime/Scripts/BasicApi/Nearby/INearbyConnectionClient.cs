@@ -19,41 +19,13 @@ using System.Collections.Generic;
 
 namespace GooglePlayGames.BasicApi.Nearby {
 
-#if UNITY_ANDROID
+    public interface IDiscoveryListener {
 
-    public interface INearbyConnectionClient {
+        void OnEndpointFound(EndpointDetails discoveredEndpoint);
 
-        int MaxUnreliableMessagePayloadLength();
+        void OnEndpointLost(string lostEndpointId);
 
-        int MaxReliableMessagePayloadLength();
-
-        void SendReliable(List<string> recipientEndpointIds, byte[] payload);
-
-        void SendUnreliable(List<string> recipientEndpointIds, byte[] payload);
-
-        void StartAdvertising(string name, List<string> appIdentifiers, TimeSpan? advertisingDuration, Action<AdvertisingResult> resultCallback, Action<ConnectionRequest> connectionRequestCallback);
-
-        void StopAdvertising();
-
-        void SendConnectionRequest(string name, string remoteEndpointId, byte[] payload, Action<ConnectionResponse> responseCallback, IMessageListener listener);
-
-        void AcceptConnectionRequest(string remoteEndpointId, byte[] payload, IMessageListener listener);
-
-        void StartDiscovery(string serviceId, TimeSpan? advertisingTimeout, IDiscoveryListener listener);
-
-        void StopDiscovery(string serviceId);
-
-        void RejectConnectionRequest(string requestingEndpointId);
-
-        void DisconnectFromEndpoint(string remoteEndpointId);
-
-        void StopAllConnections();
-
-        string GetAppBundleId();
-
-        string GetServiceId();
     }
-#endif
 
     public interface IMessageListener {
 
@@ -63,12 +35,40 @@ namespace GooglePlayGames.BasicApi.Nearby {
 
     }
 
-    public interface IDiscoveryListener {
+#if UNITY_ANDROID
+    public interface INearbyConnectionClient {
 
-        void OnEndpointFound(EndpointDetails discoveredEndpoint);
+        void AcceptConnectionRequest(string remoteEndpointId, byte[] payload, IMessageListener listener);
 
-        void OnEndpointLost(string lostEndpointId);
+        void DisconnectFromEndpoint(string remoteEndpointId);
+
+        string GetAppBundleId();
+
+        string GetServiceId();
+
+        int MaxReliableMessagePayloadLength();
+
+        int MaxUnreliableMessagePayloadLength();
+
+        void RejectConnectionRequest(string requestingEndpointId);
+
+        void SendConnectionRequest(string name, string remoteEndpointId, byte[] payload, Action<ConnectionResponse> responseCallback, IMessageListener listener);
+
+        void SendReliable(List<string> recipientEndpointIds, byte[] payload);
+
+        void SendUnreliable(List<string> recipientEndpointIds, byte[] payload);
+
+        void StartAdvertising(string name, List<string> appIdentifiers, TimeSpan? advertisingDuration, Action<AdvertisingResult> resultCallback, Action<ConnectionRequest> connectionRequestCallback);
+
+        void StartDiscovery(string serviceId, TimeSpan? advertisingTimeout, IDiscoveryListener listener);
+
+        void StopAdvertising();
+
+        void StopAllConnections();
+
+        void StopDiscovery(string serviceId);
 
     }
+#endif
 
 }

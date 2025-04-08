@@ -16,9 +16,50 @@
 
 namespace GooglePlayGames.BasicApi {
 
+    public static class CommonTypesUtil {
+
+        public static bool StatusIsSuccess(ResponseStatus status) => ((int) status) > 0;
+
+    }
+
     public enum DataSource {
         ReadCacheOrNetwork = 0,
         ReadNetworkOnly    = 1,
+    }
+
+    public enum FriendsListVisibilityStatus {
+        NetworkError       = -4,
+        NotAuthorized      = -5,
+        ResolutionRequired =  2,
+        Unavailable        =  3,
+        Unknown            =  0,
+        Visible            =  1,
+    }
+
+    public enum LeaderboardCollection {
+        Public = 1,
+        Social = 2,
+    }
+
+    public enum LeaderboardStart {
+        PlayerCentered = 2,
+        TopScores      = 1,
+    }
+
+    public enum LeaderboardTimeSpan {
+        AllTime = 3,
+        Daily   = 1,
+        Weekly  = 2,
+    }
+
+    public enum LoadFriendsStatus {
+        Completed          =  1,
+        LoadMore           =  2,
+        InternalError      = -4,
+        NetworkError       = -6,
+        NotAuthorized      = -5,
+        ResolutionRequired = -3,
+        Unknown            =  0,
     }
 
     public enum ResponseStatus {
@@ -41,47 +82,6 @@ namespace GooglePlayGames.BasicApi {
         UserClosedUI          =  -6,
         Valid                 =   1,
         VersionUpdateRequired =  -4,
-    }
-
-    public enum LeaderboardStart {
-        PlayerCentered = 2,
-        TopScores      = 1,
-    }
-
-    public enum LeaderboardTimeSpan {
-        AllTime = 3,
-        Daily   = 1,
-        Weekly  = 2,
-    }
-
-    public enum LeaderboardCollection {
-        Public = 1,
-        Social = 2,
-    }
-
-    public enum FriendsListVisibilityStatus {
-        NetworkError       = -4,
-        NotAuthorized      = -5,
-        ResolutionRequired =  2,
-        Unavailable        =  3,
-        Unknown            =  0,
-        Visible            =  1,
-    }
-
-    public enum LoadFriendsStatus {
-        Completed          =  1,
-        LoadMore           =  2,
-        InternalError      = -4,
-        NetworkError       = -6,
-        NotAuthorized      = -5,
-        ResolutionRequired = -3,
-        Unknown            =  0,
-    }
-
-    public static class CommonTypesUtil {
-
-        public static bool StatusIsSuccess(ResponseStatus status) => ((int) status) > 0;
-
     }
 
 }

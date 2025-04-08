@@ -12,12 +12,12 @@
             Visibility   = visibility;
         }
 
-        public ulong           CurrentCount { get; private set; }
-        public string          Description  { get; private set; }
-        public string          Id           { get; private set; }
-        public string          ImageUrl     { get; private set; }
-        public string          Name         { get; private set; }
-        public EventVisibility Visibility   { get; private set; }
+        public ulong           CurrentCount { get; }
+        public string          Description  { get; }
+        public string          Id           { get; }
+        public string          ImageUrl     { get; }
+        public string          Name         { get; }
+        public EventVisibility Visibility   { get; }
 
     }
 

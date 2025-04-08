@@ -29,44 +29,28 @@ using static GooglePlayGames.Editor.GpgEditorUtils;
 
 namespace GooglePlayGames.Editor.UI {
 
-    /// <summary>
-    /// Google Play Game Services Setup dialog for Android.
-    /// </summary>
     sealed internal class GpgEditorUiAndroid : EditorWindow {
 
-        /// <summary>
-        /// The configuration data from the play games console "resource data"
-        /// </summary>
-        private string m_config = string.Empty;
-
-        /// <summary>
-        /// The name of the class to generate containing the resource constants.
-        /// </summary>
-        private string m_class = "GPGSIds";
-
-        /// <summary>
-        /// The scroll position
-        /// </summary>
-        private Vector2 m_scroll;
-
-        /// <summary>
-        /// The directory for the constants class.
-        /// </summary>
-        private string m_constantsPath = "Assets";
-
-        /// <summary>
-        /// The web client identifier.
-        /// </summary>
-        private string m_webId = string.Empty;
-
-        /// <summary>
-        /// Menus the item for GPGS android setup.
-        /// </summary>
-        [MenuItem("Google/Play Games/Setup/Android...", false, 1)]
-        private static void MenuItemFileGPGSAndroidSetup()
+        private static void CheckBundleId()
         {
-            var window = GetWindow(typeof(GpgEditorUiAndroid), true, AndroidSetup.Title);
-            window.minSize = new Vector2(500, 400);
+            var packageName = GpgEditorProjectSettings.Instance.Get(KEY_ANDROID_BUNDLE_ID, string.Empty);
+            var currentId = PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Android);
+
+            if (string.IsNullOrEmpty(packageName)) {
+                Debug.Log("NULL package!!");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(currentId) || currentId == "com.Company.ProductName") {
+                PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, packageName);
+            } else if (currentId != packageName) {
+                const string title = "Set Bundle Identifier?";
+                var message = $"The server configuration is using {packageName}, but the player settings is set to {currentId}.\n" +
+                              $"Set the Bundle Identifier to {packageName}?";
+                if (EditorUtility.DisplayDialog(title, message, Ok, Cancel)) {
+                    PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, packageName);
+                }
+            }
         }
 
         [MenuItem("Google/Play Games/Setup/Android...", true)]
@@ -76,59 +60,53 @@ namespace GooglePlayGames.Editor.UI {
         private static bool EnableAndroidMenuItem() => false;
 #endif
 
-        /// <summary>
-        /// Performs setup using the Android resources downloaded XML file
-        /// from the play console.
-        /// </summary>
-        /// <returns><c>true</c>, if setup was performed, <c>false</c> otherwise.</returns>
-        /// <param name="clientId">The web client id.</param>
-        /// <param name="classDirectory">the directory to write the constants file to.</param>
-        /// <param name="className">Fully qualified class name for the resource Ids.</param>
-        /// <param name="resourceXmlData">Resource xml data.</param>
-        /// <param name="nearbyServiceId">Nearby svc identifier.</param>
-        private static bool PerformSetup(string clientId, string classDirectory, string className, string resourceXmlData, string nearbyServiceId)
+        [MenuItem("Google/Play Games/Setup/Android...", false, 1)]
+        private static void MenuItemFileGPGSAndroidSetup()
         {
-            string appId;
-            
-            if (string.IsNullOrEmpty(resourceXmlData) && !string.IsNullOrEmpty(nearbyServiceId)) {
-                appId = GpgEditorProjectSettings.Instance.Get(KEY_APP_ID);
-                return PerformSetup(clientId, appId, nearbyServiceId);
-            }
-
-            if (!ParseResources(classDirectory, className, resourceXmlData)) {
-                return false;
-            }
-            
-            GpgEditorProjectSettings.Instance.Set(KEY_CLASS_DIRECTORY, classDirectory);
-            GpgEditorProjectSettings.Instance.Set(KEY_CLASS_NAME, className);
-            GpgEditorProjectSettings.Instance.Set(KEY_ANDROID_RESOURCE, resourceXmlData);
-
-            // check the bundle id and set it if needed.
-            CheckBundleId();
-
-            CheckAndFixDependencies();
-            CheckAndFixVersionedAssestsPaths();
-            AssetDatabase.Refresh();
-
-            EnableExternalDependencyResolverFlags(verbose: true);
-            UpdateExternalDependencyResolverAssets(force: true);
-            EnableExternalDependencyResolverFlags(enable: true);
-            AssetDatabase.Refresh();
-
-            ResolveExternalDependencies();
-
-            appId = GpgEditorProjectSettings.Instance.Get(KEY_APP_ID);
-            return PerformSetup(clientId, appId, nearbyServiceId);
+            var window = GetWindow(typeof(GpgEditorUiAndroid), true, AndroidSetup.Title);
+            window.minSize = new Vector2(500, 400);
         }
 
-        /// <summary>
-        /// Provide static access to setup for facilitating automated builds.
-        /// </summary>
-        /// <param name="webClientId">The oauth2 client id for the game.  This is only
-        /// needed if the ID Token or access token are needed.</param>
-        /// <param name="appId">App identifier.</param>
-        /// <param name="nearbyServiceId">Optional nearby connection serviceId</param>
-        /// <returns>true if successful</returns>
+        private static bool ParseResources(string classDirectory, string className, string res)
+        {
+            var resourceKeys = new Hashtable();
+            var appId = null as string;
+            
+            using (var reader = new XmlTextReader(new StringReader(res))) {
+                var inResource = false;
+                var lastProp = null as string;
+                while (reader.Read()) {
+                    if (reader.Name == "resources") inResource = true;
+                    if (!inResource) continue;
+                
+                    if (reader.Name == "string") {
+                        lastProp = reader.GetAttribute("name");
+                        continue;
+                    }
+
+                    if (!string.IsNullOrEmpty(lastProp)) {
+                        if (reader.HasValue) {
+                            if (lastProp == "app_id") {
+                                appId = reader.Value;
+                                GpgEditorProjectSettings.Instance.Set(KEY_APP_ID, appId);
+                            } else if (lastProp == "package_name") {
+                                GpgEditorProjectSettings.Instance.Set(KEY_ANDROID_BUNDLE_ID, reader.Value);
+                            } else {
+                                resourceKeys[lastProp] = reader.Value;
+                            }
+                            lastProp = null;
+                        }
+                    }
+                }
+            }
+
+            if (resourceKeys.Count > 0) {
+                WriteResourceIds(classDirectory, className, resourceKeys);
+            }
+
+            return appId != null;
+        }
+
         private static bool PerformSetup(string webClientId, string appId, string nearbyServiceId)
         {
             if (!string.IsNullOrEmpty(webClientId)) {
@@ -143,7 +121,6 @@ namespace GooglePlayGames.Editor.UI {
                 }
             }
 
-            // check for valid app id
             if (!LooksLikeValidAppId(appId) && string.IsNullOrEmpty(nearbyServiceId)) {
                 Error(0x313, Setup.AppIdError);
                 return false;
@@ -162,17 +139,14 @@ namespace GooglePlayGames.Editor.UI {
             GpgEditorProjectSettings.Instance.Save();
             UpdateGameInfo();
 
-            // check that Android SDK is there
             if (!HasAndroidSdk()) {
                 Debug.LogError("Android SDK not found.");
                 EditorUtility.DisplayDialog( AndroidSetup.SdkNotFound, AndroidSetup.SdkNotFoundBlurb, Ok);
                 return false;
             }
 
-            // Generate AndroidManifest.xml
             GenerateAndroidManifest();
 
-            // refresh assets, and we're done
             AssetDatabase.Refresh();
             GpgEditorProjectSettings.Instance.Set(KEY_ANDROID_SETUP_DONE, true);
             GpgEditorProjectSettings.Instance.Save();
@@ -180,9 +154,61 @@ namespace GooglePlayGames.Editor.UI {
             return true;
         }
 
-        /// <summary>
-        /// Called when this object is enabled by Unity editor.
-        /// </summary>
+        private static bool PerformSetup(string clientId, string classDirectory, string className, string resourceXmlData, string nearbyServiceId)
+        {
+            string appId;
+            
+            if (string.IsNullOrEmpty(resourceXmlData) && !string.IsNullOrEmpty(nearbyServiceId)) {
+                appId = GpgEditorProjectSettings.Instance.Get(KEY_APP_ID);
+                return PerformSetup(clientId, appId, nearbyServiceId);
+            }
+
+            if (!ParseResources(classDirectory, className, resourceXmlData)) return false;
+            
+            GpgEditorProjectSettings.Instance.Set(KEY_CLASS_DIRECTORY, classDirectory);
+            GpgEditorProjectSettings.Instance.Set(KEY_CLASS_NAME, className);
+            GpgEditorProjectSettings.Instance.Set(KEY_ANDROID_RESOURCE, resourceXmlData);
+
+            CheckBundleId();
+
+            CheckAndFixDependencies();
+            CheckAndFixVersionedAssestsPaths();
+            AssetDatabase.Refresh();
+
+            EnableExternalDependencyResolverFlags(verbose: true);
+            UpdateExternalDependencyResolverAssets(force: true);
+            EnableExternalDependencyResolverFlags(enable: true);
+            AssetDatabase.Refresh();
+
+            ResolveExternalDependencies();
+
+            appId = GpgEditorProjectSettings.Instance.Get(KEY_APP_ID);
+            return PerformSetup(clientId, appId, nearbyServiceId);
+        }
+
+        private string  m_class         = "GPGSIds";
+        private string  m_config        = string.Empty;
+        private string  m_constantsPath = "Assets";
+        private Vector2 m_scroll;
+        private string  m_webId         = string.Empty;
+
+        private void DoSetup()
+        {
+            if (!PerformSetup(m_webId, m_constantsPath, m_class, m_config, null)) {
+                var message = "Invalid or missing XML resource data.\n" +
+                              "Make sure the data is valid and contains the app_id element.";
+                Error(0x315, message);
+                return;
+            }
+
+            CheckBundleId();
+            EditorUtility.DisplayDialog(Success, AndroidSetup.SetupComplete, Ok);
+            GpgEditorProjectSettings.Instance.Set(KEY_ANDROID_SETUP_DONE, true);
+            Close();
+        }
+
+        #region EditorWindow implementation
+
         private void OnEnable()
         {
             var settings = GpgEditorProjectSettings.Instance;
@@ -192,9 +218,6 @@ namespace GooglePlayGames.Editor.UI {
             m_webId = settings.Get(KEY_WEB_CLIENT_ID);
         }
 
-        /// <summary>
-        /// Called when the GUI should be rendered.
-        /// </summary>
         private void OnGUI()
         {
             GUI.skin.label.wordWrap = true;
@@ -235,7 +258,6 @@ namespace GooglePlayGames.Editor.UI {
             GUILayout.EndScrollView();
             GUILayout.Space(10);
 
-            // Client ID field
             GUILayout.Label(Setup.WebClientIdTitle, EditorStyles.boldLabel);
             GUILayout.Label(AndroidSetup.WebClientIdBlurb);
 
@@ -247,7 +269,6 @@ namespace GooglePlayGames.Editor.UI {
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             if (GUILayout.Button(Setup.SetupButton, GUILayout.Width(100))) {
-                // check that the classname entered is valid
                 try {
                     if (LooksLikeValidPackageName(m_class)) {
                         DoSetup();
@@ -268,115 +289,10 @@ namespace GooglePlayGames.Editor.UI {
             GUILayout.EndVertical();
         }
 
-        /// <summary>
-        /// Starts the setup process.
-        /// </summary>
-        private void DoSetup()
-        {
-            if (!PerformSetup(m_webId, m_constantsPath, m_class, m_config, null)) {
-                var message = "Invalid or missing XML resource data.\n" +
-                              "Make sure the data is valid and contains the app_id element.";
-                Error(0x315, message);
-                return;
-            }
+        #endregion EditorWindow implementation
 
-            CheckBundleId();
-            EditorUtility.DisplayDialog(Success, AndroidSetup.SetupComplete, Ok);
-            GpgEditorProjectSettings.Instance.Set(KEY_ANDROID_SETUP_DONE, true);
-            Close();
-        }
-
-        /// <summary>
-        /// Checks the bundle identifier.
-        /// </summary>
-        /// <remarks>
-        /// Check the package id.  If one is set the gpgs properties,
-        /// and the player settings are the default or empty, set it.
-        /// if the player settings is not the default, then prompt before
-        /// overwriting.
-        /// </remarks>
-        private static void CheckBundleId()
-        {
-            var packageName = GpgEditorProjectSettings.Instance.Get(KEY_ANDROID_BUNDLE_ID, string.Empty);
-#if UNITY_5_6_OR_NEWER
-            var currentId = PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Android);
-#else
-            var currentId = PlayerSettings.bundleIdentifier;
-#endif
-
-            if (string.IsNullOrEmpty(packageName)) {
-                Debug.Log("NULL package!!");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(currentId) || currentId == "com.Company.ProductName") {
-#if UNITY_5_6_OR_NEWER
-                PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, packageName);
-#else
-                PlayerSettings.bundleIdentifier = packageName;
-#endif
-            } else if (currentId != packageName) {
-                var title = "Set Bundle Identifier?";
-                var message = $"The server configuration is using {packageName}, but the player settings is set to {currentId}.\n" +
-                              $"Set the Bundle Identifier to {packageName}?";
-                if (EditorUtility.DisplayDialog(title, message, Ok, Cancel)) {
-#if UNITY_5_6_OR_NEWER
-                    PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, packageName);
-#else
-                    PlayerSettings.bundleIdentifier = packageName;
-#endif
-                }
-            }
-        }
-
-        /// <summary>
-        /// Parses the resources xml and set the properties.  Also generates the
-        /// constants file.
-        /// </summary>
-        /// <returns><c>true</c>, if resources was parsed, <c>false</c> otherwise.</returns>
-        /// <param name="classDirectory">Class directory.</param>
-        /// <param name="className">Class name.</param>
-        /// <param name="res">Res. the data to parse.</param>
-        private static bool ParseResources(string classDirectory, string className, string res)
-        {
-            var resourceKeys = new Hashtable();
-            var appId = null as string;
-            
-            using (var reader = new XmlTextReader(new StringReader(res))) {
-                var inResource = false;
-                var lastProp = null as string;
-                while (reader.Read()) {
-                    if (reader.Name == "resources") inResource = true;
-                    if (!inResource) continue;
-                
-                    if (reader.Name == "string") {
-                        lastProp = reader.GetAttribute("name");
-                        continue;
-                    }
-
-                    if (!string.IsNullOrEmpty(lastProp)) {
-                        if (reader.HasValue) {
-                            if (lastProp == "app_id") {
-                                appId = reader.Value;
-                                GpgEditorProjectSettings.Instance.Set(KEY_APP_ID, appId);
-                            } else if (lastProp == "package_name") {
-                                GpgEditorProjectSettings.Instance.Set(KEY_ANDROID_BUNDLE_ID, reader.Value);
-                            } else {
-                                resourceKeys[lastProp] = reader.Value;
-                            }
-                            lastProp = null;
-                        }
-                    }
-                }
-            }
-
-            if (resourceKeys.Count > 0) {
-                WriteResourceIds(classDirectory, className, resourceKeys);
-            }
-
-            return appId != null;
-        }
     }
+
 }
 
 #endif

@@ -18,7 +18,7 @@
 
 namespace GooglePlayGames.BasicApi {
 
-    public class PlayerProfile : PlayGamesUserProfile {
+    public sealed class PlayerProfile : PlayGamesUserProfile {
 
         internal PlayerProfile(string displayName, string playerId, string avatarUrl, bool isFriend) : base(displayName, playerId, avatarUrl, isFriend) { }
 

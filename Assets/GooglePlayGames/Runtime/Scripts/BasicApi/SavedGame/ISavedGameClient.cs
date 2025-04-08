@@ -19,6 +19,8 @@ using System.Collections.Generic;
 
 namespace GooglePlayGames.BasicApi.SavedGame {
 
+    public delegate void ConflictCallback(IConflictResolver resolver, ISavedGameMetadata original, byte[] originalData, ISavedGameMetadata unmerged, byte[] unmergedData);
+
     public enum ConflictResolutionStrategy {
         UseLastKnownGood     = 4,
         UseLongestPlaytime   = 0,
@@ -28,25 +30,13 @@ namespace GooglePlayGames.BasicApi.SavedGame {
         UseUnmerged          = 2,
     }
 
-    public enum SavedGameRequestStatus {
-        Success             =  1,
-        TimeoutError        = -1,
-        InternalError       = -2,
-        AuthenticationError = -3,
-        BadInputError       = -4,
-    }
+    public interface IConflictResolver {
 
-    public enum SelectUIStatus {
-        SavedGameSelected   =  1,
-        UserClosedUI        =  2,
-        InternalError       = -1,
-        TimeoutError        = -2,
-        AuthenticationError = -3,
-        BadInputError       = -4,
-        UiBusy              = -5,
-    }
+        void ChooseMetadata(ISavedGameMetadata chosenMetadata);
 
-    public delegate void ConflictCallback(IConflictResolver resolver, ISavedGameMetadata original, byte[] originalData, ISavedGameMetadata unmerged, byte[] unmergedData);
+        void ResolveConflict(ISavedGameMetadata chosenMetadata, SavedGameMetadataUpdate metadataUpdate, byte[] updatedData);
+
+    }
 
     public interface ISavedGameClient {
 
@@ -66,12 +56,22 @@ namespace GooglePlayGames.BasicApi.SavedGame {
 
     }
 
-    public interface IConflictResolver {
+    public enum SavedGameRequestStatus {
+        Success             =  1,
+        TimeoutError        = -1,
+        InternalError       = -2,
+        AuthenticationError = -3,
+        BadInputError       = -4,
+    }
 
-        void ChooseMetadata(ISavedGameMetadata chosenMetadata);
-
-        void ResolveConflict(ISavedGameMetadata chosenMetadata, SavedGameMetadataUpdate metadataUpdate, byte[] updatedData);
-
+    public enum SelectUIStatus {
+        SavedGameSelected   =  1,
+        UserClosedUI        =  2,
+        InternalError       = -1,
+        TimeoutError        = -2,
+        AuthenticationError = -3,
+        BadInputError       = -4,
+        UiBusy              = -5,
     }
 
 }

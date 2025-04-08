@@ -20,11 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-#if UNITY_2017_3_OR_NEWER
 using UnityEngine.Networking;
-#else
-using UnityEngine;
-#endif
 
 using static GooglePlayGames.Editor.GpgEditorUtils;
 
@@ -34,10 +30,7 @@ namespace GooglePlayGames.Editor {
 
         private static GpgEditorProjectSettings s_instance = null;
 
-        public static GpgEditorProjectSettings Instance
-        {
-            get => s_instance ??= new GpgEditorProjectSettings();
-        }
+        public static GpgEditorProjectSettings Instance => s_instance ??= new GpgEditorProjectSettings();
 
         private bool m_dirty = false;
         private readonly string m_file;
@@ -76,50 +69,38 @@ namespace GooglePlayGames.Editor {
             }
         }
 
-        public string Get(string key, Dictionary<string, string> overrides)
-        {
-            if (overrides.ContainsKey(key)) {
-                return overrides[key];
-            } else if (m_dict.ContainsKey(key)) {
-#if UNITY_2017_3_OR_NEWER
-                return UnityWebRequest.UnEscapeURL(m_dict[key]);
-#else
-                return WWW.UnEscapeURL(m_dict[key]);
-#endif
-            } else {
-                return string.Empty;
-            }
-        }
+        public string Get(string key) => Get(key, string.Empty);
 
         public string Get(string key, string defaultValue)
         {
             if (m_dict.ContainsKey(key)) {
-#if UNITY_2017_3_OR_NEWER
                 return UnityWebRequest.UnEscapeURL(m_dict[key]);
-#else
-                return WWW.UnEscapeURL(m_dict[key]);
-#endif
             } else {
                 return defaultValue;
             }
         }
 
-        public string Get(string key) => Get(key, string.Empty);
+        public string Get(string key, Dictionary<string, string> overrides)
+        {
+            if (overrides.ContainsKey(key)) {
+                return overrides[key];
+            } else if (m_dict.ContainsKey(key)) {
+                return UnityWebRequest.UnEscapeURL(m_dict[key]);
+            } else {
+                return string.Empty;
+            }
+        }
 
         public bool GetBool(string key, bool defaultValue) => Get(key, defaultValue ? "true" : "false").Equals("true");
 
+        public void Set(string key, bool val) => Set(key, val ? "true" : "false");
+
         public void Set(string key, string val)
         {
-#if UNITY_2017_3_OR_NEWER
             var escaped = UnityWebRequest.EscapeURL(val);
-#else
-            var escaped = WWW.EscapeURL(val);
-#endif
             m_dict[key] = escaped;
             m_dirty = true;
         }
-
-        public void Set(string key, bool val) => Set(key, val ? "true" : "false");
 
         public void Save()
         {

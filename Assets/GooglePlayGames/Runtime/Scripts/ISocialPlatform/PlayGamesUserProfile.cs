@@ -16,202 +16,152 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames
-{
-    using System;
-    using System.Collections;
-    using GooglePlayGames.OurUtils;
-    using UnityEngine;
+using System;
+using System.Collections;
+
+using UnityEngine;
 #if UNITY_2017_2_OR_NEWER
-    using UnityEngine.Networking;
+using UnityEngine.Networking;
 #endif
-    using UnityEngine.SocialPlatforms;
+using UnityEngine.SocialPlatforms;
 
-    /// <summary>
-    /// Represents a Google Play Games user profile. In the current implementation,
-    /// this is only used as a base class of <see cref="PlayGamesLocalUser" />
-    /// and should not be used directly.
-    /// </summary>
-    public class PlayGamesUserProfile : IUserProfile
-    {
-        private string mDisplayName;
-        private string mPlayerId;
-        private string mAvatarUrl;
-        private bool mIsFriend;
+using GooglePlayGames.OurUtils;
 
-        private volatile bool mImageLoading = false;
-        private Texture2D mImage;
+namespace GooglePlayGames {
 
-        internal PlayGamesUserProfile(string displayName, string playerId,
-            string avatarUrl)
+    public class PlayGamesUserProfile : IUserProfile {
+
+        internal PlayGamesUserProfile(string displayName, string playerId, string avatarUrl)
         {
-            mDisplayName = displayName;
-            mPlayerId = playerId;
-            setAvatarUrl(avatarUrl);
-            mImageLoading = false;
-            mIsFriend = false;
+            m_imageIsLoading = false;
+            
+            SetAvatarUrl(avatarUrl);
+            Id = playerId;
+            IsFriend = false;
+            UserName = displayName;
         }
 
-        internal PlayGamesUserProfile(string displayName, string playerId, string avatarUrl,
-            bool isFriend)
+        internal PlayGamesUserProfile(string displayName, string playerId, string avatarUrl, bool isFriend)
         {
-            mDisplayName = displayName;
-            mPlayerId = playerId;
-            mAvatarUrl = avatarUrl;
-            mImageLoading = false;
-            mIsFriend = isFriend;
+            m_imageIsLoading = false;
+            
+            AvatarURL = avatarUrl;
+            Id        = playerId;
+            IsFriend  = isFriend;
+            UserName  = displayName;
         }
 
-        protected void ResetIdentity(string displayName, string playerId,
-            string avatarUrl)
+        private          Texture2D m_image          = null;
+        private volatile bool      m_imageIsLoading = false;
+
+        public string AvatarURL { get; private set; }
+        public string UserName  { get; private set; }
+        public string Id        { get; private set; }
+        public bool   IsFriend  { get; private set; }
+        
+        public Texture2D Image
         {
-            mDisplayName = displayName;
-            mPlayerId = playerId;
-            mIsFriend = false;
-            if (mAvatarUrl != avatarUrl)
-            {
-                mImage = null;
-                setAvatarUrl(avatarUrl);
+            get {
+                if (!m_imageIsLoading && m_image == null && !string.IsNullOrEmpty(AvatarURL)) {
+                    OurUtils.Logger.d("Starting to load image: " + AvatarURL);
+                    m_imageIsLoading = true;
+                    PlayGamesHelperObject.RunCoroutine(LoadImage());
+                }
+                return m_image;
             }
+            private set => m_image = value;
+        }
 
-            mImageLoading = false;
+        public string    GameId => Id;
+        public UserState State  => UserState.Online;
+
+        [Obsolete("Use IsFriend instead")]
+        public bool Friend
+        {
+                    get => IsFriend;
+            private set => IsFriend = value;
+        }
+
+        [Obsolete("Use Id instead")]
+        public string gameId => Id;
+
+        internal IEnumerator LoadImage()
+        {
+            if (!string.IsNullOrEmpty(AvatarURL)) {
+#if UNITY_2017_2_OR_NEWER
+                var www = UnityWebRequestTexture.GetTexture(AvatarURL);
+                www.SendWebRequest();
+#else
+                var www = new WWW(AvatarURL);
+#endif
+                while (!www.isDone) yield return null;
+                if (www.error == null) {
+#if UNITY_2017_2_OR_NEWER
+                    Image = DownloadHandlerTexture.GetContent(www);
+#else
+                    Image = www.texture;
+#endif
+                } else {
+                    Image = Texture2D.blackTexture;
+                    OurUtils.Logger.e("Error downloading image: " + www.error);
+                }
+                m_imageIsLoading = false;
+            } else {
+                OurUtils.Logger.e("No URL found.");
+                Image = Texture2D.blackTexture;
+                m_imageIsLoading = false;
+            }
+        }
+
+        protected void ResetIdentity(string displayName, string playerId, string avatarUrl)
+        {
+            m_imageIsLoading = false;
+            
+            if (AvatarURL != avatarUrl) {
+                Image = null;
+                SetAvatarUrl(avatarUrl);
+            }
+            Id             = playerId;
+            IsFriend       = false;
+            UserName       = displayName;
+        }
+
+        private void SetAvatarUrl(string avatarUrl)
+        {
+            AvatarURL = avatarUrl;
+            if (!avatarUrl.StartsWith("https") && avatarUrl.StartsWith("http")) {
+                AvatarURL = avatarUrl.Insert(4, "s");
+            }
         }
 
         #region IUserProfile implementation
 
-        public string userName
-        {
-            get { return mDisplayName; }
-        }
-
-        public string id
-        {
-            get { return mPlayerId; }
-        }
-
-        public string gameId
-        {
-            get { return mPlayerId; }
-        }
-
-        public bool isFriend
-        {
-            get { return mIsFriend; }
-        }
-
-        public UserState state
-        {
-            get { return UserState.Online; }
-        }
-
-        public Texture2D image
-        {
-            get
-            {
-                if (!mImageLoading && mImage == null && !string.IsNullOrEmpty(AvatarURL))
-                {
-                    OurUtils.Logger.d("Starting to load image: " + AvatarURL);
-                    mImageLoading = true;
-                    PlayGamesHelperObject.RunCoroutine(LoadImage());
-                }
-
-                return mImage;
-            }
-        }
+        [Obsolete("Use Id instead")]       public string    id       => Id;
+        [Obsolete("Use Image instead")]    public Texture2D image    => Image;
+        [Obsolete("Use IsFriend instead")] public bool      isFriend => IsFriend;
+        [Obsolete("Use State instead")]    public UserState state    => State;
+        [Obsolete("Use UserName instead")] public string    userName => UserName;
 
         #endregion
 
-        public string AvatarURL
-        {
-            get { return mAvatarUrl; }
-        }
-
-        /// <summary>
-        /// Loads the local user's image from the url.  Loading urls
-        /// is asynchronous so the return from this call is fast,
-        /// the image is returned once it is loaded.  null is returned
-        /// up to that point.
-        /// </summary>
-        internal IEnumerator LoadImage()
-        {
-            // the url can be null if the user does not have an
-            // avatar configured.
-            if (!string.IsNullOrEmpty(AvatarURL))
-            {
-#if UNITY_2017_2_OR_NEWER
-                UnityWebRequest www = UnityWebRequestTexture.GetTexture(AvatarURL);
-                www.SendWebRequest();
-#else
-                WWW www = new WWW(AvatarURL);
-#endif
-                while (!www.isDone)
-                {
-                    yield return null;
-                }
-
-                if (www.error == null)
-                {
-#if UNITY_2017_2_OR_NEWER
-                    this.mImage = DownloadHandlerTexture.GetContent(www);
-#else
-                    this.mImage = www.texture;
-#endif
-                }
-                else
-                {
-                    mImage = Texture2D.blackTexture;
-                    OurUtils.Logger.e("Error downloading image: " + www.error);
-                }
-
-                mImageLoading = false;
-            }
-            else
-            {
-                OurUtils.Logger.e("No URL found.");
-                mImage = Texture2D.blackTexture;
-                mImageLoading = false;
-            }
-        }
+        #region Object implementation
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            PlayGamesUserProfile other = obj as PlayGamesUserProfile;
-            if (other == null)
-            {
-                return false;
-            }
-
-            return StringComparer.Ordinal.Equals(mPlayerId, other.mPlayerId);
+            if (obj == null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj is not PlayGamesUserProfile other) return false;
+            return StringComparer.Ordinal.Equals(Id, other.Id);
         }
 
-        public override int GetHashCode()
-        {
-            return typeof(PlayGamesUserProfile).GetHashCode() ^ mPlayerId.GetHashCode();
-        }
+        public override int GetHashCode() => typeof(PlayGamesUserProfile).GetHashCode() ^ Id.GetHashCode();
 
-        public override string ToString()
-        {
-            return string.Format("[Player: '{0}' (id {1})]", mDisplayName, mPlayerId);
-        }
+        public override string ToString() => $"[Player: '{UserName}' (id {Id})]";
 
-        private void setAvatarUrl(string avatarUrl)
-        {
-            mAvatarUrl = avatarUrl;
-            if (!avatarUrl.StartsWith("https") && avatarUrl.StartsWith("http"))
-            {
-                mAvatarUrl = avatarUrl.Insert(4, "s");
-            }
-        }
+        #endregion Object implementation
+
     }
+
 }
+
 #endif
