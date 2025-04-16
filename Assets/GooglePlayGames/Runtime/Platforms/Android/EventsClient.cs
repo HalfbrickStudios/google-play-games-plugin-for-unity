@@ -6,7 +6,7 @@ using System.Linq;
 
 using UnityEngine;
 
-using GooglePlayGames.Android.Java;
+using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
 using ADS  = GooglePlayGames.Api.DataSource;
@@ -15,16 +15,17 @@ using AIEC = GooglePlayGames.Api.Events.IEventsClient;
 using ARS  = GooglePlayGames.Api.ResponseStatus;
 
 using JECI = GooglePlayGames.Android.Java.EventsClient.Instance;
+using JPG  = GooglePlayGames.Android.Java.PlayGames;
 
 namespace GooglePlayGames.Android {
 
     internal class EventsClient : AIEC {
 
-        private readonly JECI m_jEventsClient;
+        private readonly JECI j_client;
 
         public EventsClient()
         {
-            m_jEventsClient = PlayGames.JGetEventsClient();
+            j_client = JPG.JGetEventsClient();
         }
 
         #region IEventsClient implementation
@@ -33,7 +34,7 @@ namespace GooglePlayGames.Android {
         {
             callback = Utility.ToUiAction(callback);
 
-            using var jTask = m_jEventsClient.JLoad(source == ADS.ReadNetworkOnly);
+            using var jTask = j_client.JLoad(source == ADS.ReadNetworkOnly);
             jTask.JAddOnSuccessListener(jData => {
                 var status = jData.GetResponseStatus();
                 var events = null as List<AIE>;
@@ -51,7 +52,7 @@ namespace GooglePlayGames.Android {
         {
             callback = Utility.ToUiAction(callback);
 
-            using var jTask = m_jEventsClient.JLoadByIds(source == ADS.ReadNetworkOnly, new[] { eventId });
+            using var jTask = j_client.JLoadByIds(source == ADS.ReadNetworkOnly, new[] { eventId });
             jTask.JAddOnSuccessListener(jData => {
                 var status = jData.GetResponseStatus();
                 var @event = null as AIE;
@@ -68,7 +69,7 @@ namespace GooglePlayGames.Android {
             });
         }
 
-        public void IncrementEvent(string id, uint steps) => m_jEventsClient.Increment(id, (int)steps);
+        public void IncrementEvent(string id, uint steps) => j_client.Increment(id, (int)steps);
 
         #endregion IEventsClient implementation
 

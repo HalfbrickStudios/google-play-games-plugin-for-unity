@@ -2,10 +2,11 @@
 
 using System;
 
-using UnityEngine;
-
-using GooglePlayGames.Api.SavedGame;
 using GooglePlayGames.Utils;
+
+using UAJO = UnityEngine.AndroidJavaObject;
+
+using AISGM = GooglePlayGames.Api.SavedGame.ISavedGameMetadata;
 
 using JSCI = GooglePlayGames.Android.Java.SnapshotContents.Instance;
 using JSI  = GooglePlayGames.Android.Java.Snapshot.Instance;
@@ -13,7 +14,7 @@ using JSMI = GooglePlayGames.Android.Java.SnapshotMetadata.Instance;
 
 namespace GooglePlayGames.Android {
 
-    internal class SnapshotMetadata : ISavedGameMetadata {
+    internal class SnapshotMetadata : AISGM {
 
         public SnapshotMetadata(JSI jSnapshot)
         {
@@ -48,9 +49,9 @@ namespace GooglePlayGames.Android {
 
         #region Backward compatibility
 
-        [Obsolete("Use JSnapshot instead")]         public AndroidJavaObject JavaSnapshot => JSnapshot;
-        [Obsolete("Use JSnapshotMetadata instead")] public AndroidJavaObject JavaMetadata => JSnapshotMetadata;
-        [Obsolete("Use JSnapshotContents instead")] public AndroidJavaObject JavaContents => JSnapshotContents;
+        [Obsolete("Use JSnapshot instead")]         public UAJO JavaSnapshot => JSnapshot;
+        [Obsolete("Use JSnapshotMetadata instead")] public UAJO JavaMetadata => JSnapshotMetadata;
+        [Obsolete("Use JSnapshotContents instead")] public UAJO JavaContents => JSnapshotContents;
 
         #endregion Backward compatibility
 

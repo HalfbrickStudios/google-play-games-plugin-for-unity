@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-using GooglePlayGames.Android.Java;
+using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Api.Nearby;
 using GooglePlayGames.Utils;
 

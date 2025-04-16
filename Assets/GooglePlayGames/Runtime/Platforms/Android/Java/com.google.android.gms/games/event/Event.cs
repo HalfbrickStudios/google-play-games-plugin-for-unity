@@ -74,6 +74,10 @@ namespace GooglePlayGames.Android.Java {
 
     }
 
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
+
     internal static class EventExtensions {
 
         public static AEV GetEventVisibility(this JEI self) => Utility.ToAndroidEventVisibility(self.IsVisible());

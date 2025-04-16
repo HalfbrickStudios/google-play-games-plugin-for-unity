@@ -2,7 +2,7 @@
 
 using System;
 
-using GooglePlayGames.Android.Java;
+using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
 using Logger = GooglePlayGames.Utils.Logger;

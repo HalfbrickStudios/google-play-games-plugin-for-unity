@@ -16,16 +16,16 @@ namespace GooglePlayGames.Android.Java {
 
     internal static class Achievement {
 
-        public static readonly string ClassName               =  "Achievement";
-        public static readonly string PackageName             =  "com.google.android.gms.games.achievement";
+        public static readonly string ClassName = "Achievement";
+        public static readonly string PackageName = "com.google.android.gms.games.achievement";
         public static readonly string FullyQualifiedClassName = $"{PackageName}.{ClassName}";
 
-        public static int STATE_HIDDEN   => JAC.Instance.STATE_HIDDEN;
+        public static int STATE_HIDDEN => JAC.Instance.STATE_HIDDEN;
         public static int STATE_REVEALED => JAC.Instance.STATE_REVEALED;
         public static int STATE_UNLOCKED => JAC.Instance.STATE_UNLOCKED;
 
         public static int TYPE_INCREMENTAL => JAC.Instance.TYPE_INCREMENTAL;
-        public static int TYPE_STANDARD    => JAC.Instance.TYPE_STANDARD;
+        public static int TYPE_STANDARD => JAC.Instance.TYPE_STANDARD;
 
         internal sealed class Class : JC {
 
@@ -164,8 +164,12 @@ namespace GooglePlayGames.Android.Java {
             }
 
         }
-        
+
     }
+
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
 
     internal static class AchievementExtensions {
 

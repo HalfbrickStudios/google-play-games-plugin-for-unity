@@ -1,5 +1,6 @@
 #if UNITY_ANDROID
 
+using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
@@ -53,6 +54,10 @@ namespace GooglePlayGames.Android.Java {
         }
 
     }
+
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
 
     internal static class NearbyExtensions {
 

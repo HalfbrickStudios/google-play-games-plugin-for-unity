@@ -1,5 +1,6 @@
 #if UNITY_ANDROID
 
+using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
 using JC = GooglePlayGames.JavaClass;
@@ -40,6 +41,10 @@ namespace GooglePlayGames.Android.Java {
         }
 
     }
+
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
 
     internal static class PlayGamesSdkExtensions {
 

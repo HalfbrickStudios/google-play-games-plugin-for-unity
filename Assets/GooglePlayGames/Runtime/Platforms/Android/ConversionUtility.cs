@@ -21,7 +21,9 @@ using System.Collections.Generic;
 
 using UnityEngine.SocialPlatforms;
 
-using US   = UnityEngine.SocialPlatforms.IScore;
+using US = UnityEngine.SocialPlatforms.IScore;
+
+using GPGS = GooglePlayGames.PlayGamesScore;
 
 using AA    = GooglePlayGames.Api.Achievement;
 using ACRS  = GooglePlayGames.Api.SavedGame.ConflictResolutionStrategy;
@@ -33,7 +35,6 @@ using ALC   = GooglePlayGames.Api.LeaderboardCollection;
 using ALSD  = GooglePlayGames.Api.LeaderboardScoreData;
 using ALTS  = GooglePlayGames.Api.LeaderboardTimeSpan;
 using AP    = GooglePlayGames.Api.Player;
-using APGS  = GooglePlayGames.PlayGamesScore;
 using APP   = GooglePlayGames.Api.PlayerProfile;
 using APS   = GooglePlayGames.Api.PlayerStats;
 using ARS   = GooglePlayGames.Api.ResponseStatus;
@@ -175,9 +176,9 @@ namespace GooglePlayGames.Utils {
             var result = status == null ? new ALSD(id) : new ALSD(id, (ARS)status);
             var count  = jScores.GetCount();
             for (var i = 0; i < count; i += 1) {
-                var score = null as APGS;
+                var score = null as GPGS;
                 using (var jScore = jScores.JGet(i)) {
-                    score = (APGS)ToAndroidPlayerGameScore(jScore);
+                    score = (GPGS)ToAndroidPlayerGameScore(jScore);
                 }
                 score.LeaderboardId = id;
                 result.AddScore(score);
@@ -209,7 +210,7 @@ namespace GooglePlayGames.Utils {
             var score         =            (ulong)jScore.GetRawScore();
             var metadata      =                   jScore.GetScoreTag();
             using var jPlayer =                   jScore.JGetScoreHolder();
-            return new APGS(date, leaderboardId ?? string.Empty, rank, jPlayer.GetPlayerId(), score, metadata);
+            return new GPGS(date, leaderboardId ?? string.Empty, rank, jPlayer.GetPlayerId(), score, metadata);
         }
 
         public static US ToAndroidPlayerGameScore(JLVI jVariant, string leaderboardId = null, string playerId = null)
@@ -218,7 +219,7 @@ namespace GooglePlayGames.Utils {
             var rank     = (ulong)jVariant.GetPlayerRank();
             var score    = (ulong)jVariant.GetRawPlayerScore();
             var metadata =        jVariant.GetPlayerScoreTag();
-            return new APGS(date, leaderboardId, rank, playerId, score, metadata);
+            return new GPGS(date, leaderboardId, rank, playerId, score, metadata);
         }
 
         public static APP ToAndroidPlayerProfile(JPI jplayer)

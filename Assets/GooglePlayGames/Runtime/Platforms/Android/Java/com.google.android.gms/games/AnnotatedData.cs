@@ -15,12 +15,12 @@ namespace GooglePlayGames.Android.Java {
 
     internal static class AnnotatedData {
 
-        public static readonly string ClassName               =  "AnnotatedData";
-        public static readonly string PackageName             =  "com.google.android.gms.games";
+        public static readonly string ClassName = "AnnotatedData";
+        public static readonly string PackageName = "com.google.android.gms.games";
         public static readonly string FullyQualifiedClassName = $"{PackageName}.{ClassName}";
 
         public static Instance<T> MakeInstance<T>() => new();
-        
+
         public static Instance<T> WrapInstance<T>(UAJO jObject) => new(jObject.GetRawObject());
 
         internal sealed class Instance<T> : JOI {
@@ -50,6 +50,10 @@ namespace GooglePlayGames.Android.Java {
         }
 
     }
+
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
 
     internal static class AnnotatedDataExtensions {
 

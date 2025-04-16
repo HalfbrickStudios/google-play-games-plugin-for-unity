@@ -18,8 +18,8 @@ namespace GooglePlayGames.Android.Java {
 
     internal static class Task {
 
-        public static readonly string ClassName               =  "Task";
-        public static readonly string PackageName             =  "com.google.android.gms.tasks";
+        public static readonly string ClassName = "Task";
+        public static readonly string PackageName = "com.google.android.gms.tasks";
         public static readonly string FullyQualifiedClassName = $"{PackageName}.{ClassName}";
 
         public static JTI MakeInstance() => new(FullyQualifiedClassName, inherit: false);
@@ -111,6 +111,10 @@ namespace GooglePlayGames.Android.Java {
         }
 
     }
+
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
 
     internal static class TaskExtensions {
 

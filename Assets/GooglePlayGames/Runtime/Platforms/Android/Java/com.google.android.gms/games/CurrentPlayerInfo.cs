@@ -46,6 +46,10 @@ namespace GooglePlayGames.Android.Java {
 
     }
 
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
+
     internal static class CurrentPlayerInfoExtensions {
 
         public static AFLVS GetFriendsListVisibilityStatus(this JCPII self)

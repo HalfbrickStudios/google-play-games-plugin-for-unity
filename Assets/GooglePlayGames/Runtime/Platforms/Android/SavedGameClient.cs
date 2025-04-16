@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-using GooglePlayGames.Android.Java;
+using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
 using Logger = GooglePlayGames.Utils.Logger;
@@ -21,6 +21,7 @@ using ASUS  = GooglePlayGames.Api.SavedGame.SelectUiStatus;
 using APGC = GooglePlayGames.Android.PlayGamesClient;
 using ASM  = GooglePlayGames.Android.SnapshotMetadata;
 
+using JPG  = GooglePlayGames.Android.Java.PlayGames;
 using JSCI = GooglePlayGames.Android.Java.SnapshotsClient.Instance;
 
 namespace GooglePlayGames.Android {
@@ -38,7 +39,7 @@ namespace GooglePlayGames.Android {
         public SavedGameClient(APGC androidClient)
         {
             JPlayClient     = androidClient;
-            JSnapshotClient = PlayGames.JGetSnapshotsClient();
+            JSnapshotClient = JPG.JGetSnapshotsClient();
         }
 
         internal APGC JPlayClient     { get; }

@@ -19,15 +19,13 @@
 using System;
 using System.Linq;
 
-using UnityEngine.SocialPlatforms;
-
-using GooglePlayGames.Android.Java;
+using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
 using Logger = GooglePlayGames.Utils.Logger;
 
 using UAJO = UnityEngine.AndroidJavaObject;
-using UUP  = UnityEngine.SocialPlatforms.IUserProfile;
+using UIUP = UnityEngine.SocialPlatforms.IUserProfile;
 
 using AA    = GooglePlayGames.Api.Achievement;
 using ACSC  = GooglePlayGames.Api.CommonStatusCodes;
@@ -49,11 +47,15 @@ using ASIS  = GooglePlayGames.Api.SignInStatus;
 using ASPC  = GooglePlayGames.Api.ScorePageCursor;
 using AUS   = GooglePlayGames.Api.UiStatus;
 
+using GPGHO = GooglePlayGames.Utils.PlayGamesHelperObject;
+
 using APGCAS = GooglePlayGames.Android.PlayGamesClient.AuthState;
 
 using JLSBI = GooglePlayGames.Android.Java.LeaderboardScoreBuffer.Instance;
 using JLSsI = GooglePlayGames.Android.Java.LeaderboardsClient.LeaderboardScores.Instance;
 using JOI   = GooglePlayGames.Android.Java.Object.Instance;
+using JPG   = GooglePlayGames.Android.Java.PlayGames;
+using JPGS  = GooglePlayGames.Android.Java.PlayGamesSdk;
 
 namespace GooglePlayGames.Android {
 
@@ -67,7 +69,7 @@ namespace GooglePlayGames.Android {
         private volatile APGCAS m_authState = APGCAS.Unauthenticated;
         private readonly object m_authStateLock = new();
         private volatile AIEC m_eventsClient = null;
-        private UUP[] m_friends = new UUP[0];
+        private UIUP[] m_friends = new UIUP[0];
         private readonly int m_friendsMaxResults = 200;
         private readonly object m_gameServicesLock = new();
         private ALFS m_lastLoadFriendsStatus = ALFS.Unknown;
@@ -84,8 +86,8 @@ namespace GooglePlayGames.Android {
 
         internal PlayGamesClient()
         {
-            PlayGamesHelperObject.CreateObject();
-            PlayGamesSdk.Initialize();
+            GPGHO.CreateObject();
+            JPGS.Initialize();
         }
 
         private void Authenticate(bool isAutoSignIn, Action<ASIS> callback)
@@ -100,7 +102,7 @@ namespace GooglePlayGames.Android {
                 }
             }
 
-            using var jClient = PlayGames.JGetGamesSignInClient();
+            using var jClient = JPG.JGetGamesSignInClient();
             using var jTask = isAutoSignIn ? jClient.JIsAuthenticated() : jClient.JSignIn();
             jTask.JAddOnSuccessListener(jResponse => {
                 SignInOnResult(jResponse.IsAuthenticated(), callback);
@@ -154,8 +156,8 @@ namespace GooglePlayGames.Android {
             m_friendsResolutionException = null;
             callback = Utility.ToUiAction(callback);
 
-            using var jClient = PlayGames.JGetPlayersClient();
-            using var jTask = more ? jClient.JLoadMoreFriends(size) : jClient.JLoadFriends(size, reload);
+            using var jClient = JPG.JGetPlayersClient();
+            using var jTask   = more ? jClient.JLoadMoreFriends(size) : jClient.JLoadFriends(size, reload);
             jTask.JAddOnSuccessListener(jData => {
                 using (var jPlayers = jData.JGet()) {
                     using (var jBundle = jPlayers.JGetMetadata()) {
@@ -204,7 +206,7 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            using var jTask = PlayGames.JGetPlayersClient().JGetCurrentPlayer();
+            using var jTask = JPG.JGetPlayersClient().JGetCurrentPlayer();
             jTask.JAddOnCompleteListener(jIt => {
                 if (jIt.JIsSuccessful()) {
                     using (var jData = jIt.JGetResult()) {
@@ -244,8 +246,8 @@ namespace GooglePlayGames.Android {
 
             Logger.d("The developer asked for access to the friends list but there is no intent to trigger the UI. " +
                      "This may be because the user has granted access already or the game has not called loadFriends() before.");
-            using var jClient = PlayGames.JGetPlayersClient();
-            using var jTask = jClient.JLoadFriends(size: 1, reload: false);
+            using var jClient = JPG.JGetPlayersClient();
+            using var jTask   = jClient.JLoadFriends(size: 1, reload: false);
             jTask.JAddOnSuccessListener(jData => {
                 callback(AUS.Valid);
             }).JAddOnFailureListener(jException => {
@@ -278,14 +280,14 @@ namespace GooglePlayGames.Android {
             }
         }
 
-        public UUP[] GetFriends() => m_friends;
+        public UIUP[] GetFriends() => m_friends;
 
         public void GetFriendsListVisibility(bool reload, Action<AFLVS> callback)
         {
             callback = Utility.ToUiAction(callback);
 
-            using var jClient = PlayGames.JGetPlayersClient();
-            using var jTask = jClient.JGetCurrentPlayer(reload);
+            using var jClient = JPG.JGetPlayersClient();
+            using var jTask   = jClient.JGetCurrentPlayer(reload);
             jTask.JAddOnSuccessListener(jData => {
                 using var jPlayer = jData.JGet();
                 using var jInfo = jPlayer.JGetCurrentPlayerInfo();
@@ -301,8 +303,8 @@ namespace GooglePlayGames.Android {
         {
             callback = Utility.ToUiAction(callback);
 
-            using var jClient = PlayGames.JGetPlayerStatsClient();
-            using var jTask = jClient.JLoadPlayerStats(reload: false);
+            using var jClient = JPG.JGetPlayerStatsClient();
+            using var jTask   = jClient.JLoadPlayerStats(reload: false);
             jTask.JAddOnSuccessListener(jData => {
                 var stats = null as APS;
                 using (var jStats = jData.JGet()) {
@@ -338,7 +340,7 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            using (var jClient = PlayGames.JGetAchievementsClient()) {
+            using (var jClient = JPG.JGetAchievementsClient()) {
                 jClient.Increment(id, steps);
             }
             callback(true);
@@ -357,8 +359,8 @@ namespace GooglePlayGames.Android {
         {
             callback = Utility.ToUiAction(callback);
 
-            using var jClient = PlayGames.JGetAchievementsClient();
-            using var jTask = jClient.JLoad(reload: false);
+            using var jClient = JPG.JGetAchievementsClient();
+            using var jTask   = jClient.JLoad(reload: false);
             jTask.JAddOnSuccessListener(jData => {
                 var achievements = null as AA[];
                 using (var jAchievements = jData.JGet()) {
@@ -381,7 +383,7 @@ namespace GooglePlayGames.Android {
         {
             callback = Utility.ToUiAction(callback);
 
-            using var jClient       = PlayGames.JGetLeaderboardsClient();
+            using var jClient       = JPG.JGetLeaderboardsClient();
             using var jLeaderboards = (JLSBI)token.LeaderboardScoreBuffer;
                   var  direction    = Utility.ToJavaPageDirection(token.Direction);
             using var jTask         = jClient.JLoadMoreScores(jLeaderboards, rows, direction);
@@ -410,10 +412,12 @@ namespace GooglePlayGames.Android {
         {
             callback = Utility.ToUiAction(callback);
 
-            using var jClient = PlayGames.JGetLeaderboardsClient();
-            var jSpan = Utility.ToJavaLeaderboardVariantTimeSpan(span);
-            var jCollection = Utility.ToJavaLeaderboardVariantCollection(collection);
-            using var jtask = start == ALS.TopScores ? jClient.JLoadTopScores(id, jSpan, jCollection, rows) : jClient.JLoadPlayerCenteredScores(id, jSpan, jCollection, rows);
+            using var jClient     = JPG.JGetLeaderboardsClient();
+                  var jSpan       = Utility.ToJavaLeaderboardVariantTimeSpan(span);
+                  var jCollection = Utility.ToJavaLeaderboardVariantCollection(collection);
+            using var jtask       = start == ALS.TopScores
+                                        ? jClient.JLoadTopScores(id, jSpan, jCollection, rows)
+                                        : jClient.JLoadPlayerCenteredScores(id, jSpan, jCollection, rows);
             jtask.JAddOnSuccessListener(jData => {
                 var data = null as ALSD;
                 using (var jScores = jData.JGet()) {
@@ -434,20 +438,20 @@ namespace GooglePlayGames.Android {
             });
         }
 
-        public void LoadUsers(string[] userIds, Action<IUserProfile[]> callback)
+        public void LoadUsers(string[] userIds, Action<UIUP[]> callback)
         {
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
-                callback(new UUP[0]);
+                callback(new UIUP[0]);
                 return;
             }
 
-            using var jClient = PlayGames.JGetPlayersClient();
+            using var jClient = JPG.JGetPlayersClient();
             var @lock = new object();
             var count = userIds.Length;
             var acc = 0;
-            var users = new UUP[count];
+            var users = new UIUP[count];
             for (var i = 0; i < count; i += 1) {
                 using var jTask = jClient.JLoadPlayer(userIds[i]);
                 jTask.JAddOnSuccessListener(jData => {
@@ -480,8 +484,8 @@ namespace GooglePlayGames.Android {
         {
             callback = Utility.ToUiAction(callback);
 
-            using var jClient = PlayGames.JGetRecallClient();
-            using var jTask = jClient.JRequestRecallAccess();
+            using var jClient = JPG.JGetRecallClient();
+            using var jTask   = jClient.JRequestRecallAccess();
             jTask.JAddOnSuccessListener(jAccess => {
                 var id = jAccess.GetSessionId();
                 callback(new ARA(id));
@@ -495,8 +499,8 @@ namespace GooglePlayGames.Android {
         {
             callback = Utility.ToUiAction(callback);
 
-            using var jClient = PlayGames.JGetGamesSignInClient();
-            using var jTask = jClient.JRequestServerSideAccess(reload: true, webId: string.Empty);
+            using var jClient = JPG.JGetGamesSignInClient();
+            using var jTask   = jClient.JRequestServerSideAccess(reload: true, webId: string.Empty);
             jTask.JAddOnSuccessListener(callback).JAddOnFailureListener(jException => {
                 Logger.e("Requesting server side access task failed - " + jException.JToString());
                 callback(null);
@@ -512,7 +516,7 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            using var jClient = PlayGames.JGetAchievementsClient();
+            using var jClient = JPG.JGetAchievementsClient();
             jClient.Reveal(achId);
             callback(true);
         }
@@ -526,7 +530,7 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            using var jClient = PlayGames.JGetAchievementsClient();
+            using var jClient = JPG.JGetAchievementsClient();
             jClient.SetSteps(achId, steps);
             callback(true);
         }
@@ -572,7 +576,7 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            using var jClient = PlayGames.JGetLeaderboardsClient();
+            using var jClient = JPG.JGetLeaderboardsClient();
             jClient.SubmitScore(id, score, metadata);
             callback(true);
         }
@@ -586,7 +590,7 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            using var jClient = PlayGames.JGetLeaderboardsClient();
+            using var jClient = JPG.JGetLeaderboardsClient();
             jClient.SubmitScore(leaderboardId, score);
             callback(true);
         }
@@ -600,7 +604,7 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            using var jClient = PlayGames.JGetAchievementsClient();
+            using var jClient = JPG.JGetAchievementsClient();
             jClient.Unlock(achId);
             callback(true);
         }
@@ -608,6 +612,10 @@ namespace GooglePlayGames.Android {
         #endregion IPlayGamesClient implementation
 
     }
+
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
 
     internal static class PlayGamesClientExtensions {
 
