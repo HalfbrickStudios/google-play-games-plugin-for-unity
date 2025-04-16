@@ -56,9 +56,6 @@ namespace GooglePlayGames.BasicApi {
         public float SpendProbability       { get; }
         public float TotalSpendNext28Days   { get; }
 
-        [Obsolete("Use IsValid instead")]
-        public bool Valid => IsValid;
-
         public bool HasAvgSessionLength()       => AvgSessionLength       !=       UNSET_VALUE;
         public bool HasChurnProbability()       => ChurnProbability       !=       UNSET_VALUE;
         public bool HasDaysSinceLastPlayed()    => DaysSinceLastPlayed    != (int) UNSET_VALUE;
@@ -68,6 +65,13 @@ namespace GooglePlayGames.BasicApi {
         public bool HasSessPercentile()         => SessPercentile         !=       UNSET_VALUE;
         public bool HasSpendPercentile()        => SpendPercentile        !=       UNSET_VALUE;
         public bool HasTotalSpendNext28Days()   => TotalSpendNext28Days   !=       UNSET_VALUE;
+
+        #region Backward compatibility layer
+
+        [Obsolete("Use IsValid instead")]
+        public bool Valid => IsValid;
+
+        #endregion Backward compatibility layer
 
     }
 

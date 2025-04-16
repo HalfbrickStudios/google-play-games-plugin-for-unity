@@ -31,6 +31,8 @@ namespace GooglePlayGames.OurUtils {
         private static readonly List<Action<bool>>    s_pauseCallbacks = new();
         private static readonly List<Action>          s_queue          = new();
 
+        private readonly List<Action> m_queue = new();
+
         public static void AddFocusCallback(Action<bool> callback)
         {
             if (s_focusCallbacks.Contains(callback)) return;
@@ -75,8 +77,6 @@ namespace GooglePlayGames.OurUtils {
                 s_empty = false;
             }
         }
-        
-        private readonly List<Action> m_queue = new();
 
         #region MonoBehaviour implementation
 

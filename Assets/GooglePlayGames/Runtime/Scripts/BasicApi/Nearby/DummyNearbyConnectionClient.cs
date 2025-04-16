@@ -23,7 +23,7 @@ using GooglePlayGames.OurUtils;
 
 namespace GooglePlayGames.BasicApi.Nearby {
 
-    public sealed class DummyNearbyConnectionClient : INearbyConnectionClient {
+    internal sealed class DummyNearbyConnectionClient : INearbyConnectionClient {
 
         public void AcceptConnectionRequest(string remoteEndpointId, byte[] payload, IMessageListener listener)
         {
@@ -73,8 +73,7 @@ namespace GooglePlayGames.BasicApi.Nearby {
 
         public void StartAdvertising(string name, List<string> appIdentifiers, TimeSpan? advertisingDuration, Action<AdvertisingResult> resultCallback, Action<ConnectionRequest> connectionRequestCallback)
         {
-            var obj = new AdvertisingResult(ResponseStatus.LicenseCheckFailed, string.Empty);
-            resultCallback.Invoke(obj);
+            resultCallback.Invoke(new AdvertisingResult(ResponseStatus.LicenseCheckFailed, string.Empty));
         }
 
         public void StartDiscovery(string serviceId, TimeSpan? advertisingTimeout, IDiscoveryListener listener)

@@ -28,7 +28,21 @@ using GooglePlayGames.BasicApi;
 
 namespace GooglePlayGames {
 
-    internal sealed class PlayGamesAchievement : IAchievement, IAchievementDescription {
+    public delegate void ReportProgress(string id, double progress, Action<bool> callback);
+
+    public sealed class PlayGamesAchievement : IAchievement, IAchievementDescription {
+
+        private readonly string          m_description      = string.Empty;
+        private          Texture2D       m_image            = null;
+#if UNITY_2017_1_OR_NEWER
+        private          UnityWebRequest m_imageFetcher     = null;
+#else
+        private          WWW             m_imageFetcher     = null;
+#endif
+        private readonly ReportProgress  m_progressCallback = null;
+
+        private readonly string          m_revealedImageUrl = null;
+        private readonly string          m_unlockedImageUrl = null;
 
         internal PlayGamesAchievement() : this(PlayGamesPlatform.Instance.ReportProgress) { }
 
@@ -43,9 +57,9 @@ namespace GooglePlayGames {
             m_revealedImageUrl = ach.RevealedImageUrl;
             m_unlockedImageUrl = ach.UnlockedImageUrl;
 
-            IsCompleted        =  ach.IsUnlocked;
+            IsCompleted      =  ach.IsUnlocked;
             CurrentSteps     =  ach.CurrentSteps;
-            IsHidden           = !ach.IsRevealed;
+            IsHidden         = !ach.IsRevealed;
             Id               =  ach.Id;
             IsIncremental    =  ach.IsIncremental;
             LastReportedDate =  ach.LastModifiedTime;
@@ -64,18 +78,6 @@ namespace GooglePlayGames {
             }
         }
 
-        private readonly string          m_description      = string.Empty;
-        private          Texture2D       m_image            = null;
-#if UNITY_2017_1_OR_NEWER
-        private          UnityWebRequest m_imageFetcher     = null;
-#else
-        private          WWW             m_imageFetcher     = null;
-#endif
-        private readonly ReportProgress  m_progressCallback = null;
-
-        private readonly string          m_revealedImageUrl = null;
-        private readonly string          m_unlockedImageUrl = null;
-
         public string    AchievedDescription   { get => m_description;                                 }
         public int       CurrentSteps          { get;                                                  }
         public string    Id                    { get;                  private set;                    }
@@ -89,9 +91,6 @@ namespace GooglePlayGames {
         public string    Title                 { get;                                                  }
         public int       TotalSteps            { get;                                                  }
         public string    UnachievedDescription { get => m_description;                                 }
-
-        [Obsolete("Use IsCompleted instead")] public bool Completed => IsCompleted;
-        [Obsolete("Use IsHidden instead")]    public bool Hidden    => IsHidden;
 
         private Texture2D LoadImage()
         {
@@ -117,6 +116,13 @@ namespace GooglePlayGames {
             return Image;
         }
 
+        #region Backward compatibility layer
+
+        [Obsolete("Use IsCompleted instead")] public bool Completed => IsCompleted;
+        [Obsolete("Use IsHidden instead")]    public bool Hidden    => IsHidden;
+
+        #endregion Backward compatibility layer
+
         #region IAchievement and IAchievementDescription implementation
 
         [Obsolete("Use AchievedDescription instead")]   public string    achievedDescription   { get => AchievedDescription;                                    }
@@ -138,8 +144,6 @@ namespace GooglePlayGames {
         #endregion IAchievement and IAchievementDescription implementation
 
     }
-
-    internal delegate void ReportProgress(string id, double progress, Action<bool> callback);
 
 }
 

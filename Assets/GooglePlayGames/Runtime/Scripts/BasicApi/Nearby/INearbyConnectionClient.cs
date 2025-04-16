@@ -29,9 +29,9 @@ namespace GooglePlayGames.BasicApi.Nearby {
 
     public interface IMessageListener {
 
-        void OnMessageReceived(string remoteEndpointId, byte[] data, bool isReliableMessage);
+        void OnMessageReceived(string id, byte[] data, bool reliable);
 
-        void OnRemoteEndpointDisconnected(string remoteEndpointId);
+        void OnRemoteEndpointDisconnected(string id);
 
     }
 

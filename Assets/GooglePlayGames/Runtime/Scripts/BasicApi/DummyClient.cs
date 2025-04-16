@@ -26,16 +26,16 @@ using GooglePlayGames.OurUtils;
 
 namespace GooglePlayGames.BasicApi {
 
-    public sealed class DummyClient : IPlayGamesClient {
+    internal sealed class DummyClient : IPlayGamesClient {
 
         private static void LogUsage() => Logger.d("Received method call on DummyClient - using stub implementation.");
 
         #region IPlayGamesClient implementation
 
-        public void AskForLoadFriendsResolution(Action<UIStatus> callback)
+        public void AskForLoadFriendsResolution(Action<UiStatus> callback)
         {
             LogUsage();
-            callback?.Invoke(UIStatus.VersionUpdateRequired);
+            callback?.Invoke(UiStatus.VersionUpdateRequired);
         }
 
         public void Authenticate(Action<SignInStatus> callback)
@@ -184,22 +184,22 @@ namespace GooglePlayGames.BasicApi {
             callback?.Invoke(false);
         }
 
-        public void ShowAchievementsUI(Action<UIStatus> callback)
+        public void ShowAchievementsUI(Action<UiStatus> callback)
         {
             LogUsage();
-            callback?.Invoke(UIStatus.VersionUpdateRequired);
+            callback?.Invoke(UiStatus.VersionUpdateRequired);
         }
 
-        public void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UIStatus> callback)
+        public void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UiStatus> callback)
         {
             LogUsage();
-            callback?.Invoke(UIStatus.VersionUpdateRequired);
+            callback?.Invoke(UiStatus.VersionUpdateRequired);
         }
 
-        public void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UIStatus> callback)
+        public void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UiStatus> callback)
         {
             LogUsage();
-            callback?.Invoke(UIStatus.VersionUpdateRequired);
+            callback?.Invoke(UiStatus.VersionUpdateRequired);
         }
 
         public void SubmitScore(string leaderboardId, long score, Action<bool> callback)

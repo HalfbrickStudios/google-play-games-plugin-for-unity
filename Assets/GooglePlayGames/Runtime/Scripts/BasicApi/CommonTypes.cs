@@ -73,7 +73,7 @@ namespace GooglePlayGames.BasicApi {
         VersionUpdateRequired = -4,
     }
 
-    public enum UIStatus {
+    public enum UiStatus {
         InternalError         =  -2,
         NetworkError          = -20,
         NotAuthorized         =  -3,

@@ -29,7 +29,8 @@ namespace GooglePlayGames.OurUtils {
         }
 
         public static void StartAdvertisingTimer(TimeSpan? span) => s_advertisingRemaining = ToSeconds(span);
-        public static void StartDiscoveryTimer(TimeSpan? span)   => s_discoveryRemaining   = ToSeconds(span);
+
+        public static void StartDiscoveryTimer(TimeSpan? span) => s_discoveryRemaining = ToSeconds(span);
 
         private static double ToSeconds(TimeSpan? span)
         {

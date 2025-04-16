@@ -52,7 +52,7 @@ namespace GooglePlayGames.BasicApi.SavedGame {
 
         void ReadBinaryData(ISavedGameMetadata metadata, Action<SavedGameRequestStatus, byte[]> completedCallback);
 
-        void ShowSelectSavedGameUI(string uiTitle, uint maxDisplayedSavedGames, bool showCreateSaveUI, bool showDeleteSaveUI, Action<SelectUIStatus, ISavedGameMetadata> callback);
+        void ShowSelectSavedGameUI(string uiTitle, uint maxDisplayedSavedGames, bool showCreateSaveUI, bool showDeleteSaveUI, Action<SelectUiStatus, ISavedGameMetadata> callback);
 
     }
 
@@ -64,7 +64,7 @@ namespace GooglePlayGames.BasicApi.SavedGame {
         BadInputError       = -4,
     }
 
-    public enum SelectUIStatus {
+    public enum SelectUiStatus {
         SavedGameSelected   =  1,
         UserClosedUI        =  2,
         InternalError       = -1,

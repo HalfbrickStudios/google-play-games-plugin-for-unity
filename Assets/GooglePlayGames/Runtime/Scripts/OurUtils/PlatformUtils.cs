@@ -18,7 +18,7 @@
 
 namespace GooglePlayGames.OurUtils {
 
-    public static class PlatformUtils {
+    internal static class PlatformUtils {
 
 #if UNITY_EDITOR
         public static bool Supported => false;

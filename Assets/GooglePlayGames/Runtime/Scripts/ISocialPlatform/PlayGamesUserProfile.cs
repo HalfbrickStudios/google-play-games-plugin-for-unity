@@ -31,6 +31,9 @@ namespace GooglePlayGames {
 
     public class PlayGamesUserProfile : IUserProfile {
 
+        private          Texture2D m_image          = null;
+        private volatile bool      m_imageIsLoading = false;
+
         internal PlayGamesUserProfile(string displayName, string playerId, string avatarUrl)
         {
             m_imageIsLoading = false;
@@ -50,9 +53,6 @@ namespace GooglePlayGames {
             IsFriend  = isFriend;
             UserName  = displayName;
         }
-
-        private          Texture2D m_image          = null;
-        private volatile bool      m_imageIsLoading = false;
 
         public string AvatarURL { get; private set; }
         public string UserName  { get; private set; }
@@ -74,16 +74,6 @@ namespace GooglePlayGames {
 
         public string    GameId => Id;
         public UserState State  => UserState.Online;
-
-        [Obsolete("Use IsFriend instead")]
-        public bool Friend
-        {
-                    get => IsFriend;
-            private set => IsFriend = value;
-        }
-
-        [Obsolete("Use Id instead")]
-        public string gameId => Id;
 
         internal IEnumerator LoadImage()
         {
@@ -133,6 +123,16 @@ namespace GooglePlayGames {
                 AvatarURL = avatarUrl.Insert(4, "s");
             }
         }
+
+        #region Backward compatibility layer
+
+        [Obsolete("Use IsFriend instead")]
+        public bool Friend { get => IsFriend; private set => IsFriend = value; }
+
+        [Obsolete("Use Id instead")]
+        public string gameId => Id;
+
+        #endregion Backward compatibility layer
 
         #region IUserProfile implementation
 

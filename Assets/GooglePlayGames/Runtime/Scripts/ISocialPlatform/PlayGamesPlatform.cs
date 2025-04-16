@@ -39,6 +39,10 @@ namespace GooglePlayGames {
         private static volatile bool                    s_nearbyPending;
         private static volatile INearbyConnectionClient s_nearbyClient;
 
+        private readonly IPlayGamesClient           m_client               = null;
+        private          string                     m_defaultLeaderboardId = null;
+        private readonly Dictionary<string, string> m_idMap                = new();
+
         public static bool DebugLogEnabled
         {
             get => Logger.DebugLogEnabled;
@@ -48,7 +52,7 @@ namespace GooglePlayGames {
         public static PlayGamesPlatform Instance
         {
             get {
-                if (s_instance == null)                 {
+                if (s_instance == null) {
                     Logger.d("Initializing the PlayGamesPlatform instance.");
                     s_instance = new PlayGamesPlatform(PlayGamesClientFactory.GetPlatformPlayGamesClient());
                 }
@@ -82,7 +86,7 @@ namespace GooglePlayGames {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 NearbyConnectionClientFactory.Create(client => {
                     Logger.d("Nearby Client Created!!");
-                    sNearbyConnectionClient = client;
+                    s_nearbyClient = client;
                     if (callback != null) {
                         callback.Invoke(client);
                     } else {
@@ -130,10 +134,6 @@ namespace GooglePlayGames {
             LocalUser = new PlayGamesLocalUser(this);
         }
 
-        private readonly IPlayGamesClient           m_client               = null;
-        private          string                     m_defaultLeaderboardId = null;
-        private readonly Dictionary<string, string> m_idMap                = new();
-
         public ILocalUser LocalUser { get; }
 
         public IEventsClient    Events    => m_client.GetEventsClient();
@@ -141,11 +141,11 @@ namespace GooglePlayGames {
 
         public void AddIdMapping(string fromId, string toId) => m_idMap[fromId] = toId;
 
-        public void AskForLoadFriendsResolution(Action<UIStatus> callback)
+        public void AskForLoadFriendsResolution(Action<UiStatus> callback)
         {
             if (!IsAuthenticated()) {
                 Logger.e("AskForLoadFriendsResolution can only be called after authentication.");
-                InvokeCallbackOnGameThread(callback, UIStatus.NotAuthorized);
+                InvokeCallbackOnGameThread(callback, UiStatus.NotAuthorized);
                 return;
             }
             Logger.d("AskForLoadFriendsResolution callback is " + callback);
@@ -388,7 +388,7 @@ namespace GooglePlayGames {
             m_client.SetStepsAtLeast(achievementID, steps, callback);
         }
 
-        public void ShowAchievementsUI(Action<UIStatus> callback)
+        public void ShowAchievementsUI(Action<UiStatus> callback)
         {
             if (!IsAuthenticated()) {
                 Logger.e("ShowAchievementsUI can only be called after authentication.");
@@ -398,11 +398,11 @@ namespace GooglePlayGames {
             m_client.ShowAchievementsUI(callback);
         }
 
-        public void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UIStatus> callback)
+        public void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UiStatus> callback)
         {
             if (!IsAuthenticated()) {
                 Logger.e("ShowCompareProfileWithAlternativeNameHintsUI can only be called after authentication.");
-                InvokeCallbackOnGameThread(callback, UIStatus.NotAuthorized);
+                InvokeCallbackOnGameThread(callback, UiStatus.NotAuthorized);
                 return;
             }
             Logger.d($"ShowCompareProfileWithAlternativeNameHintsUI, userId={userId} callback is " + callback);
@@ -415,17 +415,17 @@ namespace GooglePlayGames {
             ShowLeaderboardUI(leaderboardId, LeaderboardTimeSpan.AllTime, null);
         }
 
-        public void ShowLeaderboardUI(string leaderboardId, Action<UIStatus> callback)
+        public void ShowLeaderboardUI(string leaderboardId, Action<UiStatus> callback)
         {
             var start = LeaderboardTimeSpan.AllTime;
             ShowLeaderboardUI(leaderboardId, start, callback);
         }
 
-        public void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UIStatus> callback)
+        public void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UiStatus> callback)
         {
             if (!IsAuthenticated()) {
                 Logger.e("ShowLeaderboardUI can only be called after authentication.");
-                callback?.Invoke(UIStatus.NotAuthorized);
+                callback?.Invoke(UiStatus.NotAuthorized);
                 return;
             }
             Logger.d($"ShowLeaderboardUI, lbId={leaderboardId} callback is " + callback);

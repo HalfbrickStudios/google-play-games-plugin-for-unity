@@ -25,6 +25,8 @@ namespace GooglePlayGames.BasicApi {
 
     public sealed class LeaderboardScoreData {
 
+        private readonly List<PlayGamesScore> m_scores = new();
+
         internal LeaderboardScoreData(string leaderboardId)
         {
             Id = leaderboardId;
@@ -35,8 +37,6 @@ namespace GooglePlayGames.BasicApi {
             Id     = leaderboardId;
             Status = status;
         }
-
-        private readonly List<PlayGamesScore> m_scores = new();
 
         public ulong          ApproximateCount { get; internal set; }
         public string         Id               { get; internal set; }
@@ -49,14 +49,18 @@ namespace GooglePlayGames.BasicApi {
         public IScore[] Scores  => m_scores.ToArray();
         public bool     IsValid => Status == ResponseStatus.Success || Status == ResponseStatus.SuccessWithStale;
 
-        [Obsolete("Use IsValid instead")]
-        public bool Valid => IsValid;
-
         internal int AddScore(PlayGamesScore score)
         {
             m_scores.Add(score);
             return m_scores.Count;
         }
+
+        #region Backward compatibility layer
+
+        [Obsolete("Use IsValid instead")]
+        public bool Valid => IsValid;
+
+        #endregion Backward compatibility layer
 
         #region Object implementation
 

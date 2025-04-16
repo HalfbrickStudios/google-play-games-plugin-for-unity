@@ -19,12 +19,26 @@ using System;
 namespace GooglePlayGames.BasicApi.SavedGame {
 
     public interface ISavedGameMetadata {
-        string   CoverImageURL         { get; }
+        string   CoverImageUrl         { get; }
         string   Description           { get; }
         string   Filename              { get; }
         bool     IsOpen                { get; }
-        DateTime LastModifiedTimestamp { get; }
-        TimeSpan TotalTimePlayed       { get; }
+        DateTime LastModifiedDateTime  { get; }
+        TimeSpan PlayedTime            { get; }
+
+        #region Backward compatibility layer
+
+        [Obsolete("Use CoverImageUrl instead")]
+        string CoverImageURL => CoverImageUrl;
+        
+        [Obsolete("Use LastModifiedDateTime instead")]
+        DateTime LastModifiedTimestamp => LastModifiedDateTime;
+
+        [Obsolete("Use PlayedTime instead")]
+        TimeSpan TotalTimePlayed => PlayedTime;
+
+        #endregion Backward compatibility layer
+
     }
 
 }

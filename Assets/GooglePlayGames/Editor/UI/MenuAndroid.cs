@@ -125,6 +125,7 @@ namespace GooglePlayGames.Editor.UI {
                     }
                 } catch (Exception e) {
                     Error(0x314, "Invalid classname: " + e.Message);
+                    Debug.LogException(e);
                 }
             }
 

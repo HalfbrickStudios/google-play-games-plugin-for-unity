@@ -18,10 +18,10 @@ using System;
 
 namespace GooglePlayGames.OurUtils {
 
-    public static class Misc {
+    internal static class Misc {
 
-        public static bool BuffersAreIdentical(byte[] a, byte[] b) {
-            if (a == b                ) return true;
+        public static bool AreBuffersIdentical(byte[] a, byte[] b) {
+            if (a == b) return true;
             if (a == null || b == null) return false;
             if (a.Length != b.Length  ) return false;
             for (var i = 0; i < a.Length; i += 1) {
@@ -32,19 +32,34 @@ namespace GooglePlayGames.OurUtils {
 
         public static T CheckNotNull<T>(T value)
         {
-            if (value == null) throw new ArgumentNullException();
+            if (value == null) {
+                Logger.e($"An argument is null when it must not");
+                throw new ArgumentNullException();
+            }
             return value;
         }
 
-        public static T CheckNotNull<T>(T value, string paramName)
+        public static T CheckNotNull<T>(T value, string name)
         {
-            if (value == null) throw new ArgumentNullException(paramName);
+            if (value == null) {
+                Logger.e($"Argument \"{name}\" is null when it must not");
+                throw new ArgumentNullException(name);
+            }
+            return value;
+        }
+
+        public static int CheckPositive(int value, string name)
+        {
+            if (value < 0) {
+                Logger.e($"Argument \"{name}\" is negative when it must not");
+                throw new ArgumentNullException(name);
+            }
             return value;
         }
 
         public static byte[] GetSubsetBytes(byte[] array, int offset, int length)
         {
-            if (array == null) throw new ArgumentNullException("array");
+            CheckNotNull(array, nameof(array));
             if (offset < 0 || offset >= array.Length) throw new ArgumentOutOfRangeException("offset");
             if (length < 0 || (array.Length - offset) < length) throw new ArgumentOutOfRangeException("length");
             if (offset == 0 && length == array.Length) return array;

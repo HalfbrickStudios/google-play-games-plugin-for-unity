@@ -27,7 +27,7 @@ namespace GooglePlayGames.BasicApi {
 
     public interface IPlayGamesClient {
       
-        void AskForLoadFriendsResolution(Action<UIStatus> callback);
+        void AskForLoadFriendsResolution(Action<UiStatus> callback);
         
         void Authenticate(Action<SignInStatus> callback);
 
@@ -79,11 +79,11 @@ namespace GooglePlayGames.BasicApi {
 
         void SetStepsAtLeast(string achId, int steps, Action<bool> callback);
 
-        void ShowAchievementsUI(Action<UIStatus> callback);
+        void ShowAchievementsUI(Action<UiStatus> callback);
 
-        void ShowCompareProfileWithAlternativeNameHintsUI(string otherUserId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UIStatus> callback);
+        void ShowCompareProfileWithAlternativeNameHintsUI(string otherUserId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UiStatus> callback);
 
-        void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UIStatus> callback);
+        void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UiStatus> callback);
 
         void SubmitScore(string leaderboardId, long score, Action<bool> successOrFailureCalllback);
 

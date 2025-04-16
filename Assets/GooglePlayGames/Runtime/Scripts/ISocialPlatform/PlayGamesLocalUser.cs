@@ -26,14 +26,14 @@ namespace GooglePlayGames {
 
     public sealed class PlayGamesLocalUser : PlayGamesUserProfile, ILocalUser {
 
+        private readonly PlayGamesPlatform m_platform;
+        private          PlayerStats       m_stats;
+
         internal PlayGamesLocalUser(PlayGamesPlatform plaf) : base("localUser", string.Empty, string.Empty)
         {
             m_platform = plaf;
             m_stats    = null;
         }
-
-        private readonly PlayGamesPlatform m_platform;
-        private          PlayerStats       m_stats;
 
         public     IUserProfile[] Friends         => m_platform.GetFriends();
         public     bool           IsAuthenticated => m_platform.IsAuthenticated();
@@ -82,9 +82,6 @@ namespace GooglePlayGames {
             }
         }
 
-        [Obsolete("Use IsFriend instead")]
-        public new bool Friend => IsFriend;
-
         public void GetStats(Action<CommonStatusCodes, PlayerStats> callback)
         {
             if (m_stats == null || !m_stats.IsValid) {
@@ -93,6 +90,13 @@ namespace GooglePlayGames {
                 callback(CommonStatusCodes.Success, m_stats);
             }
         }
+
+        #region Backward compatibility layer
+
+        [Obsolete("Use IsFriend instead")]
+        public new bool Friend => IsFriend;
+
+        #endregion Backward compatibility layer
 
         #region IUserProfile implementation
 

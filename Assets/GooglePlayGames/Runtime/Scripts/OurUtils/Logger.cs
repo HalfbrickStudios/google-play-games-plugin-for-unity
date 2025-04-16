@@ -21,47 +21,81 @@ using UnityEngine;
 
 namespace GooglePlayGames.OurUtils {
 
+    // TODO: Make internal, there's no reason to expose rather than make it compatible with the sample test
     public static class Logger {
 
-        private static readonly string Tag = $"[Play Games Plugin {Version.VersionString}]";
+        private static readonly string Tag = "[GPG]";
 
         public static bool DebugLogEnabled   { get; set; }
+        public static bool TraceLogEnabled   { get; set; }
         public static bool WarningLogEnabled { get; set; }
 
+        static Logger()
+        {
+#if DEBUG
+    #if GOOGLE_PLAY_GAMES_VERBOSE
+            DebugLogEnabled   = true;
+    #else
+            DebugLogEnabled   = false;
+    #endif
+    #if GOOGLE_PLAY_GAMES_TRACE
+            TraceLogEnabled   = true;
+    #else
+            TraceLogEnabled   = false;
+    #endif
+            WarningLogEnabled = true;
+#else
+            DebugLogEnabled   = false;
+            TraceLogEnabled   = false;
+            WarningLogEnabled = true;
+#endif
+        }
+
         [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
-        public static void d(string msg)
+        public static void d(string message)
         {
             if (!DebugLogEnabled) return;
-            PlayGamesHelperObject.RunOnGameThread(() => Debug.Log(ToLogMessage(string.Empty, "DEBUG", msg)));
+            var text = ToLogMessage(prefix: ">>>", type: "DEBUG", message);
+            Convert.RunUiAction(() => Debug.Log(text));
         }
 
         [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
-        public static void e(string msg)
+        public static void e(string message)
+        {
+            var text = ToLogMessage(prefix: "***", type: "ERROR", message);
+            Convert.RunUiAction(() => Debug.LogError(text));
+        }
+
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
+        public static void t(string message)
+        {
+            if (!TraceLogEnabled) return;
+            var text = ToLogMessage(prefix: "###", type: "TRACE", message);
+            Convert.RunUiAction(() => Debug.Log(text));
+        }
+
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
+        public static void w(string message)
         {
             if (!WarningLogEnabled) return;
-            PlayGamesHelperObject.RunOnGameThread(() => Debug.LogWarning(ToLogMessage("***", "ERROR", msg)));
+            var text = ToLogMessage(prefix: "!!!", type: "WARNING", message);
+            Convert.RunUiAction(() => Debug.LogWarning(text));
         }
 
         [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
-        public static void w(string msg)
-        {
-            if (!WarningLogEnabled) return;
-            PlayGamesHelperObject.RunOnGameThread(() => Debug.LogWarning(ToLogMessage("!!!", "WARNING", msg)));
-        }
+        public static string describe(byte[] bytes) => bytes == null ? "(null)" : $"byte[{bytes.Length}]";
 
-        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
-        public static string describe(byte[] b) => b == null ? "(null)" : $"byte[{b.Length}]";
-
-        private static string ToLogMessage(string prefix, string logType, string msg)
+        private static string ToLogMessage(string prefix, string type, string message)
         {
-            string timeString = null;
-            try {
-                timeString = DateTime.Now.ToString("MM/dd/yy H:mm:ss zzz");
-            } catch (Exception) {
-                PlayGamesHelperObject.RunOnGameThread(() => Debug.LogWarning($"*** {Tag} ERROR: Failed to format DateTime.Now"));
-                timeString = string.Empty;
-            }
-            return $"{prefix} {Tag} {timeString} {logType}: {msg}";
+            // string timeString = null;
+            // try {
+            //     timeString = DateTime.Now.ToString("MM/dd/yy H:mm:ss zzz");
+            // } catch (Exception) {
+            //     Convert.RunUiAction(() => Debug.LogWarning($"!!! {Tag} ERROR: Failed to format DateTime.Now"));
+            //     timeString = string.Empty;
+            // }
+            // return $"{prefix} {Tag} {timeString} {type}: {message}";
+            return $"{prefix} {Tag} [{type}]: {message}";
         }
 
     }

@@ -1,0 +1,620 @@
+// <copyright file="NativeClient.cs" company="Google Inc.">
+// Copyright (C) 2014 Google Inc.  All Rights Reserved.
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//    limitations under the License.
+// </copyright>
+
+#if UNITY_ANDROID
+
+using System;
+using System.Linq;
+
+using UnityEngine.SocialPlatforms;
+
+using GooglePlayGames.Android.Java;
+using GooglePlayGames.OurUtils;
+
+using Logger = GooglePlayGames.OurUtils.Logger;
+
+using UAJO = UnityEngine.AndroidJavaObject;
+using UUP  = UnityEngine.SocialPlatforms.IUserProfile;
+
+using AA    = GooglePlayGames.BasicApi.Achievement;
+using ACSC  = GooglePlayGames.BasicApi.CommonStatusCodes;
+using AFLVS = GooglePlayGames.BasicApi.FriendsListVisibilityStatus;
+using AIEC  = GooglePlayGames.BasicApi.Events.IEventsClient;
+using AIPGC = GooglePlayGames.BasicApi.IPlayGamesClient;
+using AISGC = GooglePlayGames.BasicApi.SavedGame.ISavedGameClient;
+using ALC   = GooglePlayGames.BasicApi.LeaderboardCollection;
+using ALFS  = GooglePlayGames.BasicApi.LoadFriendsStatus;
+using ALS   = GooglePlayGames.BasicApi.LeaderboardStart;
+using ALSD  = GooglePlayGames.BasicApi.LeaderboardScoreData;
+using ALTS  = GooglePlayGames.BasicApi.LeaderboardTimeSpan;
+using AP    = GooglePlayGames.BasicApi.Player;
+using APS   = GooglePlayGames.BasicApi.PlayerStats;
+using ARA   = GooglePlayGames.BasicApi.RecallAccess;
+using ARS   = GooglePlayGames.BasicApi.ResponseStatus;
+using ASGRS = GooglePlayGames.BasicApi.SavedGame.SavedGameRequestStatus;
+using ASIS  = GooglePlayGames.BasicApi.SignInStatus;
+using ASPT  = GooglePlayGames.BasicApi.ScorePageToken;
+using AUS   = GooglePlayGames.BasicApi.UiStatus;
+
+using APGCAS = GooglePlayGames.Android.PlayGamesClient.AuthState;
+
+using JLSBI = GooglePlayGames.Android.Java.LeaderboardScoreBuffer.Instance;
+using JLSsI = GooglePlayGames.Android.Java.LeaderboardsClient.LeaderboardScores.Instance;
+using JOI   = GooglePlayGames.Android.Java.Object.Instance;
+
+namespace GooglePlayGames.Android {
+
+    public sealed class PlayGamesClient : AIPGC {
+
+        internal enum AuthState {
+            Authenticated   = 1,
+            Unauthenticated = 0,
+        }
+
+        private volatile APGCAS m_authState = APGCAS.Unauthenticated;
+        private readonly object m_authStateLock = new();
+        private volatile AIEC m_eventsClient = null;
+        private UUP[] m_friends = new UUP[0];
+        private readonly int m_friendsMaxResults = 200;
+        private readonly object m_gameServicesLock = new();
+        private ALFS m_lastLoadFriendsStatus = ALFS.Unknown;
+        private readonly int m_leaderboardMaxResults = 25;
+        private volatile AISGC m_savedGameClient = null;
+        private volatile AP m_user = null;
+        private UAJO m_friendsResolutionException = null;
+
+        private static bool IsApiException(JOI exception)
+        {
+            var name = exception.JGetClass().GetName();
+            return name == "com.google.android.gms.common.api.ApiException";
+        }
+
+        internal PlayGamesClient()
+        {
+            PlayGamesHelperObject.CreateObject();
+            PlayGamesSdk.Initialize();
+        }
+
+        private void Authenticate(bool isAutoSignIn, Action<ASIS> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            lock (m_authStateLock) {
+                if (m_authState == APGCAS.Authenticated) {
+                    Logger.d("Already authenticated.");
+                    callback(ASIS.Success);
+                    return;
+                }
+            }
+
+            using var jClient = PlayGames.JGetGamesSignInClient();
+            using var jTask = isAutoSignIn ? jClient.JIsAuthenticated() : jClient.JSignIn();
+            jTask.JAddOnSuccessListener(jResponse => {
+                SignInOnResult(jResponse.IsAuthenticated(), callback);
+            }).JAddOnFailureListener(jException => {
+                Logger.e("Authentication failed - " + jException.JToString());
+                callback(ASIS.InternalError);
+            });
+        }
+
+        private ALSD CreateLeaderboardScoreData(string id, ALC collection, ALTS span, ARS status, JLSsI jScores)
+        {
+            var result = Convert.ToAndroidLeaderboardScoreData(jScores, id, status, collection, span);
+            using var jLeaderboard = jScores.JGetLeaderboard();
+            using var jVariants = jLeaderboard.JGetVariants();
+            using var jVariant = jVariants.JGet(0);
+            if (jVariant.HasPlayerInfo()) {
+                result.PlayerScore = Convert.ToAndroidPlayerGameScore(jVariant, id, m_user.Id);
+            }
+            result.ApproximateCount = (ulong)jVariant.GetNumScores();
+            return result;
+        }
+
+        private void LoadAllFriends(int pageSize, bool reload, bool more, Action<bool> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            LoadFriendsPaginated(pageSize, more, reload, result => {
+                m_lastLoadFriendsStatus = result;
+                switch (result) {
+                    case ALFS.Completed:
+                        callback(true);
+                        break;
+                    case ALFS.LoadMore:
+                        LoadAllFriends(pageSize, reload: false, more: true, callback);
+                        break;
+                    case ALFS.ResolutionRequired:
+                    case ALFS.InternalError:
+                    case ALFS.NotAuthorized:
+                        callback(false);
+                        break;
+                    default:
+                        Logger.d("There was an error when loading friends." + result);
+                        callback(false);
+                        break;
+                }
+            });
+        }
+
+        private void LoadFriendsPaginated(int size, bool more, bool reload, Action<ALFS> callback)
+        {
+            m_friendsResolutionException = null;
+            callback = Convert.ToUiAction(callback);
+
+            using var jClient = PlayGames.JGetPlayersClient();
+            using var jTask = more ? jClient.JLoadMoreFriends(size) : jClient.JLoadFriends(size, reload);
+            jTask.JAddOnSuccessListener(jData => {
+                using (var jPlayers = jData.JGet()) {
+                    using (var jBundle = jPlayers.JGetMetadata()) {
+                        var cursor = jBundle?.GetString("next_page_token");
+                        m_lastLoadFriendsStatus = cursor != null ? ALFS.LoadMore : ALFS.Completed;
+                    }
+                    m_friends = Convert.ToAndroidPlayerProfile(jPlayers).ToArray();
+                }
+                callback(m_lastLoadFriendsStatus);
+            }).JAddOnFailureListener(jException => {
+                // HelperFragmentClass.Instance.IsResolutionRequired(exception, resolutionRequired => {
+                //     if (resolutionRequired) {
+                //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
+                //         m_lastLoadFriendsStatus = LoadFriendsStatus.ResolutionRequired;
+                //         m_friends = new IUserProfile[0];
+                //         InvokeCallbackOnGameThread(callback, LoadFriendsStatus.ResolutionRequired);
+                //     } else {
+                //         m_friendsResolutionException = null;
+                //         if (IsApiException(exception)) {
+                //             var casted = exception as ApiExceptionObject;
+                //             var statusCode = casted.GetStatusCode();
+                //             if (statusCode == /* GamesClientStatusCodes.NETWORK_ERROR_NO_DATA */ 26504) {
+                //                 m_lastLoadFriendsStatus = LoadFriendsStatus.NetworkError;
+                //                 InvokeCallbackOnGameThread(callback, LoadFriendsStatus.NetworkError);
+                //                 return;
+                //             }
+                //         }
+                // 
+                //         m_lastLoadFriendsStatus = LoadFriendsStatus.InternalError;
+                //         Logger.e("LoadFriends failed: " + jException.JToString());
+                //         InvokeCallbackOnGameThread(callback, LoadFriendsStatus.InternalError);
+                //     }
+                // });
+            });
+        }
+
+        private void SignInOnResult(bool isAuthenticated, Action<ASIS> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (!isAuthenticated) {
+                lock (m_authStateLock) {
+                    Logger.e("Returning an error code.");
+                    callback(ASIS.Canceled);
+                }
+                return;
+            }
+
+            using var jTask = PlayGames.JGetPlayersClient().JGetCurrentPlayer();
+            jTask.JAddOnCompleteListener(jIt => {
+                if (jIt.JIsSuccessful()) {
+                    using (var jData = jIt.JGetResult()) {
+                        using var jPlayer = jData.JGet();
+                        m_user = Convert.ToAndroidPlayer(jPlayer);
+                    }
+                    lock (m_gameServicesLock) {
+                        m_eventsClient = new EventsClient();
+                        m_savedGameClient = new SavedGameClient(this);
+                    }
+                    m_authState = APGCAS.Authenticated;
+                    callback(ASIS.Success);
+                    Logger.d("Authentication succeeded");
+                    LoadAchievements(ignore => { });
+                } else {
+                    if (jIt.JIsCanceled()) {
+                        callback(ASIS.Canceled);
+                        return;
+                    }
+                    using var jException = jIt.JGetException();
+                    Logger.e("Authentication failed - " + jException.JToString());
+                    callback(ASIS.InternalError);
+                }
+            });
+        }
+
+        #region IPlayGamesClient implementation
+
+        public void AskForLoadFriendsResolution(Action<AUS> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (m_friendsResolutionException != null) {
+                // HelperFragmentClass.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
+                return;
+            }
+
+            Logger.d("The developer asked for access to the friends list but there is no intent to trigger the UI. " +
+                     "This may be because the user has granted access already or the game has not called loadFriends() before.");
+            using var jClient = PlayGames.JGetPlayersClient();
+            using var jTask = jClient.JLoadFriends(size: 1, reload: false);
+            jTask.JAddOnSuccessListener(jData => {
+                callback(AUS.Valid);
+            }).JAddOnFailureListener(jException => {
+                // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
+                //     if (resolutionRequired) {
+                //         m_friendsResolutionException = exception.Call<AndroidJavaObject>("getResolution");
+                //         // HelperFragmentClass.AskForLoadFriendsResolution(m_friendsResolutionException, AsOnGameThreadCallback(callback));
+                //         return;
+                //     }
+                //     if (IsApiException(exception)) {
+                //         var casted = exception as AEO;
+                //         var statusCode = casted.GetStatusCode();
+                //         if (statusCode == /* GamesClientStatusCodes.NETWORK_ERROR_NO_DATA */ 26504) {
+                //             InvokeCallbackOnGameThread(callback, UIStatus.NetworkError);
+                //             return;
+                //         }
+                //     }
+                //     Logger.e("LoadFriends failed: " + jException.JToString());
+                //     InvokeCallbackOnGameThread(callback, UIStatus.InternalError);
+                // });
+            });
+        }
+
+        public void Authenticate(Action<ASIS> callback) => Authenticate(true, callback);
+
+        public AIEC GetEventsClient()
+        {
+            lock (m_gameServicesLock) {
+                return m_eventsClient;
+            }
+        }
+
+        public UUP[] GetFriends() => m_friends;
+
+        public void GetFriendsListVisibility(bool reload, Action<AFLVS> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            using var jClient = PlayGames.JGetPlayersClient();
+            using var jTask = jClient.JGetCurrentPlayer(reload);
+            jTask.JAddOnSuccessListener(jData => {
+                using var jPlayer = jData.JGet();
+                using var jInfo = jPlayer.JGetCurrentPlayerInfo();
+                callback(jInfo.GetFriendsListVisibilityStatus());
+            }).JAddOnFailureListener(jException => {
+                callback(AFLVS.NetworkError);
+            });
+        }
+
+        public ALFS GetLastLoadFriendsStatus() => m_lastLoadFriendsStatus;
+
+        public void GetPlayerStats(Action<ACSC, APS> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            using var jClient = PlayGames.JGetPlayerStatsClient();
+            using var jTask = jClient.JLoadPlayerStats(reload: false);
+            jTask.JAddOnSuccessListener(jData => {
+                var stats = null as APS;
+                using (var jStats = jData.JGet()) {
+                    stats = Convert.ToAndroidPlayerStats(jStats);
+                }
+                callback(ACSC.Success, stats);
+            }).JAddOnFailureListener(jException => {
+                Logger.e("GetPlayerStats failed: " + jException.JToString());
+                var statusCode = IsAuthenticated() ? ACSC.InternalError : ACSC.SignInRequired;
+                callback(statusCode, new APS());
+            });
+        }
+
+        public AISGC GetSavedGameClient()
+        {
+            lock (m_gameServicesLock) {
+                return m_savedGameClient;
+            }
+        }
+
+        public string GetUserDisplayName() => m_user?.UserName;
+
+        public string GetUserId() => m_user?.Id;
+
+        public string GetUserImageUrl() => m_user?.AvatarURL;
+
+        public void IncrementAchievement(string id, int steps, Action<bool> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (!IsAuthenticated()) {
+                callback(false);
+                return;
+            }
+
+            using (var jClient = PlayGames.JGetAchievementsClient()) {
+                jClient.Increment(id, steps);
+            }
+            callback(true);
+        }
+
+        public bool IsAuthenticated()
+        {
+            lock (m_authStateLock) {
+                return m_authState == APGCAS.Authenticated;
+            }
+        }
+
+        public int LeaderboardMaxResults() => m_leaderboardMaxResults;
+
+        public void LoadAchievements(Action<AA[]> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            using var jClient = PlayGames.JGetAchievementsClient();
+            using var jTask = jClient.JLoad(reload: false);
+            jTask.JAddOnSuccessListener(jData => {
+                var achievements = null as AA[];
+                using (var jAchievements = jData.JGet()) {
+                    achievements = Convert.ToAndroidAchievement(jAchievements).ToArray();
+                }
+                callback(achievements);
+            }).JAddOnFailureListener(jException => {
+                Logger.e("LoadAchievements failed: " + jException.JToString());
+                callback(new AA[0]);
+            });
+        }
+
+        public void LoadFriends(Action<bool> callback) => LoadAllFriends(m_friendsMaxResults, reload: false, more: false, callback);
+
+        public void LoadFriends(int size, bool reload, Action<ALFS> callback) => LoadFriendsPaginated(size, more: false, reload, callback);
+
+        public void LoadMoreFriends(int size, Action<ALFS> callback) => LoadFriendsPaginated(size, more: true, reload: false, callback);
+
+        public void LoadMoreScores(ASPT token, int rows, Action<ALSD> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            using var jClient       = PlayGames.JGetLeaderboardsClient();
+            using var jLeaderboards = (JLSBI)token.InternalObject;
+                  var  direction    = Convert.ToJavaPageDirection(token.Direction);
+            using var jTask         = jClient.JLoadMoreScores(jLeaderboards, rows, direction);
+            jTask.JAddOnSuccessListener(jData => {
+                var leaderboard = null as ALSD;
+                using (var jScores = jData.JGet()) {
+                    var status = jData.GetResponseStatus();
+                    leaderboard = CreateLeaderboardScoreData(token.LeaderboardId, token.Collection, token.TimeSpan, status, jScores);
+                }
+                callback(leaderboard);
+            }).JAddOnFailureListener(jException => {
+                // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
+                //     if (resolutionRequired) {
+                //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
+                //         InvokeCallbackOnGameThread(callback, new LeaderboardScoreData(token.LeaderboardId, ResponseStatus.ResolutionRequired));
+                //     } else {
+                //         m_friendsResolutionException = null;
+                //     }
+                // });
+                Logger.e("LoadMoreScores failed: " + jException.JToString());
+                callback(new ALSD(token.LeaderboardId, ARS.InternalError));
+            });
+        }
+
+        public void LoadScores(string id, ALS start, int rows, ALC collection, ALTS span, Action<ALSD> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            using var jClient = PlayGames.JGetLeaderboardsClient();
+            var jSpan = Convert.ToJavaLeaderboardVariantTimeSpan(span);
+            var jCollection = Convert.ToJavaLeaderboardVariantCollection(collection);
+            using var jtask = start == ALS.TopScores ? jClient.JLoadTopScores(id, jSpan, jCollection, rows) : jClient.JLoadPlayerCenteredScores(id, jSpan, jCollection, rows);
+            jtask.JAddOnSuccessListener(jData => {
+                var data = null as ALSD;
+                using (var jScores = jData.JGet()) {
+                    data = CreateLeaderboardScoreData(id, collection, span, jData.GetResponseStatus(), jScores);
+                }
+                callback(data);
+            }).JAddOnFailureListener(jException => {
+                // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
+                //     if (resolutionRequired) {
+                //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
+                //         InvokeCallbackOnGameThread(callback, new LeaderboardScoreData(id, ResponseStatus.ResolutionRequired));
+                //     } else {
+                //         m_friendsResolutionException = null;
+                //     }
+                // });
+                Logger.e("LoadScores failed: " + jException.JToString());
+                callback(new ALSD(id, ARS.InternalError));
+            });
+        }
+
+        public void LoadUsers(string[] userIds, Action<IUserProfile[]> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (!IsAuthenticated()) {
+                callback(new UUP[0]);
+                return;
+            }
+
+            using var jClient = PlayGames.JGetPlayersClient();
+            var @lock = new object();
+            var count = userIds.Length;
+            var acc = 0;
+            var users = new UUP[count];
+            for (var i = 0; i < count; i += 1) {
+                using var jTask = jClient.JLoadPlayer(userIds[i]);
+                jTask.JAddOnSuccessListener(jData => {
+                    using (var jPlayer = jData.JGet()) {
+                        var id = jPlayer.GetPlayerId();
+                        for (var j = 0; j < count; j += 1) {
+                            if (id == userIds[j]) {
+                                users[j] = Convert.ToAndroidPlayer(jPlayer);
+                                break;
+                            }
+                        }
+                    }
+                    lock (@lock) {
+                        acc += 1;
+                        if (acc == count) callback(users);
+                    }
+                }).JAddOnFailureListener(jException => {
+                    Logger.e("LoadUsers failed for index " + i + " with: " + jException.JToString());
+                    lock (@lock) {
+                        acc += 1;
+                        if (acc == count) callback(users);
+                    }
+                });
+            }
+        }
+
+        public void ManuallyAuthenticate(Action<ASIS> callback) => Authenticate(false, callback);
+
+        public void RequestRecallAccessToken(Action<ARA> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            using var jClient = PlayGames.JGetRecallClient();
+            using var jTask = jClient.JRequestRecallAccess();
+            jTask.JAddOnSuccessListener(jAccess => {
+                var id = jAccess.GetSessionId();
+                callback(new ARA(id));
+            }).JAddOnFailureListener(jException => {
+                Logger.e("Requesting Recall access task failed - " + jException.JToString());
+                callback(null);
+            });
+        }
+
+        public void RequestServerSideAccess(bool reload, Action<string> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            using var jClient = PlayGames.JGetGamesSignInClient();
+            using var jTask = jClient.JRequestServerSideAccess(reload: true, webId: string.Empty);
+            jTask.JAddOnSuccessListener(callback).JAddOnFailureListener(jException => {
+                Logger.e("Requesting server side access task failed - " + jException.JToString());
+                callback(null);
+            });
+        }
+
+        public void RevealAchievement(string achId, Action<bool> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (!IsAuthenticated()) {
+                callback(false);
+                return;
+            }
+
+            using var jClient = PlayGames.JGetAchievementsClient();
+            jClient.Reveal(achId);
+            callback(true);
+        }
+
+        public void SetStepsAtLeast(string achId, int steps, Action<bool> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (!IsAuthenticated()) {
+                callback(false);
+                return;
+            }
+
+            using var jClient = PlayGames.JGetAchievementsClient();
+            jClient.SetSteps(achId, steps);
+            callback(true);
+        }
+
+        public void ShowAchievementsUI(Action<AUS> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+            if (!IsAuthenticated()) {
+                callback(AUS.NotAuthorized);
+                return;
+            }
+            // HelperFragmentClass.ShowAchievementsUI(callback);
+        }
+
+        public void ShowCompareProfileWithAlternativeNameHintsUI(string playerId, string otherPlayerInGameName, string currentPlayerInGameName, Action<AUS> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+            // HelperFragmentClass.ShowCompareProfileWithAlternativeNameHintsUI(playerId, otherPlayerInGameName, currentPlayerInGameName, AsOnGameThreadCallback(callback));
+        }
+
+        public void ShowLeaderboardUI(string leaderboardId, ALTS span, Action<AUS> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (!IsAuthenticated()) {
+                callback(AUS.NotAuthorized);
+                return;
+            }
+
+            if (leaderboardId == null) {
+                // HelperFragmentClass.ShowAllLeaderboardsUI(callback);
+            } else {
+                // HelperFragmentClass.ShowLeaderboardUI(leaderboardId, span, callback);
+            }
+        }
+
+        public void SubmitScore(string id, long score, string metadata, Action<bool> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (!IsAuthenticated()) {
+                callback(false);
+                return;
+            }
+
+            using var jClient = PlayGames.JGetLeaderboardsClient();
+            jClient.SubmitScore(id, score, metadata);
+            callback(true);
+        }
+
+        public void SubmitScore(string leaderboardId, long score, Action<bool> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (!IsAuthenticated()) {
+                callback(false);
+                return;
+            }
+
+            using var jClient = PlayGames.JGetLeaderboardsClient();
+            jClient.SubmitScore(leaderboardId, score);
+            callback(true);
+        }
+
+        public void UnlockAchievement(string achId, Action<bool> callback)
+        {
+            callback = Convert.ToUiAction(callback);
+
+            if (!IsAuthenticated()) {
+                callback(false);
+                return;
+            }
+
+            using var jClient = PlayGames.JGetAchievementsClient();
+            jClient.Unlock(achId);
+            callback(true);
+        }
+
+        #endregion IPlayGamesClient implementation
+
+    }
+
+    internal static class PlayGamesClientExtensions {
+
+        public static ASGRS GetSavedGameRequestStatus(this PlayGamesClient self) => Convert.ToAndroidSavedGameRequestStatus(self.IsAuthenticated());
+
+    }
+
+}
+
+#endif

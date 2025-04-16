@@ -27,17 +27,14 @@ namespace GooglePlayGames.BasicApi {
             SessionId = sessionId;
         }
 
-        public string SessionId
-        {
-            get;
-            internal set;
-        }
+        public string SessionId { get; internal set; }
+
+        #region Backward compatibility layer
 
         [Obsolete("Use SessionId instead.")]
-        public string sessionId {
-            get => SessionId;
-            set => SessionId = value;
-        }
+        public string sessionId { get => SessionId; set => SessionId = value; }
+
+        #endregion Backward compatibility layer
 
     }
 

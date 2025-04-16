@@ -19,12 +19,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Google;
+
 using UnityEditor;
+using UnityEngine;
+
+using Google;
 
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
@@ -58,6 +60,7 @@ namespace GooglePlayGames.Editor {
         private const string GAME_INFO_RELATIVE_PATH = "Runtime/Scripts/GameInfo.cs";
         private const string MANIFEST_RELATIVE_PATH  = "../../Plugins/Android/GooglePlayGamesManifest.androidlib/AndroidManifest.xml";
         private const string ROOT_DIRECTORY_NAME     = "GooglePlayGames";
+        private const string ROOT_PACKAGE_NAME       = "com.google.play.games";
 
         private static string s_rootPath = string.Empty;
 
@@ -79,6 +82,8 @@ namespace GooglePlayGames.Editor {
             set {
                 if (value.Contains(ROOT_DIRECTORY_NAME + '@')) {
                     s_rootPath = value.Replace("Packages", "Library/PackageCache");
+                } else {
+                    s_rootPath = value;
                 }
             }
         }
@@ -87,13 +92,13 @@ namespace GooglePlayGames.Editor {
             get {
                 if (!string.IsNullOrEmpty(RootPathInternal)) return RootPathInternal;
 
-                var package = PackageInfo.FindForAssetPath("Packages/" + ROOT_DIRECTORY_NAME);
+                var package = PackageInfo.FindForAssetPath("Packages/" + ROOT_PACKAGE_NAME);
                 if (!string.IsNullOrEmpty(package?.resolvedPath)) {
                     return RootPathInternal = SlashesToPlatformSeparator(package.resolvedPath);
                 }
 
-                var caches   = Directory.GetDirectories("Library/PackageCache", $"{ROOT_DIRECTORY_NAME}*", SearchOption.TopDirectoryOnly);
-                var packages = Directory.GetDirectories("Packages", ROOT_DIRECTORY_NAME, SearchOption.TopDirectoryOnly);
+                var caches   = Directory.GetDirectories("Library/PackageCache", $"{ROOT_PACKAGE_NAME}*", SearchOption.TopDirectoryOnly);
+                var packages = Directory.GetDirectories("Packages", ROOT_PACKAGE_NAME, SearchOption.TopDirectoryOnly);
                 var combined = caches.Concat(packages);
 #if GOOGLE_PLAY_GAMES_PROJECT
                 var assets   = Directory.GetDirectories("Assets", ROOT_DIRECTORY_NAME, SearchOption.TopDirectoryOnly);
@@ -103,7 +108,7 @@ namespace GooglePlayGames.Editor {
                 switch (matches.Count) {
                     case 0:
                         // Error(0x141, "cannot find the root path of the package");
-                        throw new Exception($"Not a single directory named {ROOT_DIRECTORY_NAME} was found");
+                        throw new Exception($"Not a single directory named {ROOT_DIRECTORY_NAME} or {ROOT_PACKAGE_NAME} was found");
                     case 1:
                         RootPathInternal = SlashesToPlatformSeparator(matches.First());
                         break;
@@ -129,7 +134,7 @@ namespace GooglePlayGames.Editor {
 
         public static void CheckAndFixDependencies()
         {
-            var dependencies = SlashesToPlatformSeparator(Path.Combine(RootPath, "Editor/GooglePlayGamesPluginDependencies.xml"));
+            var dependencies = SlashesToPlatformSeparator(Path.Combine(RootPath, "Editor/GooglePlayGamesDependencies.xml"));
 
             var xml = new XmlDocument();
             xml.Load(dependencies);
@@ -179,8 +184,8 @@ namespace GooglePlayGames.Editor {
 
         public static void EnableExternalDependencyResolverFlags(bool? enable = null, bool? verbose = null)
         {
-            if (enable  != null) Google.VersionHandler.Enabled               = (bool)enable;
-            if (verbose != null) Google.VersionHandler.VerboseLoggingEnabled = (bool)verbose;
+            if (enable  != null) VersionHandler.Enabled               = (bool)enable;
+            if (verbose != null) VersionHandler.VerboseLoggingEnabled = (bool)verbose;
         }
 
         public static void EnsureDirExists(string dir)
@@ -193,7 +198,7 @@ namespace GooglePlayGames.Editor {
 
         public static void GenerateAndroidManifest()
         {
-            var content = ReadEditorTemplate("template-AndroidManifest");
+            var content = ReadEditorTemplate("AndroidManifest.xml");
             var extend = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(ProjectSettings.Instance.Get(KEY_SERVICE_ID))) {
                 extend[PLACEHOLDER_NEARBY_PERMISSIONS] = string.Join("\n", new[] {
@@ -312,7 +317,12 @@ namespace GooglePlayGames.Editor {
             return sr.ReadToEnd();
         }
 
-        private static string ReadEditorTemplate(string name) => ReadFile(Path.Combine(RootPath, "Editor", $"{name}.txt"));
+        private static string ReadEditorTemplate(string name)
+        {
+            var path = Path.Combine(RootPath, "Editor", "Templates", $"{name}.template");
+            Debug.Log("Reading template file: " + path);
+            return ReadFile(path);
+        }
 
         public static object ResolveExternalDependencies()
         {
@@ -331,7 +341,7 @@ namespace GooglePlayGames.Editor {
 
         public static void UpdateGameInfo()
         {
-            var contents = ReadEditorTemplate("template-GameInfo");
+            var contents = ReadEditorTemplate("GameInfo.cs");
             foreach (var ent in s_replacements) {
                 var value = ProjectSettings.Instance.Get(ent.Value);
                 contents = contents.Replace(ent.Key, value);
@@ -369,7 +379,7 @@ namespace GooglePlayGames.Editor {
                 constants += $"        public const string {key} = \"{ent.Value}\"; // <GPGSID>\n";
             }
 
-            var contents = ReadEditorTemplate("template-Constants");
+            var contents = ReadEditorTemplate("Constants.cs");
             if (@namespace != string.Empty) {
                 contents = contents.Replace(PLACEHOLDER_NAMESPACE_START, "namespace " + @namespace + "\n{");
             } else {
