@@ -50,6 +50,24 @@ namespace GooglePlayGames.Android.Java {
                 Call("release");
             }
 
+            #region IDisposable implementation
+
+            private bool m_disposed = false;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (!m_disposed) {
+                    if (disposing) {
+                        // No-op, no managed resources to dispose
+                    }
+                    Release();
+                    m_disposed = true;
+                }
+                base.Dispose(disposing);
+            }
+
+            #endregion IDisposable implementation
+
         }
 
     }
