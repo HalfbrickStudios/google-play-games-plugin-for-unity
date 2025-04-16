@@ -14,24 +14,24 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 
-using UnityEngine.SocialPlatforms;
+using GPGP = GooglePlayGames.PlayGamesPlatform;
+
+using UIS = UnityEngine.SocialPlatforms.IScore;
 
 namespace GooglePlayGames {
 
-    public sealed class PlayGamesScore : IScore {
+    public sealed class PlayGamesScore : UIS {
 
         internal PlayGamesScore(DateTime date, string leaderboardId, ulong rank, string playerId, ulong value, string metadata)
         {
-            Date          = date;
-            LeaderboardId = leaderboardId;
-            MetaData      = metadata;
-            Rank          = (int)rank;
-            UserId        = playerId;
-            Value         = (long) value;
+            Date          =       date;
+            LeaderboardId =       leaderboardId;
+            MetaData      =       metadata;
+            Rank          =  (int)rank;
+            UserId        =       playerId;
+            Value         = (long)value;
         }
 
         public DateTime Date           { get;      }
@@ -53,12 +53,10 @@ namespace GooglePlayGames {
         [Obsolete("Use UserId instead")]         public string   userID         { get => UserId;                                       }
         [Obsolete("Use Value instead")]          public long     value          { get => Value;          set => Value         = value; }
 
-        public void ReportScore(Action<bool> callback) => PlayGamesPlatform.Instance.ReportScore(Value, LeaderboardId, MetaData, callback);
+        public void ReportScore(Action<bool> callback) => GPGP.Instance.ReportScore(Value, LeaderboardId, MetaData, callback);
 
         #endregion IScore implementation
 
     }
 
 }
-
-#endif

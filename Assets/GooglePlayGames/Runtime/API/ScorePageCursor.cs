@@ -14,7 +14,9 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
+using ALC  = GooglePlayGames.Api.LeaderboardCollection;
+using ALTS = GooglePlayGames.Api.LeaderboardTimeSpan;
+using ASPD = GooglePlayGames.Api.ScorePageDirection;
 
 namespace GooglePlayGames.Api {
 
@@ -23,27 +25,25 @@ namespace GooglePlayGames.Api {
         Forward  = 1,
     }
 
-    public sealed class ScorePageToken {
+    public sealed class ScorePageCursor {
 
-        internal ScorePageToken(object internalObject, string id, LeaderboardCollection collection, LeaderboardTimeSpan timespan, ScorePageDirection direction)
+        internal ScorePageCursor(object token, string leaderboardId, ALC collection, ALTS span, ASPD direction)
         {
-            InternalObject = internalObject;
+            LeaderboardScoreBuffer = token;
             
-            Collection = collection;
+            Collection     = collection;
             Direction      = direction;
-            LeaderboardId  = id;
-            TimeSpan       = timespan;
+            LeaderboardId  = leaderboardId;
+            TimeSpan       = span;
         }
 
-        internal object InternalObject { get; }
+        internal object LeaderboardScoreBuffer { get; }
 
-        public LeaderboardCollection Collection    { get; }
-        public ScorePageDirection    Direction     { get; }
-        public string                LeaderboardId { get; }
-        public LeaderboardTimeSpan   TimeSpan      { get; }
+        public ALC    Collection    { get; }
+        public ASPD   Direction     { get; }
+        public string LeaderboardId { get; }
+        public ALTS   TimeSpan      { get; }
 
     }
 
 }
-
-#endif

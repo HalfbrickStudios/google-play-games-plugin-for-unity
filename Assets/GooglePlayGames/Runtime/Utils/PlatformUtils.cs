@@ -14,20 +14,16 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 namespace GooglePlayGames.Utils {
 
     internal static class PlatformUtils {
 
-#if UNITY_EDITOR
-        public static bool Supported => false;
-#else
+#if UNITY_ANDROID && !UNITY_EDITOR
         public static bool Supported => true;
+#else
+        public static bool Supported => false;
 #endif
 
     }
 
 }
-
-#endif

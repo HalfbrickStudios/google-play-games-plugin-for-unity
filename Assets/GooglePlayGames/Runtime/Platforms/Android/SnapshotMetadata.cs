@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 
 using GooglePlayGames.Api.SavedGame;
+using GooglePlayGames.Utils;
 
 using JSCI = GooglePlayGames.Android.Java.SnapshotContents.Instance;
 using JSI  = GooglePlayGames.Android.Java.Snapshot.Instance;
@@ -41,7 +42,7 @@ namespace GooglePlayGames.Android {
         public string   Filename             => JSnapshotMetadata.GetUniqueName();
         public bool     IsOpen               => JSnapshotContents != null && !JSnapshotContents.IsClosed();
         public TimeSpan PlayedTime           => TimeSpan.FromMilliseconds(JSnapshotMetadata.GetPlayedTime());
-        public DateTime LastModifiedDateTime => Convert.ToAndroidDateTime(JSnapshotMetadata.GetLastModifiedTimestamp());
+        public DateTime LastModifiedDateTime => Utility.ToAndroidDateTime(JSnapshotMetadata.GetLastModifiedTimestamp());
 
         #endregion ISavedGameMetadata implementation
 

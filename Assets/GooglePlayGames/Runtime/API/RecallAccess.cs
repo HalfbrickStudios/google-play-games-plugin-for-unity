@@ -14,8 +14,6 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 
 namespace GooglePlayGames.Api {
@@ -39,5 +37,3 @@ namespace GooglePlayGames.Api {
     }
 
 }
-
-#endif

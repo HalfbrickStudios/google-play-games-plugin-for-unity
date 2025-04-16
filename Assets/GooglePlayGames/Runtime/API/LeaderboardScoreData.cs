@@ -14,42 +14,43 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 using System.Collections.Generic;
 
 using UnityEngine.SocialPlatforms;
 
+using APGS = GooglePlayGames.PlayGamesScore;
+using ARS  = GooglePlayGames.Api.ResponseStatus;
+using ASPC = GooglePlayGames.Api.ScorePageCursor;
+
 namespace GooglePlayGames.Api {
 
     public sealed class LeaderboardScoreData {
 
-        private readonly List<PlayGamesScore> m_scores = new();
+        private readonly List<APGS> m_scores = new();
 
         internal LeaderboardScoreData(string leaderboardId)
         {
             Id = leaderboardId;
         }
 
-        internal LeaderboardScoreData(string leaderboardId, ResponseStatus status)
+        internal LeaderboardScoreData(string leaderboardId, ARS status) : this(leaderboardId)
         {
-            Id     = leaderboardId;
             Status = status;
         }
 
-        public ulong          ApproximateCount { get; internal set; }
-        public string         Id               { get; internal set; }
-        public ScorePageToken NextPageToken    { get; internal set; }
-        public IScore         PlayerScore      { get; internal set; }
-        public ScorePageToken PrevPageToken    { get; internal set; }
-        public ResponseStatus Status           { get; internal set; }
-        public string         Title            { get; internal set; }
+        public ulong  ApproximateCount   { get; internal set; }
+        public string Id                 { get; internal set; }
+        public ASPC   NextPageCursor     { get; internal set; }
+        public IScore PlayerScore        { get; internal set; }
+        public ASPC   PreviousPageCursor { get; internal set; }
+        public ARS    Status             { get; internal set; }
+        public string Title              { get; internal set; }
 
         public IScore[] Scores  => m_scores.ToArray();
-        public bool     IsValid => Status == ResponseStatus.Success || Status == ResponseStatus.SuccessWithStale;
+        public bool     IsValid => Status == ARS.Success || Status == ARS.SuccessWithStale;
 
-        internal int AddScore(PlayGamesScore score)
+        internal int AddScore(APGS score)
         {
             m_scores.Add(score);
             return m_scores.Count;
@@ -59,6 +60,20 @@ namespace GooglePlayGames.Api {
 
         [Obsolete("Use IsValid instead")]
         public bool Valid => IsValid;
+
+        [Obsolete("Use NextPageCursor instead")]
+        public ASPC NextPageToken
+        {
+                     get => NextPageCursor;
+            internal set => NextPageCursor = value;
+        }
+
+        [Obsolete("Use PreviousPageCursor instead")]
+        public ASPC PrevPageToken
+        {
+                     get => PreviousPageCursor;
+            internal set => PreviousPageCursor = value;
+        }
 
         #endregion Backward compatibility layer
 
@@ -74,5 +89,3 @@ namespace GooglePlayGames.Api {
     }
 
 }
-
-#endif

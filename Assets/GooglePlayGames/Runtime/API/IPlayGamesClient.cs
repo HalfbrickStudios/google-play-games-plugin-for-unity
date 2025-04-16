@@ -14,34 +14,45 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 
-using UnityEngine.SocialPlatforms;
+using UIUP = UnityEngine.SocialPlatforms.IUserProfile;
 
-using GooglePlayGames.Api.Events;
-using GooglePlayGames.Api.SavedGame;
+using AA    = GooglePlayGames.Api.Achievement;
+using ACSC  = GooglePlayGames.Api.CommonStatusCodes;
+using AFLVS = GooglePlayGames.Api.FriendsListVisibilityStatus;
+using AIEC  = GooglePlayGames.Api.Events.IEventsClient;
+using AISGC = GooglePlayGames.Api.SavedGame.ISavedGameClient;
+using ALC   = GooglePlayGames.Api.LeaderboardCollection;
+using ALFS  = GooglePlayGames.Api.LoadFriendsStatus;
+using ALS   = GooglePlayGames.Api.LeaderboardStart;
+using ALSD  = GooglePlayGames.Api.LeaderboardScoreData;
+using ALTS  = GooglePlayGames.Api.LeaderboardTimeSpan;
+using APS   = GooglePlayGames.Api.PlayerStats;
+using ARA   = GooglePlayGames.Api.RecallAccess;
+using ASIS  = GooglePlayGames.Api.SignInStatus;
+using ASPC  = GooglePlayGames.Api.ScorePageCursor;
+using AUS   = GooglePlayGames.Api.UiStatus;
 
 namespace GooglePlayGames.Api {
 
     public interface IPlayGamesClient {
       
-        void AskForLoadFriendsResolution(Action<UiStatus> callback);
+        void AskForLoadFriendsResolution(Action<AUS> callback);
         
-        void Authenticate(Action<SignInStatus> callback);
+        void Authenticate(Action<ASIS> callback);
 
-        IEventsClient GetEventsClient();
+        AIEC GetEventsClient();
 
-        IUserProfile[] GetFriends();
+        UIUP[] GetFriends();
 
-        void GetFriendsListVisibility(bool forceReload, Action<FriendsListVisibilityStatus> callback);
+        void GetFriendsListVisibility(bool reload, Action<AFLVS> callback);
         
-        LoadFriendsStatus GetLastLoadFriendsStatus();
+        ALFS GetLastLoadFriendsStatus();
 
-        void GetPlayerStats(Action<CommonStatusCodes, PlayerStats> callback);
+        void GetPlayerStats(Action<ACSC, APS> callback);
 
-        ISavedGameClient GetSavedGameClient();
+        AISGC GetSavedGameClient();
 
         string GetUserDisplayName();
 
@@ -51,48 +62,46 @@ namespace GooglePlayGames.Api {
 
         int LeaderboardMaxResults();
 
-        void LoadAchievements(Action<Achievement[]> callback);
+        void LoadAchievements(Action<AA[]> callback);
 
         void LoadFriends(Action<bool> callback);
 
-        void LoadFriends(int pageSize, bool forceReload, Action<LoadFriendsStatus> callback);
+        void LoadFriends(int size, bool reload, Action<ALFS> callback);
 
-        void LoadMoreFriends(int pageSize, Action<LoadFriendsStatus> callback);
+        void LoadMoreFriends(int size, Action<ALFS> callback);
 
-        void LoadMoreScores(ScorePageToken token, int rowCount, Action<LeaderboardScoreData> callback);
+        void LoadMoreScores(ASPC cursor, int size, Action<ALSD> callback);
 
-        void LoadScores(string leaderboardId, LeaderboardStart start, int rowCount, LeaderboardCollection collection, LeaderboardTimeSpan timeSpan, Action<LeaderboardScoreData> callback);
+        void LoadScores(string leaderboardId, ALS start, int size, ALC collection, ALTS span, Action<ALSD> callback);
 
-        void LoadUsers(string[] userIds, Action<IUserProfile[]> callback);
+        void LoadUsers(string[] users, Action<UIUP[]> callback);
 
-        void IncrementAchievement(string achievementId, int steps, Action<bool> successOrFailureCalllback);
+        void IncrementAchievement(string id, int steps, Action<bool> callback);
 
         bool IsAuthenticated();
 
-        void ManuallyAuthenticate(Action<SignInStatus> callback);
+        void ManuallyAuthenticate(Action<ASIS> callback);
 
-        void RequestRecallAccessToken(Action<RecallAccess> callback);
+        void RequestRecallAccessToken(Action<ARA> callback);
 
-        void RequestServerSideAccess(bool forceRefreshToken, Action<string> callback);
+        void RequestServerSideAccess(bool refresh, Action<string> callback);
 
-        void RevealAchievement(string achievementId, Action<bool> successOrFailureCalllback);
+        void RevealAchievement(string id, Action<bool> callback);
 
-        void SetStepsAtLeast(string achId, int steps, Action<bool> callback);
+        void SetStepsAtLeast(string id, int steps, Action<bool> callback);
 
-        void ShowAchievementsUI(Action<UiStatus> callback);
+        void ShowAchievementsUI(Action<AUS> callback);
 
-        void ShowCompareProfileWithAlternativeNameHintsUI(string otherUserId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UiStatus> callback);
+        void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string comparandUserName, string userName, Action<AUS> callback);
 
-        void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UiStatus> callback);
+        void ShowLeaderboardUI(string id, ALTS span, Action<AUS> callback);
 
-        void SubmitScore(string leaderboardId, long score, Action<bool> successOrFailureCalllback);
+        void SubmitScore(string leaderboardId, long score, Action<bool> callback);
 
-        void SubmitScore(string leaderboardId, long score, string metadata, Action<bool> successOrFailureCalllback);
+        void SubmitScore(string leaderboardId, long score, string metadata, Action<bool> callback);
 
-        void UnlockAchievement(string achievementId, Action<bool> successOrFailureCalllback);
+        void UnlockAchievement(string id, Action<bool> callback);
 
     }
 
 }
-
-#endif

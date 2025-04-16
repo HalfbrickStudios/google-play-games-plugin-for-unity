@@ -55,14 +55,14 @@ namespace GooglePlayGames.Utils {
         {
             if (!DebugLogEnabled) return;
             var text = ToLogMessage(prefix: ">>>", type: "DEBUG", message);
-            Convert.RunUiAction(() => Debug.Log(text));
+            Utility.RunUiAction(() => Debug.Log(text));
         }
 
         [SuppressMessage("Style", "IDE1006", Justification = "Keep same API as other well-known loggers")]
         public static void e(string message)
         {
             var text = ToLogMessage(prefix: "***", type: "ERROR", message);
-            Convert.RunUiAction(() => Debug.LogError(text));
+            Utility.RunUiAction(() => Debug.LogError(text));
         }
 
         [SuppressMessage("Style", "IDE1006", Justification = "Keep same API as other well-known loggers")]
@@ -70,7 +70,7 @@ namespace GooglePlayGames.Utils {
         {
             if (!TraceLogEnabled) return;
             var text = ToLogMessage(prefix: "###", type: "TRACE", message);
-            Convert.RunUiAction(() => Debug.Log(text));
+            Utility.RunUiAction(() => Debug.Log(text));
         }
 
         [SuppressMessage("Style", "IDE1006", Justification = "Keep same API as other well-known loggers")]
@@ -78,7 +78,7 @@ namespace GooglePlayGames.Utils {
         {
             if (!WarningLogEnabled) return;
             var text = ToLogMessage(prefix: "!!!", type: "WARNING", message);
-            Convert.RunUiAction(() => Debug.LogWarning(text));
+            Utility.RunUiAction(() => Debug.LogWarning(text));
         }
 
         [SuppressMessage("Style", "IDE1006", Justification = "Keep same API as other well-known loggers")]

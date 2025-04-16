@@ -80,7 +80,7 @@ namespace GooglePlayGames.Android {
         {
             Misc.CheckNotNull(ids, nameof(ids));
             Misc.CheckNotNull(payload, nameof(payload));
-            using var jIds     = Convert.ToJavaStringList(ids);
+            using var jIds     = Utility.ToJavaStringList(ids);
             using var jPayload = JP.JFromBytes(payload);
             using var jTask    = m_client.JSendPayload(jIds, jPayload);
         }
@@ -141,8 +141,8 @@ namespace GooglePlayGames.Android {
                 throw new InvalidOperationException(nameof(duration) + " must be positive");
             }
 
-            requestCallback = Convert.ToUiAction(requestCallback);
-            resultCallback  = Convert.ToUiAction(resultCallback);
+            requestCallback = Utility.ToUiAction(requestCallback);
+            resultCallback  = Utility.ToUiAction(resultCallback);
 
             var proxy           = JCLCPC.MakeProxy(this, resultCallback, requestCallback);
             using var jCallback = JCLCP.MakeInstance(proxy);

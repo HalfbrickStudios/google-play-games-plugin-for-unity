@@ -14,6 +14,8 @@
 //    limitations under the License.
 // </copyright>
 
+using AEV = GooglePlayGames.Api.Events.EventVisibility;
+
 namespace GooglePlayGames.Api.Events {
 
     public enum EventVisibility {
@@ -22,12 +24,12 @@ namespace GooglePlayGames.Api.Events {
     }
 
     public interface IEvent {
-        ulong           CurrentCount { get; }
-        string          Description  { get; }
-        string          Id           { get; }
-        string          ImageUrl     { get; }
-        string          Name         { get; }
-        EventVisibility Visibility   { get; }
+        ulong  CurrentCount { get; }
+        string Description  { get; }
+        string Id           { get; }
+        string ImageUrl     { get; }
+        string Name         { get; }
+        AEV    Visibility   { get; }
     }
 
 }

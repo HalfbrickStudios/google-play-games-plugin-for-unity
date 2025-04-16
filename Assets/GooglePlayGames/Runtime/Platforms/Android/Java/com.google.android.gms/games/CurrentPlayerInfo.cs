@@ -51,7 +51,7 @@ namespace GooglePlayGames.Android.Java {
         public static AFLVS GetFriendsListVisibilityStatus(this JCPII self)
         {
             var status = self.JGetFriendsListVisibilityStatus();
-            return Convert.ToAndroidFriendsListVisibilityStatus(status);
+            return Utility.ToAndroidFriendsListVisibilityStatus(status);
         }
 
     }

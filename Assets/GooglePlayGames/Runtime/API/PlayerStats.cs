@@ -14,8 +14,6 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 
 namespace GooglePlayGames.Api {
@@ -29,18 +27,18 @@ namespace GooglePlayGames.Api {
             IsValid = false;
         }
 
-        public PlayerStats(int numberOfPurchases, float avgSessionLength, int daysSinceLastPlayed, int numberOfSessions, float sessPercentile, float spendPercentile, float spendProbability, float churnProbability, float highSpenderProbability, float totalSpendNext28Days)
+        public PlayerStats(int purchases, float averageSession, int lastPlayed, int sessions, float sessPercentile, float spendPercentile, float spendProbability, float churn, float spender, float spendIn28Days)
         {
-            AvgSessionLength       = avgSessionLength;
-            ChurnProbability       = churnProbability;
-            DaysSinceLastPlayed    = daysSinceLastPlayed;
-            HighSpenderProbability = highSpenderProbability;
-            NumberOfPurchases      = numberOfPurchases;
-            NumberOfSessions       = numberOfSessions;
+            AvgSessionLength       = averageSession;
+            ChurnProbability       = churn;
+            DaysSinceLastPlayed    = lastPlayed;
+            HighSpenderProbability = spender;
+            NumberOfPurchases      = purchases;
+            NumberOfSessions       = sessions;
             SessPercentile         = sessPercentile;
             SpendPercentile        = spendPercentile;
             SpendProbability       = spendProbability;
-            TotalSpendNext28Days   = totalSpendNext28Days;
+            TotalSpendNext28Days   = spendIn28Days;
             IsValid                = true;
         }
 
@@ -76,5 +74,3 @@ namespace GooglePlayGames.Api {
     }
 
 }
-
-#endif

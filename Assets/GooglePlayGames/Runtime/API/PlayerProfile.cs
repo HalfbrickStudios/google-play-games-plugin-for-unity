@@ -14,16 +14,14 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
+using GPGUP = GooglePlayGames.PlayGamesUserProfile;
 
 namespace GooglePlayGames.Api {
 
-    internal sealed class PlayerProfile : PlayGamesUserProfile {
+    internal sealed class PlayerProfile : GPGUP {
 
-        internal PlayerProfile(string displayName, string playerId, string avatarUrl, bool isFriend) : base(displayName, playerId, avatarUrl, isFriend) { }
+        internal PlayerProfile(string playerName, string playerId, string avatar, bool friend) : base(playerName, playerId, avatar, friend) { }
 
     }
 
 }
-
-#endif

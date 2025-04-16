@@ -14,36 +14,36 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using UnityEngine;
 
-using GooglePlayGames.Android;
-using GooglePlayGames.Api;
-
 using Logger = GooglePlayGames.Utils.Logger;
+
+using ADC   = GooglePlayGames.Api.DummyClient;
+using AIPGC = GooglePlayGames.Api.IPlayGamesClient;
+
+#if UNITY_ANDROID
+using APGC = GooglePlayGames.Android.PlayGamesClient;
+#endif
 
 namespace GooglePlayGames {
 
     internal static class PlayGamesClientFactory {
 
-        internal static IPlayGamesClient GetPlatformPlayGamesClient()
+        internal static AIPGC GetPlatformPlayGamesClient()
         {
             if (Application.isEditor) {
                 Logger.d("Creating IPlayGamesClient in editor, using DummyClient.");
-                return new DummyClient();
+                return new ADC();
             }
 #if UNITY_ANDROID
             Logger.d("Creating Android IPlayGamesClient Client");
-            return new PlayGamesClient();
+            return new APGC();
 #else
             Logger.d("Cannot create IPlayGamesClient for unknown platform, returning DummyClient");
-            return new DummyClient();
+            return new ADC();
 #endif
         }
 
     }
 
 }
-
-#endif

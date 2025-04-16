@@ -15,9 +15,9 @@ namespace GooglePlayGames.Api.Nearby {
             m_listener = Misc.CheckNotNull(listener);
         }
 
-        public void OnEndpointFound(AED details) => Convert.RunUiAction(() => m_listener.OnEndpointFound(details));
+        public void OnEndpointFound(AED details) => Utility.RunUiAction(() => m_listener.OnEndpointFound(details));
 
-        public void OnEndpointLost(string id) => Convert.RunUiAction(() => m_listener.OnEndpointLost(id));
+        public void OnEndpointLost(string endpointId) => Utility.RunUiAction(() => m_listener.OnEndpointLost(endpointId));
 
     }
 
@@ -30,9 +30,9 @@ namespace GooglePlayGames.Api.Nearby {
             m_listener = Misc.CheckNotNull(listener);
         }
 
-        public void OnMessageReceived(string id, byte[] data, bool reliable) => Convert.RunUiAction(() => m_listener.OnMessageReceived(id, data, reliable));
+        public void OnMessageReceived(string endpointId, byte[] data, bool reliable) => Utility.RunUiAction(() => m_listener.OnMessageReceived(endpointId, data, reliable));
 
-        public void OnRemoteEndpointDisconnected(string id) => Convert.RunUiAction(() => m_listener.OnRemoteEndpointDisconnected(id));
+        public void OnRemoteEndpointDisconnected(string endpointId) => Utility.RunUiAction(() => m_listener.OnRemoteEndpointDisconnected(endpointId));
 
     }
 

@@ -46,7 +46,7 @@ using ARA   = GooglePlayGames.Api.RecallAccess;
 using ARS   = GooglePlayGames.Api.ResponseStatus;
 using ASGRS = GooglePlayGames.Api.SavedGame.SavedGameRequestStatus;
 using ASIS  = GooglePlayGames.Api.SignInStatus;
-using ASPT  = GooglePlayGames.Api.ScorePageToken;
+using ASPC  = GooglePlayGames.Api.ScorePageCursor;
 using AUS   = GooglePlayGames.Api.UiStatus;
 
 using APGCAS = GooglePlayGames.Android.PlayGamesClient.AuthState;
@@ -90,7 +90,7 @@ namespace GooglePlayGames.Android {
 
         private void Authenticate(bool isAutoSignIn, Action<ASIS> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             lock (m_authStateLock) {
                 if (m_authState == APGCAS.Authenticated) {
@@ -112,12 +112,12 @@ namespace GooglePlayGames.Android {
 
         private ALSD CreateLeaderboardScoreData(string id, ALC collection, ALTS span, ARS status, JLSsI jScores)
         {
-            var result = Convert.ToAndroidLeaderboardScoreData(jScores, id, status, collection, span);
+            var result = Utility.ToAndroidLeaderboardScoreData(jScores, id, status, collection, span);
             using var jLeaderboard = jScores.JGetLeaderboard();
             using var jVariants = jLeaderboard.JGetVariants();
             using var jVariant = jVariants.JGet(0);
             if (jVariant.HasPlayerInfo()) {
-                result.PlayerScore = Convert.ToAndroidPlayerGameScore(jVariant, id, m_user.Id);
+                result.PlayerScore = Utility.ToAndroidPlayerGameScore(jVariant, id, m_user.Id);
             }
             result.ApproximateCount = (ulong)jVariant.GetNumScores();
             return result;
@@ -125,7 +125,7 @@ namespace GooglePlayGames.Android {
 
         private void LoadAllFriends(int pageSize, bool reload, bool more, Action<bool> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             LoadFriendsPaginated(pageSize, more, reload, result => {
                 m_lastLoadFriendsStatus = result;
@@ -152,7 +152,7 @@ namespace GooglePlayGames.Android {
         private void LoadFriendsPaginated(int size, bool more, bool reload, Action<ALFS> callback)
         {
             m_friendsResolutionException = null;
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jClient = PlayGames.JGetPlayersClient();
             using var jTask = more ? jClient.JLoadMoreFriends(size) : jClient.JLoadFriends(size, reload);
@@ -162,7 +162,7 @@ namespace GooglePlayGames.Android {
                         var cursor = jBundle?.GetString("next_page_token");
                         m_lastLoadFriendsStatus = cursor != null ? ALFS.LoadMore : ALFS.Completed;
                     }
-                    m_friends = Convert.ToAndroidPlayerProfile(jPlayers).ToArray();
+                    m_friends = Utility.ToAndroidPlayerProfile(jPlayers).ToArray();
                 }
                 callback(m_lastLoadFriendsStatus);
             }).JAddOnFailureListener(jException => {
@@ -194,7 +194,7 @@ namespace GooglePlayGames.Android {
 
         private void SignInOnResult(bool isAuthenticated, Action<ASIS> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (!isAuthenticated) {
                 lock (m_authStateLock) {
@@ -209,7 +209,7 @@ namespace GooglePlayGames.Android {
                 if (jIt.JIsSuccessful()) {
                     using (var jData = jIt.JGetResult()) {
                         using var jPlayer = jData.JGet();
-                        m_user = Convert.ToAndroidPlayer(jPlayer);
+                        m_user = Utility.ToAndroidPlayer(jPlayer);
                     }
                     lock (m_gameServicesLock) {
                         m_eventsClient = new EventsClient();
@@ -235,7 +235,7 @@ namespace GooglePlayGames.Android {
 
         public void AskForLoadFriendsResolution(Action<AUS> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (m_friendsResolutionException != null) {
                 // HelperFragmentClass.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
@@ -282,7 +282,7 @@ namespace GooglePlayGames.Android {
 
         public void GetFriendsListVisibility(bool reload, Action<AFLVS> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jClient = PlayGames.JGetPlayersClient();
             using var jTask = jClient.JGetCurrentPlayer(reload);
@@ -299,14 +299,14 @@ namespace GooglePlayGames.Android {
 
         public void GetPlayerStats(Action<ACSC, APS> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jClient = PlayGames.JGetPlayerStatsClient();
             using var jTask = jClient.JLoadPlayerStats(reload: false);
             jTask.JAddOnSuccessListener(jData => {
                 var stats = null as APS;
                 using (var jStats = jData.JGet()) {
-                    stats = Convert.ToAndroidPlayerStats(jStats);
+                    stats = Utility.ToAndroidPlayerStats(jStats);
                 }
                 callback(ACSC.Success, stats);
             }).JAddOnFailureListener(jException => {
@@ -331,7 +331,7 @@ namespace GooglePlayGames.Android {
 
         public void IncrementAchievement(string id, int steps, Action<bool> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
                 callback(false);
@@ -355,14 +355,14 @@ namespace GooglePlayGames.Android {
 
         public void LoadAchievements(Action<AA[]> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jClient = PlayGames.JGetAchievementsClient();
             using var jTask = jClient.JLoad(reload: false);
             jTask.JAddOnSuccessListener(jData => {
                 var achievements = null as AA[];
                 using (var jAchievements = jData.JGet()) {
-                    achievements = Convert.ToAndroidAchievement(jAchievements).ToArray();
+                    achievements = Utility.ToAndroidAchievement(jAchievements).ToArray();
                 }
                 callback(achievements);
             }).JAddOnFailureListener(jException => {
@@ -377,13 +377,13 @@ namespace GooglePlayGames.Android {
 
         public void LoadMoreFriends(int size, Action<ALFS> callback) => LoadFriendsPaginated(size, more: true, reload: false, callback);
 
-        public void LoadMoreScores(ASPT token, int rows, Action<ALSD> callback)
+        public void LoadMoreScores(ASPC token, int rows, Action<ALSD> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jClient       = PlayGames.JGetLeaderboardsClient();
-            using var jLeaderboards = (JLSBI)token.InternalObject;
-                  var  direction    = Convert.ToJavaPageDirection(token.Direction);
+            using var jLeaderboards = (JLSBI)token.LeaderboardScoreBuffer;
+                  var  direction    = Utility.ToJavaPageDirection(token.Direction);
             using var jTask         = jClient.JLoadMoreScores(jLeaderboards, rows, direction);
             jTask.JAddOnSuccessListener(jData => {
                 var leaderboard = null as ALSD;
@@ -408,11 +408,11 @@ namespace GooglePlayGames.Android {
 
         public void LoadScores(string id, ALS start, int rows, ALC collection, ALTS span, Action<ALSD> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jClient = PlayGames.JGetLeaderboardsClient();
-            var jSpan = Convert.ToJavaLeaderboardVariantTimeSpan(span);
-            var jCollection = Convert.ToJavaLeaderboardVariantCollection(collection);
+            var jSpan = Utility.ToJavaLeaderboardVariantTimeSpan(span);
+            var jCollection = Utility.ToJavaLeaderboardVariantCollection(collection);
             using var jtask = start == ALS.TopScores ? jClient.JLoadTopScores(id, jSpan, jCollection, rows) : jClient.JLoadPlayerCenteredScores(id, jSpan, jCollection, rows);
             jtask.JAddOnSuccessListener(jData => {
                 var data = null as ALSD;
@@ -436,7 +436,7 @@ namespace GooglePlayGames.Android {
 
         public void LoadUsers(string[] userIds, Action<IUserProfile[]> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
                 callback(new UUP[0]);
@@ -455,7 +455,7 @@ namespace GooglePlayGames.Android {
                         var id = jPlayer.GetPlayerId();
                         for (var j = 0; j < count; j += 1) {
                             if (id == userIds[j]) {
-                                users[j] = Convert.ToAndroidPlayer(jPlayer);
+                                users[j] = Utility.ToAndroidPlayer(jPlayer);
                                 break;
                             }
                         }
@@ -478,7 +478,7 @@ namespace GooglePlayGames.Android {
 
         public void RequestRecallAccessToken(Action<ARA> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jClient = PlayGames.JGetRecallClient();
             using var jTask = jClient.JRequestRecallAccess();
@@ -493,7 +493,7 @@ namespace GooglePlayGames.Android {
 
         public void RequestServerSideAccess(bool reload, Action<string> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jClient = PlayGames.JGetGamesSignInClient();
             using var jTask = jClient.JRequestServerSideAccess(reload: true, webId: string.Empty);
@@ -505,7 +505,7 @@ namespace GooglePlayGames.Android {
 
         public void RevealAchievement(string achId, Action<bool> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
                 callback(false);
@@ -519,7 +519,7 @@ namespace GooglePlayGames.Android {
 
         public void SetStepsAtLeast(string achId, int steps, Action<bool> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
                 callback(false);
@@ -533,7 +533,7 @@ namespace GooglePlayGames.Android {
 
         public void ShowAchievementsUI(Action<AUS> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
             if (!IsAuthenticated()) {
                 callback(AUS.NotAuthorized);
                 return;
@@ -543,13 +543,13 @@ namespace GooglePlayGames.Android {
 
         public void ShowCompareProfileWithAlternativeNameHintsUI(string playerId, string otherPlayerInGameName, string currentPlayerInGameName, Action<AUS> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
             // HelperFragmentClass.ShowCompareProfileWithAlternativeNameHintsUI(playerId, otherPlayerInGameName, currentPlayerInGameName, AsOnGameThreadCallback(callback));
         }
 
         public void ShowLeaderboardUI(string leaderboardId, ALTS span, Action<AUS> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
                 callback(AUS.NotAuthorized);
@@ -565,7 +565,7 @@ namespace GooglePlayGames.Android {
 
         public void SubmitScore(string id, long score, string metadata, Action<bool> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
                 callback(false);
@@ -579,7 +579,7 @@ namespace GooglePlayGames.Android {
 
         public void SubmitScore(string leaderboardId, long score, Action<bool> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
                 callback(false);
@@ -593,7 +593,7 @@ namespace GooglePlayGames.Android {
 
         public void UnlockAchievement(string achId, Action<bool> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
                 callback(false);
@@ -611,7 +611,7 @@ namespace GooglePlayGames.Android {
 
     internal static class PlayGamesClientExtensions {
 
-        public static ASGRS GetSavedGameRequestStatus(this PlayGamesClient self) => Convert.ToAndroidSavedGameRequestStatus(self.IsAuthenticated());
+        public static ASGRS GetSavedGameRequestStatus(this PlayGamesClient self) => Utility.ToAndroidSavedGameRequestStatus(self.IsAuthenticated());
 
     }
 

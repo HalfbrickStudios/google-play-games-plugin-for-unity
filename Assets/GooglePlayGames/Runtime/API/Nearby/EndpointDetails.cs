@@ -20,10 +20,10 @@ namespace GooglePlayGames.Api.Nearby {
 
     public readonly struct EndpointDetails {
 
-        public EndpointDetails(string endpointId, string name, string serviceId)
+        public EndpointDetails(string endpointId, string endpointName, string serviceId)
         {
             EndpointId = Misc.CheckNotNull(endpointId);
-            Name       = Misc.CheckNotNull(name);
+            Name       = Misc.CheckNotNull(endpointName);
             ServiceId  = Misc.CheckNotNull(serviceId);
         }
 

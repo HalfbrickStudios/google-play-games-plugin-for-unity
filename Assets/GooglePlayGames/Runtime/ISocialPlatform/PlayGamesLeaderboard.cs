@@ -14,55 +14,51 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 using System.Collections.Generic;
 
-using UnityEngine.SocialPlatforms;
+using UIL = UnityEngine.SocialPlatforms.ILeaderboard;
+using UIS = UnityEngine.SocialPlatforms.IScore;
+using UR  = UnityEngine.SocialPlatforms.Range;
+using UTS = UnityEngine.SocialPlatforms.TimeScope;
+using UUS = UnityEngine.SocialPlatforms.UserScope;
 
-using GooglePlayGames.Api;
+using GPGP = GooglePlayGames.PlayGamesPlatform;
+using GPGS = GooglePlayGames.PlayGamesScore;
 
-using Range = UnityEngine.SocialPlatforms.Range;
+using ALSD = GooglePlayGames.Api.LeaderboardScoreData;
 
 namespace GooglePlayGames {
 
-    public sealed class PlayGamesLeaderboard : ILeaderboard {
+    public sealed class PlayGamesLeaderboard : UIL {
 
         public PlayGamesLeaderboard(string id)
         {
             Id = id;
         }
 
-        private          string[]             m_filteredUserIds = null;
-        private readonly List<PlayGamesScore> m_scores          = new();
+        private          string[]   m_users = null;
+        private readonly List<GPGS> m_scores          = new();
 
-        public string    Id             { get; private  set; }
-        public bool      IsLoading      { get; internal set; }
-        public IScore    LocalUserScore { get; private  set; }
-        public uint      MaxRange       { get; private  set; }
-        public Range     Range          { get; private  set; }
-        public TimeScope TimeScope      { get; private  set; }
-        public string    Title          { get; private  set; }
-        public UserScope UserScope      { get; private  set; }
+        public string Id             { get; private  set; }
+        public bool   IsLoading      { get; internal set; }
+        public UIS    LocalUserScore { get; private  set; }
+        public uint   MaxRange       { get; private  set; }
+        public UR     Range          { get; private  set; }
+        public UTS    TimeScope      { get; private  set; }
+        public string Title          { get; private  set; }
+        public UUS    UserScope      { get; private  set; }
 
-        public  IScore[] Scores     => m_scores.ToArray();
-        public  int      ScoreCount => m_scores.Count;
+        public  UIS[] Scores     => m_scores.ToArray();
+        public  int   ScoreCount => m_scores.Count;
 
-        [Obsolete("Use IsLoading instead")]
-        public bool Loading
+        internal int AddScore(GPGS score)
         {
-            get => IsLoading;
-            private set => IsLoading = value;
-        }
-
-        internal int AddScore(PlayGamesScore score)
-        {
-            if (m_filteredUserIds == null || m_filteredUserIds.Length == 0) {
+            if (m_users == null || m_users.Length == 0) {
                 m_scores.Add(score);
             } else {
-                foreach (var fid in m_filteredUserIds) {
-                    if (fid.Equals(score.UserId)) {
+                foreach (var uid in m_users) {
+                    if (uid.Equals(score.UserId)) {
                         m_scores.Add(score);
                         break;
                     }
@@ -73,47 +69,56 @@ namespace GooglePlayGames {
 
         internal bool HasAllScores() => m_scores.Count >= Range.count || m_scores.Count >= MaxRange;
 
-        internal bool SetFromData(LeaderboardScoreData data)
+        internal bool ImportLeaderboardScoreData(ALSD data)
         {
             if (data.IsValid) {
                 Utils.Logger.d("Setting leaderboard from: " + data);
                 SetMaxRange(data.ApproximateCount);
                 SetTitle(data.Title);
-                SetLocalUserScore((PlayGamesScore) data.PlayerScore);
+                SetLocalUserScore((GPGS)data.PlayerScore);
                 foreach (var score in data.Scores) {
-                    AddScore((PlayGamesScore) score);
+                    AddScore((GPGS)score);
                 }
                 IsLoading = data.Scores.Length == 0 || HasAllScores();
             }
             return data.IsValid;
         }
 
-        internal void SetLocalUserScore(PlayGamesScore score) => LocalUserScore = score;
+        internal void SetLocalUserScore(GPGS value) => LocalUserScore = value;
 
-        internal void SetMaxRange(ulong val) => MaxRange = (uint)val;
+        internal void SetMaxRange(ulong value) => MaxRange = (uint)value;
 
         internal void SetTitle(string value) => Title = value;
 
+        #region Backward compatibility layer
+
+        [Obsolete("Use IsLoading instead")]
+        public bool Loading
+        {
+            get => IsLoading;
+            private set => IsLoading = value;
+        }
+
+        #endregion Backward compatibility layer
+
         #region ILeaderboard implementation
 
-        [Obsolete("Use Id instead")]             public string    id             { get => Id;             set => Id        = value; }
-        [Obsolete("Use IsLoading instead")]      public bool      loading        { get => IsLoading;                                }
-        [Obsolete("Use LocalUserScore instead")] public IScore    localUserScore { get => LocalUserScore;                           }
-        [Obsolete("Use MaxRange instead")]       public uint      maxRange       { get => MaxRange;                                 }
-        [Obsolete("Use Range instead")]          public Range     range          { get => Range;          set => Range     = value; }
-        [Obsolete("Use Scores instead")]         public IScore[]  scores         { get => Scores;                                   }
-        [Obsolete("Use TimeScope instead")]      public TimeScope timeScope      { get => TimeScope;      set => TimeScope = value; }
-        [Obsolete("Use Title instead")]          public string    title          { get => Title;                                    }
-        [Obsolete("Use UserScope instead")]      public UserScope userScope      { get => UserScope;      set => UserScope = value; }
+        [Obsolete("Use Id instead")]             public string id             { get => Id;             set => Id        = value; }
+        [Obsolete("Use IsLoading instead")]      public bool   loading        { get => IsLoading;                                }
+        [Obsolete("Use LocalUserScore instead")] public UIS    localUserScore { get => LocalUserScore;                           }
+        [Obsolete("Use MaxRange instead")]       public uint   maxRange       { get => MaxRange;                                 }
+        [Obsolete("Use Range instead")]          public UR     range          { get => Range;          set => Range     = value; }
+        [Obsolete("Use Scores instead")]         public UIS[]  scores         { get => Scores;                                   }
+        [Obsolete("Use TimeScope instead")]      public UTS    timeScope      { get => TimeScope;      set => TimeScope = value; }
+        [Obsolete("Use Title instead")]          public string title          { get => Title;                                    }
+        [Obsolete("Use UserScope instead")]      public UUS    userScope      { get => UserScope;      set => UserScope = value; }
 
-        public void LoadScores(Action<bool> callback) => PlayGamesPlatform.Instance.LoadScores(this, callback);
+        public void LoadScores(Action<bool> callback) => GPGP.Instance.LoadScores(this, callback);
 
-        public void SetUserFilter(string[] userIDs) => m_filteredUserIds = userIDs;
+        public void SetUserFilter(string[] ids) => m_users = ids;
 
         #endregion
 
     }
 
 }
-
-#endif

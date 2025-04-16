@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine;
 
 using GooglePlayGames.Android.Java;
+using GooglePlayGames.Utils;
 
 using ADS  = GooglePlayGames.Api.DataSource;
 using AIE  = GooglePlayGames.Api.Events.IEvent;
@@ -30,14 +31,14 @@ namespace GooglePlayGames.Android {
 
         public void FetchAllEvents(ADS source, Action<ARS, List<AIE>> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jTask = m_jEventsClient.JLoad(source == ADS.ReadNetworkOnly);
             jTask.JAddOnSuccessListener(jData => {
                 var status = jData.GetResponseStatus();
                 var events = null as List<AIE>;
                 using (var jEvents = jData.JGet()) {
-                    events = Convert.ToAndroidEvent(jEvents).ToList();
+                    events = Utility.ToAndroidEvent(jEvents).ToList();
                 }
                 callback(status, events);
             }).JAddOnFailureListener(jException => {
@@ -48,7 +49,7 @@ namespace GooglePlayGames.Android {
 
         public void FetchEvent(ADS source, string eventId, Action<ARS, AIE> callback)
         {
-            callback = Convert.ToUiAction(callback);
+            callback = Utility.ToUiAction(callback);
 
             using var jTask = m_jEventsClient.JLoadByIds(source == ADS.ReadNetworkOnly, new[] { eventId });
             jTask.JAddOnSuccessListener(jData => {
@@ -58,7 +59,7 @@ namespace GooglePlayGames.Android {
                     var count = jEvents.GetCount();
                     if (count <= 0) return;
                     using var jEvent = jEvents.JGet(0);
-                    @event = Convert.ToAndroidEvent(jEvent);
+                    @event = Utility.ToAndroidEvent(jEvent);
                 }
                 callback.Invoke(status, @event);
             }).JAddOnFailureListener(jException => {

@@ -147,9 +147,9 @@ namespace GooglePlayGames.Android.Java {
 
     internal static class LeaderboardVariantExtensions {
 
-        public static ALC GetCollection(this JLVI self) => Convert.ToAndroidLeaderboardCollection(self.JGetCollection());
+        public static ALC GetCollection(this JLVI self) => Utility.ToAndroidLeaderboardCollection(self.JGetCollection());
 
-        public static ALTS GetTimeSpan(this JLVI self) => Convert.ToAndroidLeaderboardTimeSpan(self.JGetTimeSpan());
+        public static ALTS GetTimeSpan(this JLVI self) => Utility.ToAndroidLeaderboardTimeSpan(self.JGetTimeSpan());
 
     }
 

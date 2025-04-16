@@ -116,7 +116,7 @@ namespace SmokeTest
                     GUILayout.Height(height),
                     GUILayout.ExpandWidth(true)))
                 {
-                    PlayGamesPlatform.Instance.ShowCompareProfileWithAlternativeNameHintsUI(
+                    PlayGamesPlatform.Instance.ShowCompareProfileWithAlternativeNameHintsUi(
                         firstFriendId, /* otherPlayerInGameName= */ null, /* currentPlayerInGameName= */ null,
                         /* callback= */ null);
                 }

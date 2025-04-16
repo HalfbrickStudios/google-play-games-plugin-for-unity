@@ -14,8 +14,6 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 namespace GooglePlayGames.Api {
 
     public enum CommonStatusCodes {
@@ -46,5 +44,3 @@ namespace GooglePlayGames.Api {
     }
 
 }
-
-#endif

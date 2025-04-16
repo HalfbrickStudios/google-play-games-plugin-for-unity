@@ -14,67 +14,81 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 
-using UnityEngine.SocialPlatforms;
-
-using GooglePlayGames.Api.Events;
-using GooglePlayGames.Api.SavedGame;
 using GooglePlayGames.Utils;
+
+using UIUP = UnityEngine.SocialPlatforms.IUserProfile;
+
+using AA    = GooglePlayGames.Api.Achievement;
+using ACSC  = GooglePlayGames.Api.CommonStatusCodes;
+using AFLVS = GooglePlayGames.Api.FriendsListVisibilityStatus;
+using AIEC  = GooglePlayGames.Api.Events.IEventsClient;
+using AIPGC = GooglePlayGames.Api.IPlayGamesClient;
+using AISGC = GooglePlayGames.Api.SavedGame.ISavedGameClient;
+using ALC   = GooglePlayGames.Api.LeaderboardCollection;
+using ALFS  = GooglePlayGames.Api.LoadFriendsStatus;
+using ALS   = GooglePlayGames.Api.LeaderboardStart;
+using ALSD  = GooglePlayGames.Api.LeaderboardScoreData;
+using ALTS  = GooglePlayGames.Api.LeaderboardTimeSpan;
+using APS   = GooglePlayGames.Api.PlayerStats;
+using ARA   = GooglePlayGames.Api.RecallAccess;
+using ARS   = GooglePlayGames.Api.ResponseStatus;
+using ASIS  = GooglePlayGames.Api.SignInStatus;
+using ASPC  = GooglePlayGames.Api.ScorePageCursor;
+using AUS   = GooglePlayGames.Api.UiStatus;
 
 namespace GooglePlayGames.Api {
 
-    internal sealed class DummyClient : IPlayGamesClient {
+    internal sealed class DummyClient : AIPGC {
 
         private static void LogUsage() => Logger.d("Received method call on DummyClient - using stub implementation.");
 
         #region IPlayGamesClient implementation
 
-        public void AskForLoadFriendsResolution(Action<UiStatus> callback)
+        public void AskForLoadFriendsResolution(Action<AUS> callback)
         {
             LogUsage();
-            callback?.Invoke(UiStatus.VersionUpdateRequired);
+            callback?.Invoke(AUS.VersionUpdateRequired);
         }
 
-        public void Authenticate(Action<SignInStatus> callback)
+        public void Authenticate(Action<ASIS> callback)
         {
             LogUsage();
-            callback?.Invoke(SignInStatus.Canceled);
+            callback?.Invoke(ASIS.Canceled);
         }
 
-        public IEventsClient GetEventsClient()
+        public AIEC GetEventsClient()
         {
             LogUsage();
             return null;
         }
 
-        public IUserProfile[] GetFriends()
+        public UIUP[] GetFriends()
         {
             LogUsage();
-            return new IUserProfile[0];
+            return new UIUP[0];
         }
 
-        public void GetFriendsListVisibility(bool forceReload, Action<FriendsListVisibilityStatus> callback)
+        public void GetFriendsListVisibility(bool reload, Action<AFLVS> callback)
         {
             LogUsage();
-            callback?.Invoke(FriendsListVisibilityStatus.Unknown);
+            callback?.Invoke(AFLVS.Unknown);
         }
 
-        public LoadFriendsStatus GetLastLoadFriendsStatus()
+        public ALFS GetLastLoadFriendsStatus()
         {
             LogUsage();
-            return LoadFriendsStatus.Unknown;
+            return ALFS.Unknown;
         }
 
-        public void GetPlayerStats(Action<CommonStatusCodes, PlayerStats> callback)
+        public void GetPlayerStats(Action<ACSC, APS> callback)
         {
             LogUsage();
-            callback?.Invoke(CommonStatusCodes.ApiNotConnected, new PlayerStats());
+            callback?.Invoke(ACSC.ApiNotConnected, new APS());
         }
 
-        public ISavedGameClient GetSavedGameClient()
+        public AISGC GetSavedGameClient()
         {
             LogUsage();
             return null;
@@ -98,7 +112,7 @@ namespace GooglePlayGames.Api {
             return null;
         }
 
-        public void IncrementAchievement(string achId, int steps, Action<bool> callback)
+        public void IncrementAchievement(string id, int steps, Action<bool> callback)
         {
             LogUsage();
             callback?.Invoke(false);
@@ -112,7 +126,7 @@ namespace GooglePlayGames.Api {
 
         public int LeaderboardMaxResults() => 25;
 
-        public void LoadAchievements(Action<Achievement[]> callback)
+        public void LoadAchievements(Action<AA[]> callback)
         {
             LogUsage();
             callback?.Invoke(null);
@@ -124,82 +138,82 @@ namespace GooglePlayGames.Api {
             callback?.Invoke(false);
         }
 
-        public void LoadFriends(int pageSize, bool forceReload, Action<LoadFriendsStatus> callback)
+        public void LoadFriends(int size, bool reload, Action<ALFS> callback)
         {
             LogUsage();
-            callback?.Invoke(LoadFriendsStatus.Unknown);
+            callback?.Invoke(ALFS.Unknown);
         }
 
-        public void LoadMoreFriends(int pageSize, Action<LoadFriendsStatus> callback)
+        public void LoadMoreFriends(int size, Action<ALFS> callback)
         {
             LogUsage();
-            callback?.Invoke(LoadFriendsStatus.Unknown);
+            callback?.Invoke(ALFS.Unknown);
         }
 
-        public void LoadMoreScores(ScorePageToken token, int rowCount, Action<LeaderboardScoreData> callback)
+        public void LoadMoreScores(ASPC cursor, int size, Action<ALSD> callback)
         {
             LogUsage();
-            callback?.Invoke(new LeaderboardScoreData(token.LeaderboardId, ResponseStatus.LicenseCheckFailed));
+            callback?.Invoke(new ALSD(cursor.LeaderboardId, ARS.LicenseCheckFailed));
         }
 
-        public void LoadScores(string leaderboardId, LeaderboardStart start, int rowCount, LeaderboardCollection collection, LeaderboardTimeSpan timeSpan, Action<LeaderboardScoreData> callback)
+        public void LoadScores(string leaderboardId, ALS start, int size, ALC collection, ALTS span, Action<ALSD> callback)
         {
             LogUsage();
-            callback?.Invoke(new LeaderboardScoreData(leaderboardId, ResponseStatus.LicenseCheckFailed));
+            callback?.Invoke(new ALSD(leaderboardId, ARS.LicenseCheckFailed));
         }
 
-        public void LoadUsers(string[] userIds, Action<IUserProfile[]> callback)
-        {
-            LogUsage();
-            callback?.Invoke(null);
-        }
-
-        public void ManuallyAuthenticate(Action<SignInStatus> callback)
-        {
-            LogUsage();
-            callback?.Invoke(SignInStatus.Canceled);
-        }
-
-        public void RequestRecallAccessToken(Action<RecallAccess> callback)
+        public void LoadUsers(string[] ids, Action<UIUP[]> callback)
         {
             LogUsage();
             callback?.Invoke(null);
         }
 
-        public void RequestServerSideAccess(bool forceRefreshToken, Action<string> callback)
+        public void ManuallyAuthenticate(Action<ASIS> callback)
+        {
+            LogUsage();
+            callback?.Invoke(ASIS.Canceled);
+        }
+
+        public void RequestRecallAccessToken(Action<ARA> callback)
         {
             LogUsage();
             callback?.Invoke(null);
         }
 
-        public void RevealAchievement(string achId, Action<bool> callback)
+        public void RequestServerSideAccess(bool refresh, Action<string> callback)
+        {
+            LogUsage();
+            callback?.Invoke(null);
+        }
+
+        public void RevealAchievement(string id, Action<bool> callback)
         {
             LogUsage();
             callback?.Invoke(false);
         }
 
-        public void SetStepsAtLeast(string achId, int steps, Action<bool> callback)
+        public void SetStepsAtLeast(string id, int steps, Action<bool> callback)
         {
             LogUsage();
             callback?.Invoke(false);
         }
 
-        public void ShowAchievementsUI(Action<UiStatus> callback)
+        public void ShowAchievementsUI(Action<AUS> callback)
         {
             LogUsage();
-            callback?.Invoke(UiStatus.VersionUpdateRequired);
+            callback?.Invoke(AUS.VersionUpdateRequired);
         }
 
-        public void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string otherPlayerInGameName, string currentPlayerInGameName, Action<UiStatus> callback)
+        public void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string comparandUserName, string userName, Action<AUS> callback)
         {
             LogUsage();
-            callback?.Invoke(UiStatus.VersionUpdateRequired);
+            callback?.Invoke(AUS.VersionUpdateRequired);
         }
 
-        public void ShowLeaderboardUI(string leaderboardId, LeaderboardTimeSpan span, Action<UiStatus> callback)
+        public void ShowLeaderboardUI(string id, ALTS span, Action<AUS> callback)
         {
             LogUsage();
-            callback?.Invoke(UiStatus.VersionUpdateRequired);
+            callback?.Invoke(AUS.VersionUpdateRequired);
         }
 
         public void SubmitScore(string leaderboardId, long score, Action<bool> callback)
@@ -214,7 +228,7 @@ namespace GooglePlayGames.Api {
             callback?.Invoke(false);
         }
 
-        public void UnlockAchievement(string achId, Action<bool> callback)
+        public void UnlockAchievement(string id, Action<bool> callback)
         {
             LogUsage();
             callback?.Invoke(false);
@@ -225,5 +239,3 @@ namespace GooglePlayGames.Api {
     }
 
 }
-
-#endif

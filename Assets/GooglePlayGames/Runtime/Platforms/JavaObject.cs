@@ -8,22 +8,6 @@ namespace GooglePlayGames {
 
     internal class JavaObject : UAJO {
 
-        private static string Normalize(string name)
-        {
-            var result = name;
-            if (string.IsNullOrEmpty(name)) {
-                // No-op
-            } else if (name.StartsWith("L") && name.EndsWith(";")) {
-                result = name[1..^1].Replace('/', '.');
-            } else {
-                result = name.Replace('/', '.');
-            }
-            if (result != name) {
-                Logger.d($"JNI: Normalized \"{name}\" => \"{result}\"");
-            }
-            return result; 
-        }
-
         protected JavaObject(string fullyQualifiedClassName, bool inherit = true) : base(fullyQualifiedClassName)
         {
             if (!inherit) Logger.t($"JNI: Creating instance of {fullyQualifiedClassName}");

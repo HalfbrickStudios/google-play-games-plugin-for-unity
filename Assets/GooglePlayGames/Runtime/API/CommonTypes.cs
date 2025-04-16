@@ -14,11 +14,13 @@
 //    limitations under the License.
 // </copyright>
 
+using ARS = GooglePlayGames.Api.ResponseStatus;
+
 namespace GooglePlayGames.Api {
 
     public static class CommonTypesUtil {
 
-        public static bool StatusIsSuccess(ResponseStatus status) => ((int) status) > 0;
+        public static bool StatusIsSuccess(ARS status) => ((int) status) > 0;
 
     }
 

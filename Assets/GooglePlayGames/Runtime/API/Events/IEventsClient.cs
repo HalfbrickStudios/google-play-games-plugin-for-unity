@@ -14,23 +14,23 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 using System.Collections.Generic;
+
+using ADS = GooglePlayGames.Api.DataSource;
+using AIE = GooglePlayGames.Api.Events.IEvent;
+using ARS = GooglePlayGames.Api.ResponseStatus;
 
 namespace GooglePlayGames.Api.Events {
 
     public interface IEventsClient {
 
-        void FetchAllEvents(DataSource source, Action<ResponseStatus, List<IEvent>> callback);
+        void FetchAllEvents(ADS source, Action<ARS, List<AIE>> callback);
 
-        void FetchEvent(DataSource source, string eventId, Action<ResponseStatus, IEvent> callback);
+        void FetchEvent(ADS source, string id, Action<ARS, AIE> callback);
 
-        void IncrementEvent(string eventId, uint stepsToIncrement);
+        void IncrementEvent(string id, uint steps);
 
     }
 
 }
-
-#endif

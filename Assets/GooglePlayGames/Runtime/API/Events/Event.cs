@@ -1,23 +1,26 @@
-﻿namespace GooglePlayGames.Api.Events {
+﻿using AEV = GooglePlayGames.Api.Events.EventVisibility;
+using AIE = GooglePlayGames.Api.Events.IEvent;
 
-    internal sealed class Event : IEvent {
+namespace GooglePlayGames.Api.Events {
 
-        internal Event(string id, string name, string description, string imageUrl, ulong currentCount, EventVisibility visibility)
+    internal sealed class Event : AIE {
+
+        internal Event(string id, string name, string description, string image, ulong count, AEV visibility)
         {
-            CurrentCount = currentCount;
+            CurrentCount = count;
             Description  = description;
             Id           = id;
-            ImageUrl     = imageUrl;
+            ImageUrl     = image;
             Name         = name;
             Visibility   = visibility;
         }
 
-        public ulong           CurrentCount { get; }
-        public string          Description  { get; }
-        public string          Id           { get; }
-        public string          ImageUrl     { get; }
-        public string          Name         { get; }
-        public EventVisibility Visibility   { get; }
+        public ulong  CurrentCount { get; }
+        public string Description  { get; }
+        public string Id           { get; }
+        public string ImageUrl     { get; }
+        public string Name         { get; }
+        public AEV    Visibility   { get; }
 
     }
 

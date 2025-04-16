@@ -14,117 +14,114 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 using System.Collections;
 
-using UnityEngine;
-#if UNITY_2017_2_OR_NEWER
-using UnityEngine.Networking;
-#endif
-using UnityEngine.SocialPlatforms;
-
 using GooglePlayGames.Utils;
+
+using Logger = GooglePlayGames.Utils.Logger;
+
+using GPGUP = GooglePlayGames.PlayGamesUserProfile;
+
+using UDHT = UnityEngine.Networking.DownloadHandlerTexture;
+using UIUP = UnityEngine.SocialPlatforms.IUserProfile;
+using UT2D = UnityEngine.Texture2D;
+using UUS  = UnityEngine.SocialPlatforms.UserState;
+using UWRT = UnityEngine.Networking.UnityWebRequestTexture;
 
 namespace GooglePlayGames {
 
-    public class PlayGamesUserProfile : IUserProfile {
+    public class PlayGamesUserProfile : UIUP {
 
-        private          Texture2D m_image          = null;
-        private volatile bool      m_imageIsLoading = false;
+        private          UT2D m_image          = null;
+        private volatile bool m_imageIsLoading = false;
 
-        internal PlayGamesUserProfile(string displayName, string playerId, string avatarUrl)
+        internal PlayGamesUserProfile(string userName, string userId, string avatar)
         {
             m_imageIsLoading = false;
             
-            SetAvatarUrl(avatarUrl);
-            Id = playerId;
+            SetAvatarUrl(avatar);
+            Id       = userId;
             IsFriend = false;
-            UserName = displayName;
+            UserName = userName;
         }
 
-        internal PlayGamesUserProfile(string displayName, string playerId, string avatarUrl, bool isFriend)
+        internal PlayGamesUserProfile(string userName, string userId, string avatar, bool friend)
         {
             m_imageIsLoading = false;
             
-            AvatarURL = avatarUrl;
-            Id        = playerId;
-            IsFriend  = isFriend;
-            UserName  = displayName;
+            AvatarUrl = avatar;
+            Id        = userId;
+            IsFriend  = friend;
+            UserName  = userName;
         }
 
-        public string AvatarURL { get; private set; }
+        public string AvatarUrl { get; private set; }
         public string UserName  { get; private set; }
         public string Id        { get; private set; }
         public bool   IsFriend  { get; private set; }
         
-        public Texture2D Image
+        public UT2D Image
         {
             get {
-                if (!m_imageIsLoading && m_image == null && !string.IsNullOrEmpty(AvatarURL)) {
-                    Utils.Logger.d("Starting to load image: " + AvatarURL);
+                if (!m_imageIsLoading && m_image == null && !string.IsNullOrEmpty(AvatarUrl)) {
+                    Logger.d("Starting to load image: " + AvatarUrl);
                     m_imageIsLoading = true;
-                    PlayGamesHelperObject.RunCoroutine(LoadImage());
+                    PlayGamesHelperObject.RunOnUiThread(LoadImage());
                 }
                 return m_image;
             }
             private set => m_image = value;
         }
 
-        public string    GameId => Id;
-        public UserState State  => UserState.Online;
+        public string GameId => Id;
+        public UUS    State  => UUS.Online;
 
         internal IEnumerator LoadImage()
         {
-            if (!string.IsNullOrEmpty(AvatarURL)) {
-#if UNITY_2017_2_OR_NEWER
-                var www = UnityWebRequestTexture.GetTexture(AvatarURL);
+            if (!string.IsNullOrEmpty(AvatarUrl)) {
+                var www = UWRT.GetTexture(AvatarUrl);
                 www.SendWebRequest();
-#else
-                var www = new WWW(AvatarURL);
-#endif
                 while (!www.isDone) yield return null;
                 if (www.error == null) {
-#if UNITY_2017_2_OR_NEWER
-                    Image = DownloadHandlerTexture.GetContent(www);
-#else
-                    Image = www.texture;
-#endif
+                    Image = UDHT.GetContent(www);
                 } else {
-                    Image = Texture2D.blackTexture;
-                    Utils.Logger.e("Error downloading image: " + www.error);
+                    Image = UT2D.blackTexture;
+                    Logger.e("Error downloading image: " + www.error);
                 }
                 m_imageIsLoading = false;
             } else {
-                Utils.Logger.e("No URL found.");
-                Image = Texture2D.blackTexture;
+                Logger.e("No URL found.");
+                Image = UT2D.blackTexture;
                 m_imageIsLoading = false;
             }
         }
 
-        protected void ResetIdentity(string displayName, string playerId, string avatarUrl)
+        protected void ResetIdentity(string userName, string userId, string avatar)
         {
             m_imageIsLoading = false;
             
-            if (AvatarURL != avatarUrl) {
+            if (AvatarUrl != avatar) {
                 Image = null;
-                SetAvatarUrl(avatarUrl);
+                SetAvatarUrl(avatar);
             }
-            Id             = playerId;
-            IsFriend       = false;
-            UserName       = displayName;
+            Id       = userId;
+            IsFriend = false;
+            UserName = userName;
         }
 
-        private void SetAvatarUrl(string avatarUrl)
+        private void SetAvatarUrl(string value)
         {
-            AvatarURL = avatarUrl;
-            if (!avatarUrl.StartsWith("https") && avatarUrl.StartsWith("http")) {
-                AvatarURL = avatarUrl.Insert(4, "s");
+            AvatarUrl = value;
+            if (!value.StartsWith("https") && value.StartsWith("http")) {
+                AvatarUrl = value.Insert(4, "s");
             }
         }
 
         #region Backward compatibility layer
+
+        [Obsolete("Use IsFriend instead")]
+        public string AvatarURL { get => AvatarUrl; private set => AvatarUrl = value; }
 
         [Obsolete("Use IsFriend instead")]
         public bool Friend { get => IsFriend; private set => IsFriend = value; }
@@ -136,11 +133,11 @@ namespace GooglePlayGames {
 
         #region IUserProfile implementation
 
-        [Obsolete("Use Id instead")]       public string    id       => Id;
-        [Obsolete("Use Image instead")]    public Texture2D image    => Image;
-        [Obsolete("Use IsFriend instead")] public bool      isFriend => IsFriend;
-        [Obsolete("Use State instead")]    public UserState state    => State;
-        [Obsolete("Use UserName instead")] public string    userName => UserName;
+        [Obsolete("Use Id instead")]       public string id       => Id;
+        [Obsolete("Use Image instead")]    public UT2D   image    => Image;
+        [Obsolete("Use IsFriend instead")] public bool   isFriend => IsFriend;
+        [Obsolete("Use State instead")]    public UUS    state    => State;
+        [Obsolete("Use UserName instead")] public string userName => UserName;
 
         #endregion
 
@@ -150,11 +147,11 @@ namespace GooglePlayGames {
         {
             if (obj == null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj is not PlayGamesUserProfile other) return false;
+            if (obj is not GPGUP other) return false;
             return StringComparer.Ordinal.Equals(Id, other.Id);
         }
 
-        public override int GetHashCode() => typeof(PlayGamesUserProfile).GetHashCode() ^ Id.GetHashCode();
+        public override int GetHashCode() => typeof(GPGUP).GetHashCode() ^ Id.GetHashCode();
 
         public override string ToString() => $"[Player: '{UserName}' (id {Id})]";
 
@@ -163,5 +160,3 @@ namespace GooglePlayGames {
     }
 
 }
-
-#endif

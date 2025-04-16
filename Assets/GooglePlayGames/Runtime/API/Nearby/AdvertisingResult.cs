@@ -16,20 +16,22 @@
 
 using GooglePlayGames.Utils;
 
+using ARS = GooglePlayGames.Api.ResponseStatus;
+
 namespace GooglePlayGames.Api.Nearby {
 
     public readonly struct AdvertisingResult {
 
-        public AdvertisingResult(ResponseStatus status, string localEndpointName)
+        public AdvertisingResult(ARS status, string endpointName)
         {
-            LocalEndpointName = Misc.CheckNotNull(localEndpointName);
+            LocalEndpointName = Misc.CheckNotNull(endpointName);
             Status            = status;
         }
 
-        public string         LocalEndpointName { get; }
-        public ResponseStatus Status            { get; }
+        public string LocalEndpointName { get; }
+        public ARS    Status            { get; }
 
-        public bool Succeeded => Status == ResponseStatus.Success;
+        public bool Succeeded => Status == ARS.Success;
 
     }
 

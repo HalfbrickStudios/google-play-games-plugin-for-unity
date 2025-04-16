@@ -169,11 +169,11 @@ namespace GooglePlayGames.Android.Java {
 
     internal static class AchievementExtensions {
 
-        public static bool IsIncremental(this JAI self) => Convert.ToAndroidAchievementIsIncremental(self.JGetType());
+        public static bool IsIncremental(this JAI self) => Utility.ToAndroidAchievementIsIncremental(self.JGetType());
 
-        public static bool IsRevealed(this JAI self) => Convert.ToAndroidAchievementIsRevealed(self.JGetState());
+        public static bool IsRevealed(this JAI self) => Utility.ToAndroidAchievementIsRevealed(self.JGetState());
 
-        public static bool IsUnlocked(this JAI self) => Convert.ToAndroidAchievementIsUnlocked(self.JGetState());
+        public static bool IsUnlocked(this JAI self) => Utility.ToAndroidAchievementIsUnlocked(self.JGetState());
 
     }
 

@@ -17,9 +17,17 @@
 using System;
 using System.Collections.Generic;
 
+using ACRS  = GooglePlayGames.Api.SavedGame.ConflictResolutionStrategy;
+using ADS   = GooglePlayGames.Api.DataSource;
+using AICR  = GooglePlayGames.Api.SavedGame.IConflictResolver;
+using AISGM = GooglePlayGames.Api.SavedGame.ISavedGameMetadata;
+using ASGMU = GooglePlayGames.Api.SavedGame.SavedGameMetadataUpdate;
+using ASGRS = GooglePlayGames.Api.SavedGame.SavedGameRequestStatus;
+using ASUS  = GooglePlayGames.Api.SavedGame.SelectUiStatus;
+
 namespace GooglePlayGames.Api.SavedGame {
 
-    public delegate void ConflictCallback(IConflictResolver resolver, ISavedGameMetadata original, byte[] originalData, ISavedGameMetadata unmerged, byte[] unmergedData);
+    public delegate void ConflictCallback(AICR resolver, AISGM original, byte[] originalData, AISGM unmerged, byte[] unmergedData);
 
     public enum ConflictResolutionStrategy {
         UseLastKnownGood     = 4,
@@ -32,27 +40,27 @@ namespace GooglePlayGames.Api.SavedGame {
 
     public interface IConflictResolver {
 
-        void ChooseMetadata(ISavedGameMetadata chosenMetadata);
+        void ChooseMetadata(AISGM metadata);
 
-        void ResolveConflict(ISavedGameMetadata chosenMetadata, SavedGameMetadataUpdate metadataUpdate, byte[] updatedData);
+        void ResolveConflict(AISGM metadata, ASGMU update, byte[] data);
 
     }
 
     public interface ISavedGameClient {
 
-        void CommitUpdate(ISavedGameMetadata metadata, SavedGameMetadataUpdate updateForMetadata, byte[] updatedBinaryData, Action<SavedGameRequestStatus, ISavedGameMetadata> callback);
+        void CommitUpdate(AISGM metadata, ASGMU update, byte[] data, Action<ASGRS, AISGM> callback);
 
-        void Delete(ISavedGameMetadata metadata);
+        void Delete(AISGM metadata);
 
-        void FetchAllSavedGames(DataSource source, Action<SavedGameRequestStatus, List<ISavedGameMetadata>> callback);
+        void FetchAllSavedGames(ADS source, Action<ASGRS, List<AISGM>> callback);
 
-        void OpenWithAutomaticConflictResolution(string filename, DataSource source, ConflictResolutionStrategy resolutionStrategy, Action<SavedGameRequestStatus, ISavedGameMetadata> callback);
+        void OpenWithAutomaticConflictResolution(string filename, ADS source, ACRS strategy, Action<ASGRS, AISGM> callback);
 
-        void OpenWithManualConflictResolution(string filename, DataSource source, bool prefetchDataOnConflict, ConflictCallback conflictCallback, Action<SavedGameRequestStatus, ISavedGameMetadata> completedCallback);
+        void OpenWithManualConflictResolution(string filename, ADS source, bool prefetchData, ConflictCallback onConflict, Action<ASGRS, AISGM> onCompleted);
 
-        void ReadBinaryData(ISavedGameMetadata metadata, Action<SavedGameRequestStatus, byte[]> completedCallback);
+        void ReadBinaryData(AISGM metadata, Action<ASGRS, byte[]> callback);
 
-        void ShowSelectSavedGameUI(string uiTitle, uint maxDisplayedSavedGames, bool showCreateSaveUI, bool showDeleteSaveUI, Action<SelectUiStatus, ISavedGameMetadata> callback);
+        void ShowSelectSavedGameUI(string title, uint entries, bool showCreate, bool showDelete, Action<ASUS, AISGM> callback);
 
     }
 

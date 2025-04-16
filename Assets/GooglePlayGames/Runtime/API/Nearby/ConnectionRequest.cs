@@ -16,19 +16,21 @@
 
 using GooglePlayGames.Utils;
 
+using AED = GooglePlayGames.Api.Nearby.EndpointDetails;
+
 namespace GooglePlayGames.Api.Nearby {
 
     public readonly struct ConnectionRequest {
 
-        public ConnectionRequest(string remoteEndpointId, string remoteEndpointName, string serviceId, byte[] payload)
+        public ConnectionRequest(string endpointId, string endpointName, string serviceId, byte[] payload)
         {
             Logger.d("Constructing ConnectionRequest");
             Payload        = Misc.CheckNotNull(payload);
-            RemoteEndpoint = new EndpointDetails(remoteEndpointId, remoteEndpointName, serviceId);
+            RemoteEndpoint = new AED(endpointId, endpointName, serviceId);
         }
 
-        public byte[]          Payload        { get; }
-        public EndpointDetails RemoteEndpoint { get; }
+        public byte[] Payload        { get; }
+        public AED    RemoteEndpoint { get; }
 
     }
 

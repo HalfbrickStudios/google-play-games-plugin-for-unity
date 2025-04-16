@@ -14,23 +14,29 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 using System.Collections.Generic;
 
 using GooglePlayGames.Utils;
 
+using AAR   = GooglePlayGames.Api.Nearby.AdvertisingResult;
+using ACReq = GooglePlayGames.Api.Nearby.ConnectionRequest;
+using ACRes = GooglePlayGames.Api.Nearby.ConnectionResponse;
+using AIDL  = GooglePlayGames.Api.Nearby.IDiscoveryListener;
+using AINCC = GooglePlayGames.Api.Nearby.INearbyConnectionClient;
+using AIML  = GooglePlayGames.Api.Nearby.IMessageListener;
+using ANCC  = GooglePlayGames.Api.Nearby.NearbyConnectionConfiguration;
+
 namespace GooglePlayGames.Api.Nearby {
 
-    internal sealed class DummyNearbyConnectionClient : INearbyConnectionClient {
+    internal sealed class DummyNearbyConnectionClient : AINCC {
 
-        public void AcceptConnectionRequest(string remoteEndpointId, byte[] payload, IMessageListener listener)
+        public void AcceptConnectionRequest(string endpointId, byte[] payload, AIML listener)
         {
             Logger.d("AcceptConnectionRequest in dummy implementation called");
         }
 
-        public void DisconnectFromEndpoint(string remoteEndpointId)
+        public void DisconnectFromEndpoint(string endpointId)
         {
             Logger.d("DisconnectFromEndpoint in dummy implementation called");
         }
@@ -43,40 +49,37 @@ namespace GooglePlayGames.Api.Nearby {
 
         public string LocalEndpointId() => string.Empty;
 
-        public int MaxReliableMessagePayloadLength() => NearbyConnectionConfiguration.MaxReliableMessagePayloadLength;
+        public int MaxReliableMessagePayloadLength() => ANCC.MaxReliableMessagePayloadLength;
 
-        public int MaxUnreliableMessagePayloadLength() => NearbyConnectionConfiguration.MaxUnreliableMessagePayloadLength;
+        public int MaxUnreliableMessagePayloadLength() => ANCC.MaxUnreliableMessagePayloadLength;
 
-        public void RejectConnectionRequest(string requestingEndpointId)
+        public void RejectConnectionRequest(string endpointId)
         {
             Logger.d("RejectConnectionRequest in dummy implementation called");
         }
 
-        public void SendConnectionRequest(string name, string remoteEndpointId, byte[] payload, Action<ConnectionResponse> responseCallback, IMessageListener listener)
+        public void SendConnectionRequest(string endpointName, string endpointId, byte[] payload, Action<ACRes> callback, AIML listener)
         {
             Logger.d("SendConnectionRequest called from dummy implementation");
-            if (responseCallback != null) {
-                var obj = ConnectionResponse.Rejected(0, string.Empty);
-                responseCallback.Invoke(obj);
-            }
+            callback?.Invoke(ACRes.Rejected(0, string.Empty));
         }
 
-        public void SendReliable(List<string> recipientEndpointIds, byte[] payload)
+        public void SendReliable(List<string> endpointIds, byte[] payload)
         {
             Logger.d("SendReliable called from dummy implementation");
         }
 
-        public void SendUnreliable(List<string> recipientEndpointIds, byte[] payload)
+        public void SendUnreliable(List<string> endpointIds, byte[] payload)
         {
             Logger.d("SendUnreliable called from dummy implementation");
         }
 
-        public void StartAdvertising(string name, List<string> appIdentifiers, TimeSpan? advertisingDuration, Action<AdvertisingResult> resultCallback, Action<ConnectionRequest> connectionRequestCallback)
+        public void StartAdvertising(string name, List<string> serviceIds, TimeSpan? duration, Action<AAR> onResult, Action<ACReq> onRequest)
         {
-            resultCallback.Invoke(new AdvertisingResult(ResponseStatus.LicenseCheckFailed, string.Empty));
+            onResult?.Invoke(new AAR(ResponseStatus.LicenseCheckFailed, string.Empty));
         }
 
-        public void StartDiscovery(string serviceId, TimeSpan? advertisingTimeout, IDiscoveryListener listener)
+        public void StartDiscovery(string serviceId, TimeSpan? timeout, AIDL listener)
         {
             Logger.d("StartDiscovery in dummy implementation called");
         }
@@ -99,5 +102,3 @@ namespace GooglePlayGames.Api.Nearby {
     }
 
 }
-
-#endif

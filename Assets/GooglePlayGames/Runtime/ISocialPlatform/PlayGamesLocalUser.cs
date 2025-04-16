@@ -14,34 +14,39 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 
-using UnityEngine.SocialPlatforms;
+using UILU = UnityEngine.SocialPlatforms.ILocalUser;
+using UIUP = UnityEngine.SocialPlatforms.IUserProfile;
+using UUS  = UnityEngine.SocialPlatforms.UserState;
 
-using GooglePlayGames.Api;
+using GPGP  = GooglePlayGames.PlayGamesPlatform;
+using GPGUP = GooglePlayGames.PlayGamesUserProfile;
+
+using ACSC = GooglePlayGames.Api.CommonStatusCodes;
+using APS  = GooglePlayGames.Api.PlayerStats;
+using ASIS = GooglePlayGames.Api.SignInStatus;
 
 namespace GooglePlayGames {
 
-    public sealed class PlayGamesLocalUser : PlayGamesUserProfile, ILocalUser {
+    public sealed class PlayGamesLocalUser : GPGUP, UILU {
 
-        private readonly PlayGamesPlatform m_platform;
-        private          PlayerStats       m_stats;
+        private readonly GPGP m_platform;
+        private          APS  m_stats;
 
-        internal PlayGamesLocalUser(PlayGamesPlatform plaf) : base("localUser", string.Empty, string.Empty)
+        internal PlayGamesLocalUser(GPGP platform) : base(userName: "localUser", userId: string.Empty, avatar: string.Empty)
         {
-            m_platform = plaf;
+            m_platform = platform;
             m_stats    = null;
         }
 
-        public     IUserProfile[] Friends         => m_platform.GetFriends();
-        public     bool           IsAuthenticated => m_platform.IsAuthenticated();
-        public new bool           IsFriend        => true;
-        public     bool           IsUnderage      => true;
-        public new UserState      State           => UserState.Online;
+        public     UIUP[] Friends         => m_platform.GetFriends();
+        public     bool   IsAuthenticated => m_platform.IsAuthenticated();
+        public new bool   IsFriend        => true;
+        public     bool   IsUnderage      => true;
+        public new UUS    State           => UUS.Online;
 
-        public new string AvatarURL
+        public new string AvatarUrl
         {
             get {
                 var result = string.Empty;
@@ -82,16 +87,19 @@ namespace GooglePlayGames {
             }
         }
 
-        public void GetStats(Action<CommonStatusCodes, PlayerStats> callback)
+        public void GetStats(Action<ACSC, APS> callback)
         {
             if (m_stats == null || !m_stats.IsValid) {
                 m_platform.GetPlayerStats((rc, stats) => callback(rc, m_stats = stats));
             } else {
-                callback(CommonStatusCodes.Success, m_stats);
+                callback(ACSC.Success, m_stats);
             }
         }
 
         #region Backward compatibility layer
+
+        [Obsolete("Use AvatarUrl instead")]
+        public new string AvatarURL => AvatarUrl;
 
         [Obsolete("Use IsFriend instead")]
         public new bool Friend => IsFriend;
@@ -100,27 +108,25 @@ namespace GooglePlayGames {
 
         #region IUserProfile implementation
 
-        [Obsolete("Use Id instead")]       public new string    id       => Id;
-        [Obsolete("Use IsFriend instead")] public new bool      isFriend => IsFriend;
-        [Obsolete("Use State instead")]    public new UserState state    => State;
-        [Obsolete("Use UserName instead")] public new string    userName => UserName;
+        [Obsolete("Use Id instead")]       public new string id       => Id;
+        [Obsolete("Use IsFriend instead")] public new bool   isFriend => IsFriend;
+        [Obsolete("Use State instead")]    public new UUS    state    => State;
+        [Obsolete("Use UserName instead")] public new string userName => UserName;
 
         #endregion IUserProfile implementation
 
         #region ILocalUser implementation
 
-        [Obsolete("Use Friends         instead")] public IUserProfile[] friends       => Friends;
-        [Obsolete("Use IsAuthenticated instead")] public bool           authenticated => IsAuthenticated;
-        [Obsolete("Use IsUnderage      instead")] public bool           underage      => IsUnderage;
+        [Obsolete("Use Friends         instead")] public UIUP[] friends       => Friends;
+        [Obsolete("Use IsAuthenticated instead")] public bool   authenticated => IsAuthenticated;
+        [Obsolete("Use IsUnderage      instead")] public bool   underage      => IsUnderage;
 
-        public void Authenticate(Action<bool> callback)         => m_platform.Authenticate(it => callback(it == SignInStatus.Success));
-        public void Authenticate(Action<bool, string> callback) => m_platform.Authenticate(it => callback(it == SignInStatus.Success, it.ToString()));
-        public void LoadFriends(Action<bool> callback)          => m_platform.LoadFriends(this, callback);
+        public void Authenticate(Action<bool>         callback) => m_platform.Authenticate(it => callback(it == ASIS.Success));
+        public void Authenticate(Action<bool, string> callback) => m_platform.Authenticate(it => callback(it == ASIS.Success, it.ToString()));
+        public void LoadFriends (Action<bool>         callback) => m_platform.LoadFriends(this, callback);
 
         #endregion ILocalUser implementation
 
     }
 
 }
-
-#endif

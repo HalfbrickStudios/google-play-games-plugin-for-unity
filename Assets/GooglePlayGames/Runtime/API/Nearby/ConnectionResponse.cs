@@ -16,6 +16,9 @@
 
 using GooglePlayGames.Utils;
 
+using ACR  = GooglePlayGames.Api.Nearby.ConnectionResponse;
+using ACRS = GooglePlayGames.Api.Nearby.ConnectionResponse.Status;
+
 namespace GooglePlayGames.Api.Nearby {
 
     public readonly struct ConnectionResponse {
@@ -31,30 +34,30 @@ namespace GooglePlayGames.Api.Nearby {
 
         private static readonly byte[] s_emptyPayload = new byte[0];
 
-        public static ConnectionResponse Accepted(long clientId, string remoteId, byte[] payload) => new(clientId, remoteId, Status.Accepted, payload);
+        public static ACR Accepted(long clientId, string endpointId, byte[] payload) => new(clientId, endpointId, ACRS.Accepted, payload);
 
-        public static ConnectionResponse AlreadyConnected(long clientId, string remoteId) => new(clientId, remoteId, Status.ErrorAlreadyConnected, s_emptyPayload);
+        public static ACR AlreadyConnected(long clientId, string endpointId) => new(clientId, endpointId, ACRS.ErrorAlreadyConnected, s_emptyPayload);
 
-        public static ConnectionResponse EndpointNotConnected(long clientId, string remoteId) => new(clientId, remoteId, Status.ErrorEndpointNotConnected, s_emptyPayload);
+        public static ACR EndpointNotConnected(long clientId, string endpointId) => new(clientId, endpointId, ACRS.ErrorEndpointNotConnected, s_emptyPayload);
 
-        public static ConnectionResponse InternalError(long clientId, string remoteId) => new(clientId, remoteId, Status.ErrorInternal, s_emptyPayload);
+        public static ACR InternalError(long clientId, string endpointId) => new(clientId, endpointId, ACRS.ErrorInternal, s_emptyPayload);
 
-        public static ConnectionResponse NetworkNotConnected(long clientId, string remoteId) => new(clientId, remoteId, Status.ErrorNetworkNotConnected, s_emptyPayload);
+        public static ACR NetworkNotConnected(long clientId, string endpointId) => new(clientId, endpointId, ACRS.ErrorNetworkNotConnected, s_emptyPayload);
 
-        public static ConnectionResponse Rejected(long clientId, string remoteId) => new(clientId, remoteId, Status.Rejected, s_emptyPayload);
+        public static ACR Rejected(long clientId, string endpointId) => new(clientId, endpointId, ACRS.Rejected, s_emptyPayload);
 
-        private ConnectionResponse(long localClientId, string remoteEndpointId, Status code, byte[] payload)
+        private ConnectionResponse(long clientId, string endpointId, ACRS status, byte[] payload)
         {
-            LocalClientId    = localClientId;
+            LocalClientId    = clientId;
             Payload          = Misc.CheckNotNull(payload);
-            RemoteEndpointId = Misc.CheckNotNull(remoteEndpointId);
-            ResponseStatus   = code;
+            RemoteEndpointId = Misc.CheckNotNull(endpointId);
+            ResponseStatus   = status;
         }
 
         public long   LocalClientId    { get; }
         public byte[] Payload          { get; }
         public string RemoteEndpointId { get; }
-        public Status ResponseStatus   { get; }
+        public ACRS   ResponseStatus   { get; }
 
     }
 

@@ -39,8 +39,8 @@ using APS   = GooglePlayGames.Api.PlayerStats;
 using ARS   = GooglePlayGames.Api.ResponseStatus;
 using ASGMU = GooglePlayGames.Api.SavedGame.SavedGameMetadataUpdate;
 using ASGRS = GooglePlayGames.Api.SavedGame.SavedGameRequestStatus;
+using ASPC  = GooglePlayGames.Api.ScorePageCursor;
 using ASPD  = GooglePlayGames.Api.ScorePageDirection;
-using ASPT  = GooglePlayGames.Api.ScorePageToken;
 
 using JABI   = GooglePlayGames.Android.Java.AchievementBuffer.Instance;
 using JAI    = GooglePlayGames.Android.Java.Achievement.Instance;
@@ -64,9 +64,9 @@ using JSC    = GooglePlayGames.Android.Java.SnapshotsClient;
 using JSMC   = GooglePlayGames.Android.Java.SnapshotMetadataChange;
 using JSMCI  = GooglePlayGames.Android.Java.SnapshotMetadataChange.Instance;
 
-namespace GooglePlayGames {
+namespace GooglePlayGames.Utils {
 
-    internal static partial class Convert {
+    internal static partial class Utility {
 
         private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, 0);
 
@@ -160,8 +160,8 @@ namespace GooglePlayGames {
             using (var jBuffer = jScores.JGetScores()) {
                 result = ToAndroidLeaderboardScoreData(jBuffer, id, status);
                 if (collection != null && span != null) {
-                    result.NextPageToken = new ASPT(jBuffer, id, (ALC)collection, (ALTS)span, ASPD.Forward);
-                    result.PrevPageToken = new ASPT(jBuffer, id, (ALC)collection, (ALTS)span, ASPD.Backward);
+                    result.NextPageToken = new ASPC(jBuffer, id, (ALC)collection, (ALTS)span, ASPD.Forward);
+                    result.PrevPageToken = new ASPC(jBuffer, id, (ALC)collection, (ALTS)span, ASPD.Backward);
                 }
             }
             using (var jLeaderboard = jScores.JGetLeaderboard()) {

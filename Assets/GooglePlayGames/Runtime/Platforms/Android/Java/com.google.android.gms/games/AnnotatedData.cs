@@ -53,7 +53,7 @@ namespace GooglePlayGames.Android.Java {
 
     internal static class AnnotatedDataExtensions {
 
-        public static ARS GetResponseStatus<T>(this JAD.Instance<T> self) => Convert.ToAndroidResponseStatus(self.IsStale());
+        public static ARS GetResponseStatus<T>(this JAD.Instance<T> self) => Utility.ToAndroidResponseStatus(self.IsStale());
 
     }
 

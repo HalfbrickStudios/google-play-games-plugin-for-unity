@@ -18,11 +18,14 @@ using System;
 
 using GooglePlayGames.Utils;
 
+using ASGMU  = GooglePlayGames.Api.SavedGame.SavedGameMetadataUpdate;
+using ASGMUB = GooglePlayGames.Api.SavedGame.SavedGameMetadataUpdate.Builder;
+
 namespace GooglePlayGames.Api.SavedGame {
 
     public readonly struct SavedGameMetadataUpdate {
 
-        private SavedGameMetadataUpdate(Builder builder)
+        private SavedGameMetadataUpdate(ASGMUB builder)
         {
             IsCoverImageUpdated  = builder.IsCoverImageUpdated;
             IsDescriptionUpdated = builder.IsDescriptionUpdated;
@@ -47,30 +50,30 @@ namespace GooglePlayGames.Api.SavedGame {
             internal TimeSpan? UpdatedPlayedTime    { get; private set; }
             internal byte[]    UpdatedPngCoverImage { get; private set; }
 
-            public Builder WithUpdatedDescription(string description)
+            public ASGMUB WithUpdatedDescription(string value)
             {
                 IsDescriptionUpdated = true;
-                UpdatedDescription   = Misc.CheckNotNull(description);
+                UpdatedDescription   = Misc.CheckNotNull(value);
                 return this;
             }
 
-            public Builder WithUpdatedPngCoverImage(byte[] newPngCoverImage)
+            public ASGMUB WithUpdatedPngCoverImage(byte[] value)
             {
                 IsCoverImageUpdated  = true;
-                UpdatedPngCoverImage = newPngCoverImage;
+                UpdatedPngCoverImage = value;
                 return this;
             }
 
-            public Builder WithUpdatedPlayedTime(TimeSpan newPlayedTime)
+            public ASGMUB WithUpdatedPlayedTime(TimeSpan value)
             {
-                if (newPlayedTime.TotalMilliseconds > ulong.MaxValue) {
+                if (value.TotalMilliseconds > ulong.MaxValue) {
                     throw new InvalidOperationException("Timespans longer than ulong.MaxValue milliseconds are not allowed");
                 }
-                UpdatedPlayedTime = newPlayedTime;
+                UpdatedPlayedTime = value;
                 return this;
             }
 
-            public readonly SavedGameMetadataUpdate Build() => new(this);
+            public readonly ASGMU Build() => new(this);
 
         }
 

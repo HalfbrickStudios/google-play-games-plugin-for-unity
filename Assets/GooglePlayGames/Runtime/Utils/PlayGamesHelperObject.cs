@@ -20,16 +20,21 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using UGO = UnityEngine.GameObject;
+using UMO = UnityEngine.MonoBehaviour;
+
+using GPGHO = GooglePlayGames.Utils.PlayGamesHelperObject;
+
 namespace GooglePlayGames.Utils {
 
-    public sealed class PlayGamesHelperObject : MonoBehaviour {
+    public sealed class PlayGamesHelperObject : UMO {
 
-        private static          bool                  s_dummy          = false;
-        private static volatile bool                  s_empty          = true;
-        private static readonly List<Action<bool>>    s_focusCallbacks = new();
-        private static          PlayGamesHelperObject s_instance       = null;
-        private static readonly List<Action<bool>>    s_pauseCallbacks = new();
-        private static readonly List<Action>          s_queue          = new();
+        private static          bool               s_dummy          = false;
+        private static volatile bool               s_empty          = true;
+        private static readonly List<Action<bool>> s_focusCallbacks = new();
+        private static          GPGHO              s_instance       = null;
+        private static readonly List<Action<bool>> s_pauseCallbacks = new();
+        private static readonly List<Action>       s_queue          = new();
 
         private readonly List<Action> m_queue = new();
 
@@ -49,12 +54,12 @@ namespace GooglePlayGames.Utils {
         {
             if (s_instance != null) return;
             if (Application.isPlaying) {
-                var obj = new GameObject("PlayGames_QueueRunner");
+                var obj = new UGO("GpgQueueRunner");
                 DontDestroyOnLoad(obj);
-                s_instance = obj.AddComponent<PlayGamesHelperObject>();
+                s_instance = obj.AddComponent<GPGHO>();
             } else {
-                s_instance = new PlayGamesHelperObject();
-                s_dummy = true;
+                s_instance = new();
+                s_dummy    = true;
             }
         }
 
@@ -62,20 +67,20 @@ namespace GooglePlayGames.Utils {
 
         public static bool RemovePauseCallback(Action<bool> callback) => s_pauseCallbacks.Remove(callback);
 
-        public static void RunCoroutine(IEnumerator action)
+        public static void RunOnUiThread(Action runnable)
         {
-            if (s_instance == null)
-            RunOnGameThread(() => s_instance.StartCoroutine(action));
-        }
-
-        public static void RunOnGameThread(Action action)
-        {
-            if (action == null) throw new ArgumentNullException("action");
+            Misc.CheckNotNull(runnable, nameof(runnable));
             if (s_dummy) return;
             lock (s_queue) {
-                s_queue.Add(action);
+                s_queue.Add(runnable);
                 s_empty = false;
             }
+        }
+
+        public static void RunOnUiThread(IEnumerator coroutine)
+        {
+            if (s_instance == null) return;
+            RunOnUiThread(() => s_instance.StartCoroutine(coroutine));
         }
 
         #region MonoBehaviour implementation
@@ -100,14 +105,14 @@ namespace GooglePlayGames.Utils {
                 s_queue.Clear();
                 s_empty = true;
             }
-            m_queue.ForEach(it => it.Invoke());
+            m_queue.ForEach(it => it?.Invoke());
         }
 
         private void OnApplicationFocus(bool focused)
         {
             foreach (var callback in s_focusCallbacks) {
                 try {
-                    callback(focused);
+                    callback?.Invoke(focused);
                 } catch (Exception e) {
                     Logger.e($"Exception in OnApplicationFocus: {e.Message}\n" + e.StackTrace);
                 }
@@ -118,7 +123,7 @@ namespace GooglePlayGames.Utils {
         {
             foreach (var callback in s_pauseCallbacks) {
                 try {
-                    callback(paused);
+                    callback?.Invoke(paused);
                 } catch (Exception e) {
                     Logger.e($"Exception in OnApplicationPause: {e.Message}\n" + e.StackTrace);
                 }

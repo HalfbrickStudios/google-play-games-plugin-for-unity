@@ -17,30 +17,36 @@
 using System;
 using System.Collections.Generic;
 
+using AAR   = GooglePlayGames.Api.Nearby.AdvertisingResult;
+using ACReq = GooglePlayGames.Api.Nearby.ConnectionRequest;
+using ACRes = GooglePlayGames.Api.Nearby.ConnectionResponse;
+using AED   = GooglePlayGames.Api.Nearby.EndpointDetails;
+using AIDL  = GooglePlayGames.Api.Nearby.IDiscoveryListener;
+using AIML  = GooglePlayGames.Api.Nearby.IMessageListener;
+
 namespace GooglePlayGames.Api.Nearby {
 
     public interface IDiscoveryListener {
 
-        void OnEndpointFound(EndpointDetails discoveredEndpoint);
+        void OnEndpointFound(AED details);
 
-        void OnEndpointLost(string lostEndpointId);
+        void OnEndpointLost(string endpointId);
 
     }
 
     public interface IMessageListener {
 
-        void OnMessageReceived(string id, byte[] data, bool reliable);
+        void OnMessageReceived(string endpointId, byte[] data, bool reliable);
 
-        void OnRemoteEndpointDisconnected(string id);
+        void OnRemoteEndpointDisconnected(string endpointId);
 
     }
 
-#if UNITY_ANDROID
     public interface INearbyConnectionClient {
 
-        void AcceptConnectionRequest(string remoteEndpointId, byte[] payload, IMessageListener listener);
+        void AcceptConnectionRequest(string endpointId, byte[] payload, AIML listener);
 
-        void DisconnectFromEndpoint(string remoteEndpointId);
+        void DisconnectFromEndpoint(string endpointId);
 
         string GetAppBundleId();
 
@@ -50,17 +56,17 @@ namespace GooglePlayGames.Api.Nearby {
 
         int MaxUnreliableMessagePayloadLength();
 
-        void RejectConnectionRequest(string requestingEndpointId);
+        void RejectConnectionRequest(string endpointId);
 
-        void SendConnectionRequest(string name, string remoteEndpointId, byte[] payload, Action<ConnectionResponse> responseCallback, IMessageListener listener);
+        void SendConnectionRequest(string endpointName, string endpointId, byte[] payload, Action<ACRes> callback, AIML listener);
 
-        void SendReliable(List<string> recipientEndpointIds, byte[] payload);
+        void SendReliable(List<string> endpointIds, byte[] payload);
 
-        void SendUnreliable(List<string> recipientEndpointIds, byte[] payload);
+        void SendUnreliable(List<string> endpointIds, byte[] payload);
 
-        void StartAdvertising(string name, List<string> appIdentifiers, TimeSpan? advertisingDuration, Action<AdvertisingResult> resultCallback, Action<ConnectionRequest> connectionRequestCallback);
+        void StartAdvertising(string name, List<string> serviceIds, TimeSpan? duration, Action<AAR> onResult, Action<ACReq> onRequest);
 
-        void StartDiscovery(string serviceId, TimeSpan? advertisingTimeout, IDiscoveryListener listener);
+        void StartDiscovery(string serviceId, TimeSpan? timeout, AIDL listener);
 
         void StopAdvertising();
 
@@ -69,6 +75,5 @@ namespace GooglePlayGames.Api.Nearby {
         void StopDiscovery(string serviceId);
 
     }
-#endif
 
 }

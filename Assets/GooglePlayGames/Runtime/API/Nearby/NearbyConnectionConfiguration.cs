@@ -18,6 +18,8 @@ using System;
 
 using GooglePlayGames.Utils;
 
+using AIS = GooglePlayGames.Api.Nearby.InitializationStatus;
+
 namespace GooglePlayGames.Api.Nearby {
 
     public enum InitializationStatus {
@@ -31,14 +33,14 @@ namespace GooglePlayGames.Api.Nearby {
         public const int MaxReliableMessagePayloadLength   = 4096;
         public const int MaxUnreliableMessagePayloadLength = 1168;
 
-        public NearbyConnectionConfiguration(Action<InitializationStatus> callback, long localClientId)
+        public NearbyConnectionConfiguration(Action<AIS> callback, long clientId)
         {
             InitializationCallback = Misc.CheckNotNull(callback);
-            LocalClientId          = localClientId;
+            LocalClientId          = clientId;
         }
 
-        public long                         LocalClientId          { get; }
-        public Action<InitializationStatus> InitializationCallback { get; }
+        public long        LocalClientId          { get; }
+        public Action<AIS> InitializationCallback { get; }
 
     }
 

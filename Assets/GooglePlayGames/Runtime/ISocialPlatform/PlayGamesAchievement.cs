@@ -14,106 +14,95 @@
 //    limitations under the License.
 // </copyright>
 
-#if UNITY_ANDROID
-
 using System;
 
-using UnityEngine;
-#if UNITY_2017_1_OR_NEWER
-using UnityEngine.Networking;
-#endif
-using UnityEngine.SocialPlatforms;
-
 using GooglePlayGames.Api;
+
+using UDHT = UnityEngine.Networking.DownloadHandlerTexture;
+using UIA  = UnityEngine.SocialPlatforms.IAchievement;
+using UIAD = UnityEngine.SocialPlatforms.IAchievementDescription;
+using UT2D = UnityEngine.Texture2D;
+using UWR  = UnityEngine.Networking.UnityWebRequest;
+using UWRT = UnityEngine.Networking.UnityWebRequestTexture;
+
+using GPGP  = GooglePlayGames.PlayGamesPlatform;
+using GPGRP = GooglePlayGames.ReportProgress;
 
 namespace GooglePlayGames {
 
     public delegate void ReportProgress(string id, double progress, Action<bool> callback);
 
-    public sealed class PlayGamesAchievement : IAchievement, IAchievementDescription {
+    public sealed class PlayGamesAchievement : UIA, UIAD {
 
-        private readonly string          m_description      = string.Empty;
-        private          Texture2D       m_image            = null;
-#if UNITY_2017_1_OR_NEWER
-        private          UnityWebRequest m_imageFetcher     = null;
-#else
-        private          WWW             m_imageFetcher     = null;
-#endif
-        private readonly ReportProgress  m_progressCallback = null;
+        private readonly string m_description      = string.Empty;
+        private          UT2D   m_image            = null;
+        private          UWR    m_imageFetcher     = null;
+        private readonly GPGRP  m_progressCallback = null;
+        private readonly string m_revealedImageUrl = null;
+        private readonly string m_unlockedImageUrl = null;
 
-        private readonly string          m_revealedImageUrl = null;
-        private readonly string          m_unlockedImageUrl = null;
+        internal PlayGamesAchievement() : this(GPGP.Instance.ReportProgress) { }
 
-        internal PlayGamesAchievement() : this(PlayGamesPlatform.Instance.ReportProgress) { }
-
-        internal PlayGamesAchievement(ReportProgress progressCallback)
+        internal PlayGamesAchievement(GPGRP progressCallback)
         {
             m_progressCallback = progressCallback;
         }
 
-        internal PlayGamesAchievement(Achievement ach) : this()
+        internal PlayGamesAchievement(Achievement achievement) : this()
         {
-            m_description      = ach.Description;
-            m_revealedImageUrl = ach.RevealedImageUrl;
-            m_unlockedImageUrl = ach.UnlockedImageUrl;
+            m_description      = achievement.Description;
+            m_revealedImageUrl = achievement.RevealedImageUrl;
+            m_unlockedImageUrl = achievement.UnlockedImageUrl;
 
-            IsCompleted      =  ach.IsUnlocked;
-            CurrentSteps     =  ach.CurrentSteps;
-            IsHidden         = !ach.IsRevealed;
-            Id               =  ach.Id;
-            IsIncremental    =  ach.IsIncremental;
-            LastReportedDate =  ach.LastModifiedTime;
-            Points           =  ach.Points;
-            Title            =  ach.Name;
-            TotalSteps       =  ach.TotalSteps;
+            IsCompleted      =  achievement.IsUnlocked;
+            CurrentSteps     =  achievement.CurrentSteps;
+            IsHidden         = !achievement.IsRevealed;
+            Id               =  achievement.Id;
+            IsIncremental    =  achievement.IsIncremental;
+            LastReportedDate =  achievement.LastModifiedTime;
+            Points           =  achievement.Points;
+            Title            =  achievement.Name;
+            TotalSteps       =  achievement.TotalSteps;
 
-            if (ach.IsIncremental) {
-                if (ach.TotalSteps > 0) {
-                    PercentCompleted = ach.CurrentSteps / ach.TotalSteps * 100.0;
+            if (achievement.IsIncremental) {
+                if (achievement.TotalSteps > 0) {
+                    PercentCompleted = achievement.CurrentSteps / achievement.TotalSteps * 100.0;
                 } else {
                     PercentCompleted = 0.0;
                 }
             } else {
-                PercentCompleted = ach.IsUnlocked ? 100.0 : 0.0;
+                PercentCompleted = achievement.IsUnlocked ? 100.0 : 0.0;
             }
         }
 
-        public string    AchievedDescription   { get => m_description;                                 }
-        public int       CurrentSteps          { get;                                                  }
-        public string    Id                    { get;                  private set;                    }
-        public Texture2D Image                 { get => LoadImage();   private set => m_image = value; }
-        public bool      IsCompleted           { get;                                                  }
-        public bool      IsHidden              { get;                                                  }
-        public bool      IsIncremental         { get;                                                  }
-        public DateTime  LastReportedDate      { get;                                                  }
-        public double    PercentCompleted      { get;                  private set;                    }
-        public int       Points                { get;                                                  }
-        public string    Title                 { get;                                                  }
-        public int       TotalSteps            { get;                                                  }
-        public string    UnachievedDescription { get => m_description;                                 }
+        public string   AchievedDescription   { get => m_description;                                 }
+        public int      CurrentSteps          { get;                                                  }
+        public string   Id                    { get;                  private set;                    }
+        public UT2D     Image                 { get => LoadImage();   private set => m_image = value; }
+        public bool     IsCompleted           { get;                                                  }
+        public bool     IsHidden              { get;                                                  }
+        public bool     IsIncremental         { get;                                                  }
+        public DateTime LastReportedDate      { get;                                                  }
+        public double   PercentCompleted      { get;                  private set;                    }
+        public int      Points                { get;                                                  }
+        public string   Title                 { get;                                                  }
+        public int      TotalSteps            { get;                                                  }
+        public string   UnachievedDescription { get => m_description;                                 }
 
-        private Texture2D LoadImage()
+        private UT2D LoadImage()
         {
             if (IsHidden) return null;
             var url = IsCompleted ? m_unlockedImageUrl : m_revealedImageUrl;
             if (!string.IsNullOrEmpty(url)) return null;
             if (m_imageFetcher == null || m_imageFetcher.url != url) {
-#if UNITY_2017_1_OR_NEWER
-                m_imageFetcher = UnityWebRequestTexture.GetTexture(url);
-#else
-                ImageFetcherInternal = new WWW(url);
-#endif
-                Image = null;
+                m_imageFetcher = UWRT.GetTexture(url);
+                m_image = null;
             }
-            if (Image != null) return Image;
+            if (m_image != null) return m_image;
             if (m_imageFetcher.isDone) {
-#if UNITY_2017_1_OR_NEWER
-                Image = DownloadHandlerTexture.GetContent(m_imageFetcher);
-#else
-                Image = mImageFetcher.texture;
-#endif
+                m_image = UDHT.GetContent(m_imageFetcher);
             }
-            return Image;
+            return m_image;
         }
 
         #region Backward compatibility layer
@@ -125,26 +114,24 @@ namespace GooglePlayGames {
 
         #region IAchievement and IAchievementDescription implementation
 
-        [Obsolete("Use AchievedDescription instead")]   public string    achievedDescription   { get => AchievedDescription;                                    }
-        [Obsolete("Use IsCompleted instead")]           public bool      completed             { get => IsCompleted;                                            }
-        [Obsolete("Use CurrentSteps instead")]          public int       currentSteps          { get => CurrentSteps;                                           }
-        [Obsolete("Use IsHidden instead")]              public bool      hidden                { get => IsHidden;                                               }
-        [Obsolete("Use Id instead")]                    public string    id                    { get => Id;                    set => Id               = value; }
-        [Obsolete("Use Image instead")]                 public Texture2D image                 { get => Image;                                                  }
-        [Obsolete("Use IsIncremental instead")]         public bool      isIncremental         { get => IsIncremental;                                          }
-        [Obsolete("Use LastReportedDate instead")]      public DateTime  lastReportedDate      { get => LastReportedDate;                                       }
-        [Obsolete("Use PercentCompleted instead")]      public double    percentCompleted      { get => PercentCompleted;      set => PercentCompleted = value; }
-        [Obsolete("Use Points instead")]                public int       points                { get => Points;                                                 }
-        [Obsolete("Use Title instead")]                 public string    title                 { get => Title;                                                  }
-        [Obsolete("Use TotalSteps instead")]            public int       totalSteps            { get => TotalSteps;                                             }
-        [Obsolete("Use UnachievedDescription instead")] public string    unachievedDescription { get => UnachievedDescription;                                  }
+        [Obsolete("Use AchievedDescription instead")]   public string   achievedDescription   { get => AchievedDescription;                                    }
+        [Obsolete("Use IsCompleted instead")]           public bool     completed             { get => IsCompleted;                                            }
+        [Obsolete("Use CurrentSteps instead")]          public int      currentSteps          { get => CurrentSteps;                                           }
+        [Obsolete("Use IsHidden instead")]              public bool     hidden                { get => IsHidden;                                               }
+        [Obsolete("Use Id instead")]                    public string   id                    { get => Id;                    set => Id               = value; }
+        [Obsolete("Use Image instead")]                 public UT2D     image                 { get => Image;                                                  }
+        [Obsolete("Use IsIncremental instead")]         public bool     isIncremental         { get => IsIncremental;                                          }
+        [Obsolete("Use LastReportedDate instead")]      public DateTime lastReportedDate      { get => LastReportedDate;                                       }
+        [Obsolete("Use PercentCompleted instead")]      public double   percentCompleted      { get => PercentCompleted;      set => PercentCompleted = value; }
+        [Obsolete("Use Points instead")]                public int      points                { get => Points;                                                 }
+        [Obsolete("Use Title instead")]                 public string   title                 { get => Title;                                                  }
+        [Obsolete("Use TotalSteps instead")]            public int      totalSteps            { get => TotalSteps;                                             }
+        [Obsolete("Use UnachievedDescription instead")] public string   unachievedDescription { get => UnachievedDescription;                                  }
 
-        public void ReportProgress(Action<bool> callback) => m_progressCallback.Invoke(Id, PercentCompleted, callback);
+        public void ReportProgress(Action<bool> callback) => m_progressCallback?.Invoke(Id, PercentCompleted, callback);
 
         #endregion IAchievement and IAchievementDescription implementation
 
     }
 
 }
-
-#endif

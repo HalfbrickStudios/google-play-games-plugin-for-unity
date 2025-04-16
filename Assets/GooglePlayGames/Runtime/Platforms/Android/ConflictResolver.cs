@@ -57,7 +57,7 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            using var jChange = Convert.ToJavaSnapshotMetadataChangeUpdate(update);
+            using var jChange = Utility.ToJavaSnapshotMetadataChangeUpdate(update);
             var conflict = m_conflict.GetConflictId();
             var snapshot = casted.JSnapshotMetadata.GetSnapshotId();
             using var jTask = m_jSnapClient.JResolveConflict(conflict, snapshot, jChange, jContents);
