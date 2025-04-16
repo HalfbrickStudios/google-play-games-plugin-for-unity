@@ -90,9 +90,9 @@ namespace GooglePlayGames {
         public void GetStats(Action<ACSC, APS> callback)
         {
             if (m_stats == null || !m_stats.IsValid) {
-                m_platform.GetPlayerStats((rc, stats) => callback(rc, m_stats = stats));
+                m_platform.GetPlayerStats((rc, stats) => callback?.Invoke(rc, m_stats = stats));
             } else {
-                callback(ACSC.Success, m_stats);
+                callback?.Invoke(ACSC.Success, m_stats);
             }
         }
 
@@ -121,8 +121,8 @@ namespace GooglePlayGames {
         [Obsolete("Use IsAuthenticated instead")] public bool   authenticated => IsAuthenticated;
         [Obsolete("Use IsUnderage      instead")] public bool   underage      => IsUnderage;
 
-        public void Authenticate(Action<bool>         callback) => m_platform.Authenticate(it => callback(it == ASIS.Success));
-        public void Authenticate(Action<bool, string> callback) => m_platform.Authenticate(it => callback(it == ASIS.Success, it.ToString()));
+        public void Authenticate(Action<bool>         callback) => m_platform.Authenticate(it => callback?.Invoke(it == ASIS.Success));
+        public void Authenticate(Action<bool, string> callback) => m_platform.Authenticate(it => callback?.Invoke(it == ASIS.Success, it.ToString()));
         public void LoadFriends (Action<bool>         callback) => m_platform.LoadFriends(this, callback);
 
         #endregion ILocalUser implementation

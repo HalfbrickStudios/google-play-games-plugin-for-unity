@@ -46,24 +46,25 @@ namespace GooglePlayGames.Android {
             var casted = metadata as ASM;
             if (casted != m_original && casted != m_unmerged) {
                 Logger.e("Caller attempted to choose a version of the metadata that was not part of the conflict");
-                m_callback(ASGRS.BadInputError, null);
+                m_callback?.Invoke(ASGRS.BadInputError, null);
                 return;
             }
 
             using var jContents = m_conflict.JGetResolutionSnapshotContents();
             if (!jContents.WriteBytes(bytes)) {
                 Logger.e("Can't update snapshot contents during conflict resolution.");
-                m_callback(ASGRS.BadInputError, null);
+                m_callback?.Invoke(ASGRS.BadInputError, null);
                 return;
             }
 
-            using var jChange = Utility.ToJavaSnapshotMetadataChangeUpdate(update);
-            var conflict = m_conflict.GetConflictId();
-            var snapshot = casted.JSnapshotMetadata.GetSnapshotId();
-            using var jTask = m_jSnapClient.JResolveConflict(conflict, snapshot, jChange, jContents);
+            using var jChange   = Utility.ToJavaSnapshotMetadataChangeUpdate(update);
+                  var conflict  = m_conflict.GetConflictId();
+            using var jMetadata = casted.JSnapshotMetadata;
+                  var snapshot  = jMetadata.GetSnapshotId();
+            using var jTask     = m_jSnapClient.JResolveConflict(conflict, snapshot, jChange, jContents);
             jTask.JAddOnSuccessListener(jData => m_retry()).JAddOnFailureListener(exception => {
                 Logger.d("ResolveConflict failed: " + exception.JToString());
-                m_callback(m_saveClient.JPlayClient.GetSavedGameRequestStatus(), null);
+                m_callback?.Invoke(m_saveClient.JPlayClient.GetSavedGameRequestStatus(), null);
             });
         }
 
@@ -72,14 +73,14 @@ namespace GooglePlayGames.Android {
             var casted = metadata as ASM;
             if (casted != m_original && casted != m_unmerged) {
                 Logger.e("Caller attempted to choose a version of the metadata that was not part of the conflict");
-                m_callback(ASGRS.BadInputError, null);
+                m_callback?.Invoke(ASGRS.BadInputError, null);
                 return;
             }
 
             using var jTask = m_jSnapClient.JResolveConflict(m_conflict.GetConflictId(), casted.JSnapshot);
             jTask.JAddOnSuccessListener(jData => m_retry()).JAddOnFailureListener(jException => {
                 Logger.d("ChooseMetadata failed: " + jException.JToString());
-                m_callback(m_saveClient.JPlayClient.GetSavedGameRequestStatus(), null);
+                m_callback?.Invoke(m_saveClient.JPlayClient.GetSavedGameRequestStatus(), null);
             });
         }
     }

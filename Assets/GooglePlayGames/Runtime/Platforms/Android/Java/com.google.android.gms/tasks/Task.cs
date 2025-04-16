@@ -120,7 +120,7 @@ namespace GooglePlayGames.Android.Java.Extensions {
 
         public static JT.Instance<TResult> JAddOnCompleteListener<TResult>(this JT.Instance<TResult> self, Action<JT.Instance<TResult>> callback)
         {
-            var jListener = JOCL.MakeProxy<TResult>(it => callback(it));
+            var jListener = JOCL.MakeProxy<TResult>(it => callback?.Invoke(it));
             using (self.JAddOnCompleteListener(jListener)) {
                 return self;
             }
@@ -128,7 +128,7 @@ namespace GooglePlayGames.Android.Java.Extensions {
 
         public static JT.Instance<TResult> JAddOnFailureListener<TResult>(this JT.Instance<TResult> self, Action<JEI> callback)
         {
-            var jListener = JOFL.MakeProxy(it => callback(it));
+            var jListener = JOFL.MakeProxy(it => callback?.Invoke(it));
             using (self.JAddOnFailureListener(jListener)) {
                 return self;
             }
@@ -141,7 +141,7 @@ namespace GooglePlayGames.Android.Java.Extensions {
 
         public static JTI JAddOnSuccessListener(this JTI self, bool dispose, Action callback)
         {
-            var jListener = JOSL.MakeProxy<JOI>(dispose, _ => callback());
+            var jListener = JOSL.MakeProxy<JOI>(dispose, _ => callback?.Invoke());
             using (self.JAddOnSuccessListener(jListener)) {
                 return self;
             }
@@ -154,7 +154,7 @@ namespace GooglePlayGames.Android.Java.Extensions {
 
         public static JT.Instance<TResult> JAddOnSuccessListener<TResult>(this JT.Instance<TResult> self, bool dispose, Action<TResult> callback)
         {
-            var jListener = JOSL.MakeProxy<TResult>(dispose, it => callback(it));
+            var jListener = JOSL.MakeProxy<TResult>(dispose, it => callback?.Invoke(it));
             using (self.JAddOnSuccessListener(jListener)) {
                 return self;
             }

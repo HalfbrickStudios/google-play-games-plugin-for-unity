@@ -97,7 +97,7 @@ namespace GooglePlayGames.Android {
             lock (m_authStateLock) {
                 if (m_authState == APGCAS.Authenticated) {
                     Logger.d("Already authenticated.");
-                    callback(ASIS.Success);
+                    callback.Invoke(ASIS.Success);
                     return;
                 }
             }
@@ -108,7 +108,7 @@ namespace GooglePlayGames.Android {
                 SignInOnResult(jResponse.IsAuthenticated(), callback);
             }).JAddOnFailureListener(jException => {
                 Logger.e("Authentication failed - " + jException.JToString());
-                callback(ASIS.InternalError);
+                callback.Invoke(ASIS.InternalError);
             });
         }
 
@@ -133,7 +133,7 @@ namespace GooglePlayGames.Android {
                 m_lastLoadFriendsStatus = result;
                 switch (result) {
                     case ALFS.Completed:
-                        callback(true);
+                        callback.Invoke(true);
                         break;
                     case ALFS.LoadMore:
                         LoadAllFriends(pageSize, reload: false, more: true, callback);
@@ -141,11 +141,11 @@ namespace GooglePlayGames.Android {
                     case ALFS.ResolutionRequired:
                     case ALFS.InternalError:
                     case ALFS.NotAuthorized:
-                        callback(false);
+                        callback.Invoke(false);
                         break;
                     default:
                         Logger.d("There was an error when loading friends." + result);
-                        callback(false);
+                        callback.Invoke(false);
                         break;
                 }
             });
@@ -166,7 +166,7 @@ namespace GooglePlayGames.Android {
                     }
                     m_friends = Utility.ToAndroidPlayerProfile(jPlayers).ToArray();
                 }
-                callback(m_lastLoadFriendsStatus);
+                callback.Invoke(m_lastLoadFriendsStatus);
             }).JAddOnFailureListener(jException => {
                 // HelperFragmentClass.Instance.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
@@ -218,17 +218,17 @@ namespace GooglePlayGames.Android {
                         m_savedGameClient = new SavedGameClient(this);
                     }
                     m_authState = APGCAS.Authenticated;
-                    callback(ASIS.Success);
+                    callback.Invoke(ASIS.Success);
                     Logger.d("Authentication succeeded");
                     LoadAchievements(ignore => { });
                 } else {
                     if (jIt.JIsCanceled()) {
-                        callback(ASIS.Canceled);
+                        callback.Invoke(ASIS.Canceled);
                         return;
                     }
                     using var jException = jIt.JGetException();
                     Logger.e("Authentication failed - " + jException.JToString());
-                    callback(ASIS.InternalError);
+                    callback.Invoke(ASIS.InternalError);
                 }
             });
         }
@@ -249,7 +249,7 @@ namespace GooglePlayGames.Android {
             using var jClient = JPG.JGetPlayersClient();
             using var jTask   = jClient.JLoadFriends(size: 1, reload: false);
             jTask.JAddOnSuccessListener(jData => {
-                callback(AUS.Valid);
+                callback.Invoke(AUS.Valid);
             }).JAddOnFailureListener(jException => {
                 // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
@@ -291,9 +291,9 @@ namespace GooglePlayGames.Android {
             jTask.JAddOnSuccessListener(jData => {
                 using var jPlayer = jData.JGet();
                 using var jInfo = jPlayer.JGetCurrentPlayerInfo();
-                callback(jInfo.GetFriendsListVisibilityStatus());
+                callback.Invoke(jInfo.GetFriendsListVisibilityStatus());
             }).JAddOnFailureListener(jException => {
-                callback(AFLVS.NetworkError);
+                callback.Invoke(AFLVS.NetworkError);
             });
         }
 
@@ -310,11 +310,11 @@ namespace GooglePlayGames.Android {
                 using (var jStats = jData.JGet()) {
                     stats = Utility.ToAndroidPlayerStats(jStats);
                 }
-                callback(ACSC.Success, stats);
+                callback.Invoke(ACSC.Success, stats);
             }).JAddOnFailureListener(jException => {
                 Logger.e("GetPlayerStats failed: " + jException.JToString());
                 var statusCode = IsAuthenticated() ? ACSC.InternalError : ACSC.SignInRequired;
-                callback(statusCode, new APS());
+                callback.Invoke(statusCode, new APS());
             });
         }
 
@@ -336,14 +336,14 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
-                callback(false);
+                callback.Invoke(false);
                 return;
             }
 
             using (var jClient = JPG.JGetAchievementsClient()) {
                 jClient.Increment(id, steps);
             }
-            callback(true);
+            callback.Invoke(true);
         }
 
         public bool IsAuthenticated()
@@ -366,10 +366,10 @@ namespace GooglePlayGames.Android {
                 using (var jAchievements = jData.JGet()) {
                     achievements = Utility.ToAndroidAchievement(jAchievements).ToArray();
                 }
-                callback(achievements);
+                callback.Invoke(achievements);
             }).JAddOnFailureListener(jException => {
                 Logger.e("LoadAchievements failed: " + jException.JToString());
-                callback(new AA[0]);
+                callback.Invoke(new AA[0]);
             });
         }
 
@@ -393,7 +393,7 @@ namespace GooglePlayGames.Android {
                     var status = jData.GetResponseStatus();
                     leaderboard = CreateLeaderboardScoreData(token.LeaderboardId, token.Collection, token.TimeSpan, status, jScores);
                 }
-                callback(leaderboard);
+                callback.Invoke(leaderboard);
             }).JAddOnFailureListener(jException => {
                 // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
@@ -404,7 +404,7 @@ namespace GooglePlayGames.Android {
                 //     }
                 // });
                 Logger.e("LoadMoreScores failed: " + jException.JToString());
-                callback(new ALSD(token.LeaderboardId, ARS.InternalError));
+                callback.Invoke(new ALSD(token.LeaderboardId, ARS.InternalError));
             });
         }
 
@@ -423,7 +423,7 @@ namespace GooglePlayGames.Android {
                 using (var jScores = jData.JGet()) {
                     data = CreateLeaderboardScoreData(id, collection, span, jData.GetResponseStatus(), jScores);
                 }
-                callback(data);
+                callback.Invoke(data);
             }).JAddOnFailureListener(jException => {
                 // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
@@ -434,7 +434,7 @@ namespace GooglePlayGames.Android {
                 //     }
                 // });
                 Logger.e("LoadScores failed: " + jException.JToString());
-                callback(new ALSD(id, ARS.InternalError));
+                callback.Invoke(new ALSD(id, ARS.InternalError));
             });
         }
 
@@ -443,7 +443,7 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
-                callback(new UIUP[0]);
+                callback.Invoke(new UIUP[0]);
                 return;
             }
 
@@ -466,13 +466,13 @@ namespace GooglePlayGames.Android {
                     }
                     lock (@lock) {
                         acc += 1;
-                        if (acc == count) callback(users);
+                        if (acc == count) callback.Invoke(users);
                     }
                 }).JAddOnFailureListener(jException => {
                     Logger.e("LoadUsers failed for index " + i + " with: " + jException.JToString());
                     lock (@lock) {
                         acc += 1;
-                        if (acc == count) callback(users);
+                        if (acc == count) callback.Invoke(users);
                     }
                 });
             }
@@ -488,10 +488,10 @@ namespace GooglePlayGames.Android {
             using var jTask   = jClient.JRequestRecallAccess();
             jTask.JAddOnSuccessListener(jAccess => {
                 var id = jAccess.GetSessionId();
-                callback(new ARA(id));
+                callback.Invoke(new ARA(id));
             }).JAddOnFailureListener(jException => {
                 Logger.e("Requesting Recall access task failed - " + jException.JToString());
-                callback(null);
+                callback.Invoke(null);
             });
         }
 
@@ -503,7 +503,7 @@ namespace GooglePlayGames.Android {
             using var jTask   = jClient.JRequestServerSideAccess(reload: true, webId: string.Empty);
             jTask.JAddOnSuccessListener(callback).JAddOnFailureListener(jException => {
                 Logger.e("Requesting server side access task failed - " + jException.JToString());
-                callback(null);
+                callback.Invoke(null);
             });
         }
 
@@ -512,13 +512,13 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
-                callback(false);
+                callback.Invoke(false);
                 return;
             }
 
             using var jClient = JPG.JGetAchievementsClient();
             jClient.Reveal(achId);
-            callback(true);
+            callback.Invoke(true);
         }
 
         public void SetStepsAtLeast(string achId, int steps, Action<bool> callback)
@@ -526,20 +526,20 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
-                callback(false);
+                callback.Invoke(false);
                 return;
             }
 
             using var jClient = JPG.JGetAchievementsClient();
             jClient.SetSteps(achId, steps);
-            callback(true);
+            callback.Invoke(true);
         }
 
         public void ShowAchievementsUI(Action<AUS> callback)
         {
             callback = Utility.ToUiAction(callback);
             if (!IsAuthenticated()) {
-                callback(AUS.NotAuthorized);
+                callback.Invoke(AUS.NotAuthorized);
                 return;
             }
             // HelperFragmentClass.ShowAchievementsUI(callback);
@@ -556,7 +556,7 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
-                callback(AUS.NotAuthorized);
+                callback.Invoke(AUS.NotAuthorized);
                 return;
             }
 
@@ -572,13 +572,13 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
-                callback(false);
+                callback.Invoke(false);
                 return;
             }
 
             using var jClient = JPG.JGetLeaderboardsClient();
             jClient.SubmitScore(id, score, metadata);
-            callback(true);
+            callback.Invoke(true);
         }
 
         public void SubmitScore(string leaderboardId, long score, Action<bool> callback)
@@ -586,13 +586,13 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
-                callback(false);
+                callback.Invoke(false);
                 return;
             }
 
             using var jClient = JPG.JGetLeaderboardsClient();
             jClient.SubmitScore(leaderboardId, score);
-            callback(true);
+            callback.Invoke(true);
         }
 
         public void UnlockAchievement(string achId, Action<bool> callback)
@@ -600,13 +600,13 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
-                callback(false);
+                callback.Invoke(false);
                 return;
             }
 
             using var jClient = JPG.JGetAchievementsClient();
             jClient.Unlock(achId);
-            callback(true);
+            callback.Invoke(true);
         }
 
         #endregion IPlayGamesClient implementation

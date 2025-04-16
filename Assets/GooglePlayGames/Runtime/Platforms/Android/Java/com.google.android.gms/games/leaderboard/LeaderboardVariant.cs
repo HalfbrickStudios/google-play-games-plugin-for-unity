@@ -145,6 +145,10 @@ namespace GooglePlayGames.Android.Java {
 
     }
 
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
+
     internal static class LeaderboardVariantExtensions {
 
         public static ALC GetCollection(this JLVI self) => Utility.ToAndroidLeaderboardCollection(self.JGetCollection());

@@ -41,10 +41,10 @@ namespace GooglePlayGames.Android {
                 using (var jEvents = jData.JGet()) {
                     events = Utility.ToAndroidEvent(jEvents).ToList();
                 }
-                callback(status, events);
+                callback?.Invoke(status, events);
             }).JAddOnFailureListener(jException => {
                 Debug.Log("FetchAllEvents failed");
-                callback(ARS.InternalError, null);
+                callback?.Invoke(ARS.InternalError, null);
             });
         }
 

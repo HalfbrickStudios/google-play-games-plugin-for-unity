@@ -27,31 +27,31 @@ namespace GooglePlayGames.Utils {
         internal static void RunUiAction(Action callback)
         {
             if (callback == null) return;
-            PlayGamesHelperObject.RunOnUiThread(() => callback());
+            PlayGamesHelperObject.RunOnUiThread(() => callback.Invoke());
         }
 
         internal static void RunUiAction<T1>(Action<T1> callback, T1 arg1)
         {
             if (callback == null) return;
-            PlayGamesHelperObject.RunOnUiThread(() => callback(arg1));
+            PlayGamesHelperObject.RunOnUiThread(() => callback.Invoke(arg1));
         }
 
         internal static void RunUiAction<T1, T2>(Action<T1, T2> callback, T1 arg1, T2 arg2)
         {
             if (callback == null) return;
-            PlayGamesHelperObject.RunOnUiThread(() => callback(arg1, arg2));
+            PlayGamesHelperObject.RunOnUiThread(() => callback.Invoke(arg1, arg2));
         }
 
         internal static void RunUiAction<T1, T2, T3>(Action<T1, T2, T3> callback, T1 arg1, T2 arg2, T3 arg3)
         {
             if (callback == null) return;
-            PlayGamesHelperObject.RunOnUiThread(() => callback(arg1, arg2, arg3));
+            PlayGamesHelperObject.RunOnUiThread(() => callback.Invoke(arg1, arg2, arg3));
         }
 
         internal static void RunUiDelegate(ACC callback, AICR arg1, AISGM arg2, byte[] arg3, AISGM arg4, byte[] arg5)
         {
             if (callback == null) return;
-            PlayGamesHelperObject.RunOnUiThread(() => callback(arg1, arg2, arg3, arg4, arg5));
+            PlayGamesHelperObject.RunOnUiThread(() => callback.Invoke(arg1, arg2, arg3, arg4, arg5));
         }
 
         public static Action<T1> ToUiAction<T1>(Action<T1> callback)

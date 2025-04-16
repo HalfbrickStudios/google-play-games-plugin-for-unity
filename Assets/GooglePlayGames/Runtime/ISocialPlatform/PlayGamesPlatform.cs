@@ -115,7 +115,7 @@ namespace GooglePlayGames {
                     Logger.d("Nearby Client Created!!");
                     s_nearbyClient = client;
                     if (callback != null) {
-                        callback.Invoke(client);
+                        callback?.Invoke(client);
                     } else {
                         Logger.d("Initialize Nearby callback is null");
                     }
@@ -197,7 +197,7 @@ namespace GooglePlayGames {
                 m_client.GetPlayerStats(callback);
             } else {
                 Logger.e("GetPlayerStats can only be called after authentication.");
-                callback(ACSC.SignInRequired, new APS());
+                callback?.Invoke(ACSC.SignInRequired, new APS());
             }
         }
 
@@ -266,7 +266,7 @@ namespace GooglePlayGames {
         {
             if (!IsAuthenticated()) {
                 Logger.e("LoadMoreScores can only be called after authentication.");
-                callback(new ALSD(cursor.LeaderboardId, ARS.NotAuthorized));
+                callback?.Invoke(new ALSD(cursor.LeaderboardId, ARS.NotAuthorized));
                 return;
             }
             m_client.LoadMoreScores(cursor, rowCount, callback);
@@ -466,9 +466,9 @@ namespace GooglePlayGames {
         [Obsolete("Use LocalUser instead")]
         public UILU localUser => LocalUser;
 
-        public void Authenticate(UILU _, Action<bool> callback) => Authenticate(it => callback(it == ASIS.Success));
+        public void Authenticate(UILU _, Action<bool> callback) => Authenticate(it => callback?.Invoke(it == ASIS.Success));
 
-        public void Authenticate(UILU _, Action<bool, string> callback) => Authenticate(it => callback(it == ASIS.Success, it.ToString()));
+        public void Authenticate(UILU _, Action<bool, string> callback) => Authenticate(it => callback?.Invoke(it == ASIS.Success, it.ToString()));
 
         public UIA CreateAchievement() => new GPGA();
 
@@ -518,7 +518,7 @@ namespace GooglePlayGames {
             var size       = m_client.LeaderboardMaxResults();
             var collection = ALC.Public;
             var span       = ALTS.AllTime;
-            LoadScores(leaderboardId, start, size, collection, span, (data) => callback(data.Scores));
+            LoadScores(leaderboardId, start, size, collection, span, (data) => callback?.Invoke(data.Scores));
         }
 
         public void LoadScores(string leaderboardId, ALS start, int size, ALC collection, ALTS span, Action<ALSD> callback)
