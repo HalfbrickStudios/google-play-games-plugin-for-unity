@@ -17,8 +17,8 @@
 using System;
 using System.Linq;
 using GooglePlayGames;
-using GooglePlayGames.BasicApi;
-using GooglePlayGames.BasicApi.SavedGame;
+using GooglePlayGames.Api;
+using GooglePlayGames.Api.SavedGame;
 using UnityEngine;
 
 namespace SmokeTest
@@ -120,7 +120,7 @@ namespace SmokeTest
             mConflictLocalVersion = System.Text.ASCIIEncoding.Default.GetString(local);
             mConflictServerVersion = System.Text.ASCIIEncoding.Default.GetString(server);
 
-            GooglePlayGames.OurUtils.Logger.d(
+            GooglePlayGames.Utils.Logger.d(
                 string.Format(
                     "Found conflict! local:{0}, server:{1}",
                     mConflictLocalVersion,
@@ -321,7 +321,7 @@ namespace SmokeTest
                     if (openedFile != null)
                     {
                         Status += "Successfully opened file: " + openedFile;
-                        GooglePlayGames.OurUtils.Logger.d("Opened file: " + openedFile);
+                        GooglePlayGames.Utils.Logger.d("Opened file: " + openedFile);
                         mCurrentSavedGame = openedFile;
                     }
 
@@ -413,7 +413,7 @@ namespace SmokeTest
                 true,
                 (resolver, original, originalData, unmerged, unmergedData) =>
                 {
-                    GooglePlayGames.OurUtils.Logger.d("Entering conflict callback");
+                    GooglePlayGames.Utils.Logger.d("Entering conflict callback");
                     mConflictResolver = resolver;
                     mConflictOriginal = original;
                     mConflictOriginalData = System.Text.ASCIIEncoding.Default.GetString(originalData);
@@ -421,7 +421,7 @@ namespace SmokeTest
                     mConflictUnmergedData = System.Text.ASCIIEncoding.Default.GetString(unmergedData);
                     SetUI(Ui.ResolveSaveConflict);
                     EndStandBy();
-                    GooglePlayGames.OurUtils.Logger.d("Encountered manual open conflict.");
+                    GooglePlayGames.Utils.Logger.d("Encountered manual open conflict.");
                 },
                 (status, openedFile) =>
                 {
@@ -429,7 +429,7 @@ namespace SmokeTest
                     if (openedFile != null)
                     {
                         Status += "Successfully opened file: " + openedFile;
-                        GooglePlayGames.OurUtils.Logger.d("Opened file: " + openedFile);
+                        GooglePlayGames.Utils.Logger.d("Opened file: " + openedFile);
                         mCurrentSavedGame = openedFile;
                     }
 
@@ -448,7 +448,7 @@ namespace SmokeTest
                     Status += "Saved Games: [" +
                               string.Join(",", savedGames.Select(g => g.Filename).ToArray()) + "]";
                     savedGames.ForEach(g =>
-                        GooglePlayGames.OurUtils.Logger.d("Retrieved save game: " + g));
+                        GooglePlayGames.Utils.Logger.d("Retrieved save game: " + g));
                     EndStandBy();
                 });
         }

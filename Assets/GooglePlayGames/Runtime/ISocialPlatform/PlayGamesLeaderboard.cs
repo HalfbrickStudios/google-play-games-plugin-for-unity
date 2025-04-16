@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 using UnityEngine.SocialPlatforms;
 
-using GooglePlayGames.BasicApi;
+using GooglePlayGames.Api;
 
 using Range = UnityEngine.SocialPlatforms.Range;
 
@@ -76,7 +76,7 @@ namespace GooglePlayGames {
         internal bool SetFromData(LeaderboardScoreData data)
         {
             if (data.IsValid) {
-                OurUtils.Logger.d("Setting leaderboard from: " + data);
+                Utils.Logger.d("Setting leaderboard from: " + data);
                 SetMaxRange(data.ApproximateCount);
                 SetTitle(data.Title);
                 SetLocalUserScore((PlayGamesScore) data.PlayerScore);

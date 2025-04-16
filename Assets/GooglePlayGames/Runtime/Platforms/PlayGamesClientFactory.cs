@@ -19,9 +19,9 @@
 using UnityEngine;
 
 using GooglePlayGames.Android;
-using GooglePlayGames.BasicApi;
+using GooglePlayGames.Api;
 
-using Logger = GooglePlayGames.OurUtils.Logger;
+using Logger = GooglePlayGames.Utils.Logger;
 
 namespace GooglePlayGames {
 

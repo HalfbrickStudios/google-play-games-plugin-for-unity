@@ -24,7 +24,7 @@ using UnityEngine.Networking;
 #endif
 using UnityEngine.SocialPlatforms;
 
-using GooglePlayGames.BasicApi;
+using GooglePlayGames.Api;
 
 namespace GooglePlayGames {
 

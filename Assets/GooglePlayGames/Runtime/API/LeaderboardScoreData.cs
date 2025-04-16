@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 using UnityEngine.SocialPlatforms;
 
-namespace GooglePlayGames.BasicApi {
+namespace GooglePlayGames.Api {
 
     public sealed class LeaderboardScoreData {
 

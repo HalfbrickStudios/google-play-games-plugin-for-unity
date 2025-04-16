@@ -1,10 +1,10 @@
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
-using AED  = GooglePlayGames.BasicApi.Nearby.EndpointDetails;
-using AIDL = GooglePlayGames.BasicApi.Nearby.IDiscoveryListener;
-using AIML = GooglePlayGames.BasicApi.Nearby.IMessageListener;
+using AED  = GooglePlayGames.Api.Nearby.EndpointDetails;
+using AIDL = GooglePlayGames.Api.Nearby.IDiscoveryListener;
+using AIML = GooglePlayGames.Api.Nearby.IMessageListener;
 
-namespace GooglePlayGames.BasicApi.Nearby {
+namespace GooglePlayGames.Api.Nearby {
 
     internal sealed class UiDiscoveryListener : AIDL {
 

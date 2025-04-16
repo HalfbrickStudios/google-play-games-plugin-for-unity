@@ -16,7 +16,7 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.BasicApi {
+namespace GooglePlayGames.Api {
 
     public enum ScorePageDirection {
         Backward = 2,

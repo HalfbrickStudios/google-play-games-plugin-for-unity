@@ -23,13 +23,13 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
-using GooglePlayGames.BasicApi;
-using GooglePlayGames.BasicApi.Events;
-using GooglePlayGames.BasicApi.Nearby;
-using GooglePlayGames.BasicApi.SavedGame;
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Api;
+using GooglePlayGames.Api.Events;
+using GooglePlayGames.Api.Nearby;
+using GooglePlayGames.Api.SavedGame;
+using GooglePlayGames.Utils;
 
-using Logger = GooglePlayGames.OurUtils.Logger;
+using Logger = GooglePlayGames.Utils.Logger;
 
 namespace GooglePlayGames {
 

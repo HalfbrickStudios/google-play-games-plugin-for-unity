@@ -3,13 +3,13 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 using UAJP = UnityEngine.AndroidJavaProxy;
 
-using AED  = GooglePlayGames.BasicApi.Nearby.EndpointDetails;
-using AIDL = GooglePlayGames.BasicApi.Nearby.IDiscoveryListener;
+using AED  = GooglePlayGames.Api.Nearby.EndpointDetails;
+using AIDL = GooglePlayGames.Api.Nearby.IDiscoveryListener;
 
 using JDEII     = GooglePlayGames.Android.Java.DiscoveredEndpointInfo.Instance;
 using JOI       = GooglePlayGames.Android.Java.Object.Instance;

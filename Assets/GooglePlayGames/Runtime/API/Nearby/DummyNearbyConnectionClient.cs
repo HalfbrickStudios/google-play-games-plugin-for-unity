@@ -19,9 +19,9 @@
 using System;
 using System.Collections.Generic;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
-namespace GooglePlayGames.BasicApi.Nearby {
+namespace GooglePlayGames.Api.Nearby {
 
     internal sealed class DummyNearbyConnectionClient : INearbyConnectionClient {
 

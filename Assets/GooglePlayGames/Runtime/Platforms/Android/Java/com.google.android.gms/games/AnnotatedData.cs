@@ -2,11 +2,11 @@
 
 using System;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using ARS = GooglePlayGames.BasicApi.ResponseStatus;
+using ARS = GooglePlayGames.Api.ResponseStatus;
 
 using JAD = GooglePlayGames.Android.Java.AnnotatedData;
 using JOI = GooglePlayGames.Android.Java.Object.Instance;

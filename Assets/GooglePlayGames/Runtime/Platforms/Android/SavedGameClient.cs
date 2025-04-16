@@ -5,18 +5,18 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using GooglePlayGames.Android.Java;
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
-using Logger = GooglePlayGames.OurUtils.Logger;
+using Logger = GooglePlayGames.Utils.Logger;
 
-using ACC   = GooglePlayGames.BasicApi.SavedGame.ConflictCallback;
-using ACRS  = GooglePlayGames.BasicApi.SavedGame.ConflictResolutionStrategy;
-using ADS   = GooglePlayGames.BasicApi.DataSource;
-using AISGC = GooglePlayGames.BasicApi.SavedGame.ISavedGameClient;
-using AISGM = GooglePlayGames.BasicApi.SavedGame.ISavedGameMetadata;
-using ASGMU = GooglePlayGames.BasicApi.SavedGame.SavedGameMetadataUpdate;
-using ASGRS = GooglePlayGames.BasicApi.SavedGame.SavedGameRequestStatus;
-using ASUS  = GooglePlayGames.BasicApi.SavedGame.SelectUiStatus;
+using ACC   = GooglePlayGames.Api.SavedGame.ConflictCallback;
+using ACRS  = GooglePlayGames.Api.SavedGame.ConflictResolutionStrategy;
+using ADS   = GooglePlayGames.Api.DataSource;
+using AISGC = GooglePlayGames.Api.SavedGame.ISavedGameClient;
+using AISGM = GooglePlayGames.Api.SavedGame.ISavedGameMetadata;
+using ASGMU = GooglePlayGames.Api.SavedGame.SavedGameMetadataUpdate;
+using ASGRS = GooglePlayGames.Api.SavedGame.SavedGameRequestStatus;
+using ASUS  = GooglePlayGames.Api.SavedGame.SelectUiStatus;
 
 using APGC = GooglePlayGames.Android.PlayGamesClient;
 using ASM  = GooglePlayGames.Android.SnapshotMetadata;

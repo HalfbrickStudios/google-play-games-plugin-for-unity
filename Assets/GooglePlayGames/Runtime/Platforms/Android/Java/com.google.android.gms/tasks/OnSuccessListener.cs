@@ -3,7 +3,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 using UAJP = UnityEngine.AndroidJavaProxy;

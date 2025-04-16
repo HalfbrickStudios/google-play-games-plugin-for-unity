@@ -16,9 +16,9 @@
 
 using System;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
-namespace GooglePlayGames.BasicApi.Nearby {
+namespace GooglePlayGames.Api.Nearby {
 
     public enum InitializationStatus {
         InternalError         = 2,

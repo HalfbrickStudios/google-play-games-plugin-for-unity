@@ -4,7 +4,7 @@ using System;
 
 using UnityEngine;
 
-using GooglePlayGames.BasicApi.SavedGame;
+using GooglePlayGames.Api.SavedGame;
 
 using JSCI = GooglePlayGames.Android.Java.SnapshotContents.Instance;
 using JSI  = GooglePlayGames.Android.Java.Snapshot.Instance;

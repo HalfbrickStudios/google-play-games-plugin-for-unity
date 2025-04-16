@@ -1,6 +1,6 @@
 #if UNITY_ANDROID
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 

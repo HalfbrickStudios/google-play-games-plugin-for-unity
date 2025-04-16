@@ -21,9 +21,9 @@ namespace SmokeTest
     using GooglePlayGames;
     using System;
     using System.Linq;
-    using GooglePlayGames.BasicApi;
-    using GooglePlayGames.BasicApi.SavedGame;
-    using GooglePlayGames.OurUtils;
+    using GooglePlayGames.Api;
+    using GooglePlayGames.Api.SavedGame;
+    using GooglePlayGames.Utils;
 
     public class FriendsGUI : MonoBehaviour
     {

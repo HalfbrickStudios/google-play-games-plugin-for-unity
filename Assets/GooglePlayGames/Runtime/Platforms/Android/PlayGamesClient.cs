@@ -22,32 +22,32 @@ using System.Linq;
 using UnityEngine.SocialPlatforms;
 
 using GooglePlayGames.Android.Java;
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
-using Logger = GooglePlayGames.OurUtils.Logger;
+using Logger = GooglePlayGames.Utils.Logger;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 using UUP  = UnityEngine.SocialPlatforms.IUserProfile;
 
-using AA    = GooglePlayGames.BasicApi.Achievement;
-using ACSC  = GooglePlayGames.BasicApi.CommonStatusCodes;
-using AFLVS = GooglePlayGames.BasicApi.FriendsListVisibilityStatus;
-using AIEC  = GooglePlayGames.BasicApi.Events.IEventsClient;
-using AIPGC = GooglePlayGames.BasicApi.IPlayGamesClient;
-using AISGC = GooglePlayGames.BasicApi.SavedGame.ISavedGameClient;
-using ALC   = GooglePlayGames.BasicApi.LeaderboardCollection;
-using ALFS  = GooglePlayGames.BasicApi.LoadFriendsStatus;
-using ALS   = GooglePlayGames.BasicApi.LeaderboardStart;
-using ALSD  = GooglePlayGames.BasicApi.LeaderboardScoreData;
-using ALTS  = GooglePlayGames.BasicApi.LeaderboardTimeSpan;
-using AP    = GooglePlayGames.BasicApi.Player;
-using APS   = GooglePlayGames.BasicApi.PlayerStats;
-using ARA   = GooglePlayGames.BasicApi.RecallAccess;
-using ARS   = GooglePlayGames.BasicApi.ResponseStatus;
-using ASGRS = GooglePlayGames.BasicApi.SavedGame.SavedGameRequestStatus;
-using ASIS  = GooglePlayGames.BasicApi.SignInStatus;
-using ASPT  = GooglePlayGames.BasicApi.ScorePageToken;
-using AUS   = GooglePlayGames.BasicApi.UiStatus;
+using AA    = GooglePlayGames.Api.Achievement;
+using ACSC  = GooglePlayGames.Api.CommonStatusCodes;
+using AFLVS = GooglePlayGames.Api.FriendsListVisibilityStatus;
+using AIEC  = GooglePlayGames.Api.Events.IEventsClient;
+using AIPGC = GooglePlayGames.Api.IPlayGamesClient;
+using AISGC = GooglePlayGames.Api.SavedGame.ISavedGameClient;
+using ALC   = GooglePlayGames.Api.LeaderboardCollection;
+using ALFS  = GooglePlayGames.Api.LoadFriendsStatus;
+using ALS   = GooglePlayGames.Api.LeaderboardStart;
+using ALSD  = GooglePlayGames.Api.LeaderboardScoreData;
+using ALTS  = GooglePlayGames.Api.LeaderboardTimeSpan;
+using AP    = GooglePlayGames.Api.Player;
+using APS   = GooglePlayGames.Api.PlayerStats;
+using ARA   = GooglePlayGames.Api.RecallAccess;
+using ARS   = GooglePlayGames.Api.ResponseStatus;
+using ASGRS = GooglePlayGames.Api.SavedGame.SavedGameRequestStatus;
+using ASIS  = GooglePlayGames.Api.SignInStatus;
+using ASPT  = GooglePlayGames.Api.ScorePageToken;
+using AUS   = GooglePlayGames.Api.UiStatus;
 
 using APGCAS = GooglePlayGames.Android.PlayGamesClient.AuthState;
 

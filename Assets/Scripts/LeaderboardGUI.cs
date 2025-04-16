@@ -19,7 +19,7 @@ namespace SmokeTest
     using System;
     using System.Collections.Generic;
     using GooglePlayGames;
-    using GooglePlayGames.BasicApi;
+    using GooglePlayGames.Api;
     using UnityEngine;
     using UnityEngine.SocialPlatforms;
 

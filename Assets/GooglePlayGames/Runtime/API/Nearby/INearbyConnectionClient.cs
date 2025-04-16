@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GooglePlayGames.BasicApi.Nearby {
+namespace GooglePlayGames.Api.Nearby {
 
     public interface IDiscoveryListener {
 

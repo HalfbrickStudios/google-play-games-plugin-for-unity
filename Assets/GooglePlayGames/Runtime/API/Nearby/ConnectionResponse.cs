@@ -14,9 +14,9 @@
 //    limitations under the License.
 // </copyright>
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
-namespace GooglePlayGames.BasicApi.Nearby {
+namespace GooglePlayGames.Api.Nearby {
 
     public readonly struct ConnectionResponse {
 

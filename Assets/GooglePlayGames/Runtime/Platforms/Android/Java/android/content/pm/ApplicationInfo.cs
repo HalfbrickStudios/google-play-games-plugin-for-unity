@@ -2,7 +2,7 @@
 
 using System;
 
-using Logger = GooglePlayGames.OurUtils.Logger;
+using Logger = GooglePlayGames.Utils.Logger;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 

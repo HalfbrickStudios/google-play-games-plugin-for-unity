@@ -20,7 +20,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace GooglePlayGames.OurUtils {
+namespace GooglePlayGames.Utils {
 
     public sealed class PlayGamesHelperObject : MonoBehaviour {
 

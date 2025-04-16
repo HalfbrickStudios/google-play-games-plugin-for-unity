@@ -14,7 +14,7 @@
 //    limitations under the License.
 // </copyright>
 
-namespace GooglePlayGames.BasicApi {
+namespace GooglePlayGames.Api {
 
     public static class CommonTypesUtil {
 

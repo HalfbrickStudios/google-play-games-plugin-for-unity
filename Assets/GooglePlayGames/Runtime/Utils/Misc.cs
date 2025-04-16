@@ -16,7 +16,7 @@
 
 using System;
 
-namespace GooglePlayGames.OurUtils {
+namespace GooglePlayGames.Utils {
 
     internal static class Misc {
 

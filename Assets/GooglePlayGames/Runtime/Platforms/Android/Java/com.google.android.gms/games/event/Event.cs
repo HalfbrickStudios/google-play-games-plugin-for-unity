@@ -1,10 +1,10 @@
 #if UNITY_ANDROID
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using AEV = GooglePlayGames.BasicApi.Events.EventVisibility;
+using AEV = GooglePlayGames.Api.Events.EventVisibility;
 
 using JEI = GooglePlayGames.Android.Java.Event.Instance;
 using JOI = GooglePlayGames.Android.Java.Object.Instance;

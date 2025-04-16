@@ -4,17 +4,17 @@ using System;
 using System.Collections.Generic;
 
 using GooglePlayGames.Android.Java;
-using GooglePlayGames.BasicApi.Nearby;
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Api.Nearby;
+using GooglePlayGames.Utils;
 
-using Logger = GooglePlayGames.OurUtils.Logger;
+using Logger = GooglePlayGames.Utils.Logger;
 
-using AAR   = GooglePlayGames.BasicApi.Nearby.AdvertisingResult;
-using ACRes = GooglePlayGames.BasicApi.Nearby.ConnectionResponse;
-using ACReq = GooglePlayGames.BasicApi.Nearby.ConnectionRequest;
-using AIDL  = GooglePlayGames.BasicApi.Nearby.IDiscoveryListener;
-using AIML  = GooglePlayGames.BasicApi.Nearby.IMessageListener;
-using ANCC  = GooglePlayGames.BasicApi.Nearby.NearbyConnectionConfiguration;
+using AAR   = GooglePlayGames.Api.Nearby.AdvertisingResult;
+using ACRes = GooglePlayGames.Api.Nearby.ConnectionResponse;
+using ACReq = GooglePlayGames.Api.Nearby.ConnectionRequest;
+using AIDL  = GooglePlayGames.Api.Nearby.IDiscoveryListener;
+using AIML  = GooglePlayGames.Api.Nearby.IMessageListener;
+using ANCC  = GooglePlayGames.Api.Nearby.NearbyConnectionConfiguration;
 
 using JAO    = GooglePlayGames.Android.Java.AdvertisingOptions;
 using JAOI   = GooglePlayGames.Android.Java.AdvertisingOptions.Instance;

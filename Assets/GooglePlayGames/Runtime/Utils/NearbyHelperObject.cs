@@ -4,9 +4,9 @@ using System;
 
 using UnityEngine;
 
-using GooglePlayGames.BasicApi.Nearby;
+using GooglePlayGames.Api.Nearby;
 
-namespace GooglePlayGames.OurUtils {
+namespace GooglePlayGames.Utils {
 
     public sealed class NearbyHelperObject : MonoBehaviour {
 

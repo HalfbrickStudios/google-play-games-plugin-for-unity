@@ -20,7 +20,7 @@ using System;
 
 using UnityEngine.SocialPlatforms;
 
-using GooglePlayGames.BasicApi;
+using GooglePlayGames.Api;
 
 namespace GooglePlayGames {
 

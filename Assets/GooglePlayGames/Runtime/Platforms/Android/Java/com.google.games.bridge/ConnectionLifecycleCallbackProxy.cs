@@ -3,16 +3,16 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 using UAJP = UnityEngine.AndroidJavaProxy;
 
-using AAR   = GooglePlayGames.BasicApi.Nearby.AdvertisingResult;
-using ACReq = GooglePlayGames.BasicApi.Nearby.ConnectionRequest;
-using ACRes = GooglePlayGames.BasicApi.Nearby.ConnectionResponse;
-using AIML  = GooglePlayGames.BasicApi.Nearby.IMessageListener;
-using ARS   = GooglePlayGames.BasicApi.ResponseStatus;
+using AAR   = GooglePlayGames.Api.Nearby.AdvertisingResult;
+using ACReq = GooglePlayGames.Api.Nearby.ConnectionRequest;
+using ACRes = GooglePlayGames.Api.Nearby.ConnectionResponse;
+using AIML  = GooglePlayGames.Api.Nearby.IMessageListener;
+using ARS   = GooglePlayGames.Api.ResponseStatus;
 
 using ANCC = GooglePlayGames.Android.NearbyConnectionClient;
 

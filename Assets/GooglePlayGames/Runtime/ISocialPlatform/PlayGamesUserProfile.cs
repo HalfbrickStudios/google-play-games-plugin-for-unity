@@ -25,7 +25,7 @@ using UnityEngine.Networking;
 #endif
 using UnityEngine.SocialPlatforms;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 namespace GooglePlayGames {
 
@@ -63,7 +63,7 @@ namespace GooglePlayGames {
         {
             get {
                 if (!m_imageIsLoading && m_image == null && !string.IsNullOrEmpty(AvatarURL)) {
-                    OurUtils.Logger.d("Starting to load image: " + AvatarURL);
+                    Utils.Logger.d("Starting to load image: " + AvatarURL);
                     m_imageIsLoading = true;
                     PlayGamesHelperObject.RunCoroutine(LoadImage());
                 }
@@ -93,11 +93,11 @@ namespace GooglePlayGames {
 #endif
                 } else {
                     Image = Texture2D.blackTexture;
-                    OurUtils.Logger.e("Error downloading image: " + www.error);
+                    Utils.Logger.e("Error downloading image: " + www.error);
                 }
                 m_imageIsLoading = false;
             } else {
-                OurUtils.Logger.e("No URL found.");
+                Utils.Logger.e("No URL found.");
                 Image = Texture2D.blackTexture;
                 m_imageIsLoading = false;
             }

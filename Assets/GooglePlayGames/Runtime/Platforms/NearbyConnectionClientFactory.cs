@@ -23,9 +23,9 @@ using System;
 using UnityEngine;
 
 using GooglePlayGames.Android;
-using GooglePlayGames.BasicApi.Nearby;
+using GooglePlayGames.Api.Nearby;
 
-using Logger = GooglePlayGames.OurUtils.Logger;
+using Logger = GooglePlayGames.Utils.Logger;
 
 namespace GooglePlayGames {
 

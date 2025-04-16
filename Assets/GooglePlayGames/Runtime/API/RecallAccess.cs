@@ -18,7 +18,7 @@
 
 using System;
 
-namespace GooglePlayGames.BasicApi {
+namespace GooglePlayGames.Api {
 
     public sealed class RecallAccess {
 

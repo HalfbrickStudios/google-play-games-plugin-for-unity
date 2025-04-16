@@ -3,12 +3,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 using UAJP = UnityEngine.AndroidJavaProxy;
 
-using AIML = GooglePlayGames.BasicApi.Nearby.IMessageListener;
+using AIML = GooglePlayGames.Api.Nearby.IMessageListener;
 
 using JOI     = GooglePlayGames.Android.Java.Object.Instance;
 using JPCPCP  = GooglePlayGames.Android.Java.PayloadCallbackProxy.Callback.Proxy;

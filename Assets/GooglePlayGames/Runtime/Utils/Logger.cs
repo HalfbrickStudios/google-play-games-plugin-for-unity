@@ -14,12 +14,11 @@
 //    limitations under the License.
 // </copyright>
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 using UnityEngine;
 
-namespace GooglePlayGames.OurUtils {
+namespace GooglePlayGames.Utils {
 
     // TODO: Make internal, there's no reason to expose rather than make it compatible with the sample test
     public static class Logger {
@@ -51,7 +50,7 @@ namespace GooglePlayGames.OurUtils {
 #endif
         }
 
-        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep same API as other well-known loggers")]
         public static void d(string message)
         {
             if (!DebugLogEnabled) return;
@@ -59,14 +58,14 @@ namespace GooglePlayGames.OurUtils {
             Convert.RunUiAction(() => Debug.Log(text));
         }
 
-        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep same API as other well-known loggers")]
         public static void e(string message)
         {
             var text = ToLogMessage(prefix: "***", type: "ERROR", message);
             Convert.RunUiAction(() => Debug.LogError(text));
         }
 
-        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep same API as other well-known loggers")]
         public static void t(string message)
         {
             if (!TraceLogEnabled) return;
@@ -74,7 +73,7 @@ namespace GooglePlayGames.OurUtils {
             Convert.RunUiAction(() => Debug.Log(text));
         }
 
-        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep same API as other well-known loggers")]
         public static void w(string message)
         {
             if (!WarningLogEnabled) return;
@@ -82,7 +81,7 @@ namespace GooglePlayGames.OurUtils {
             Convert.RunUiAction(() => Debug.LogWarning(text));
         }
 
-        [SuppressMessage("Style", "IDE1006", Justification = "Keep method style as many different loggers")]
+        [SuppressMessage("Style", "IDE1006", Justification = "Keep same API as other well-known loggers")]
         public static string describe(byte[] bytes) => bytes == null ? "(null)" : $"byte[{bytes.Length}]";
 
         private static string ToLogMessage(string prefix, string type, string message)

@@ -3,14 +3,14 @@
 using System;
 
 using GooglePlayGames.Android.Java;
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
-using Logger = GooglePlayGames.OurUtils.Logger;
+using Logger = GooglePlayGames.Utils.Logger;
 
-using AICR  = GooglePlayGames.BasicApi.SavedGame.IConflictResolver;
-using AISGM = GooglePlayGames.BasicApi.SavedGame.ISavedGameMetadata;
-using ASGMU = GooglePlayGames.BasicApi.SavedGame.SavedGameMetadataUpdate;
-using ASGRS = GooglePlayGames.BasicApi.SavedGame.SavedGameRequestStatus;
+using AICR  = GooglePlayGames.Api.SavedGame.IConflictResolver;
+using AISGM = GooglePlayGames.Api.SavedGame.ISavedGameMetadata;
+using ASGMU = GooglePlayGames.Api.SavedGame.SavedGameMetadataUpdate;
+using ASGRS = GooglePlayGames.Api.SavedGame.SavedGameRequestStatus;
 
 using ASGC = GooglePlayGames.Android.SavedGameClient;
 using ASM  = GooglePlayGames.Android.SnapshotMetadata;

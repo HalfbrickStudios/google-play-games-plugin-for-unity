@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GooglePlayGames.BasicApi.SavedGame {
+namespace GooglePlayGames.Api.SavedGame {
 
     public delegate void ConflictCallback(IConflictResolver resolver, ISavedGameMetadata original, byte[] originalData, ISavedGameMetadata unmerged, byte[] unmergedData);
 

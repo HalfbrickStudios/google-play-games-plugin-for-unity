@@ -4,7 +4,7 @@ using System;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using Logger = GooglePlayGames.OurUtils.Logger;
+using Logger = GooglePlayGames.Utils.Logger;
 
 using JAI = GooglePlayGames.Android.Java.Activity.Instance;
 using JCI = GooglePlayGames.Android.Java.Context.Instance;

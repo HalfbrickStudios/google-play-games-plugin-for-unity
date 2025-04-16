@@ -20,11 +20,11 @@ using System;
 
 using UnityEngine.SocialPlatforms;
 
-using GooglePlayGames.BasicApi.Events;
-using GooglePlayGames.BasicApi.SavedGame;
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Api.Events;
+using GooglePlayGames.Api.SavedGame;
+using GooglePlayGames.Utils;
 
-namespace GooglePlayGames.BasicApi {
+namespace GooglePlayGames.Api {
 
     internal sealed class DummyClient : IPlayGamesClient {
 

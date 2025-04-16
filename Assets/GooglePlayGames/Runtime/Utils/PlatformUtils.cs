@@ -16,7 +16,7 @@
 
 #if UNITY_ANDROID
 
-namespace GooglePlayGames.OurUtils {
+namespace GooglePlayGames.Utils {
 
     internal static class PlatformUtils {
 

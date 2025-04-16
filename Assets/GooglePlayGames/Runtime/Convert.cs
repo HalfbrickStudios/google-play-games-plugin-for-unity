@@ -16,11 +16,11 @@
 
 using System;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
-using ACC   = GooglePlayGames.BasicApi.SavedGame.ConflictCallback;
-using AICR  = GooglePlayGames.BasicApi.SavedGame.IConflictResolver;
-using AISGM = GooglePlayGames.BasicApi.SavedGame.ISavedGameMetadata;
+using ACC   = GooglePlayGames.Api.SavedGame.ConflictCallback;
+using AICR  = GooglePlayGames.Api.SavedGame.IConflictResolver;
+using AISGM = GooglePlayGames.Api.SavedGame.ISavedGameMetadata;
 
 namespace GooglePlayGames {
 

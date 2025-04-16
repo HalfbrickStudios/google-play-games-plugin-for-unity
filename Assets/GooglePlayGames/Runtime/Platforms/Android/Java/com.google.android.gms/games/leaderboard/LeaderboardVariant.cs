@@ -2,14 +2,14 @@
 
 using System;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
 using JC = GooglePlayGames.JavaClass;
 
-using ALC  = GooglePlayGames.BasicApi.LeaderboardCollection;
-using ALTS = GooglePlayGames.BasicApi.LeaderboardTimeSpan;
+using ALC  = GooglePlayGames.Api.LeaderboardCollection;
+using ALTS = GooglePlayGames.Api.LeaderboardTimeSpan;
 
 using JLVC = GooglePlayGames.Android.Java.LeaderboardVariant.Class;
 using JLVI = GooglePlayGames.Android.Java.LeaderboardVariant.Instance;

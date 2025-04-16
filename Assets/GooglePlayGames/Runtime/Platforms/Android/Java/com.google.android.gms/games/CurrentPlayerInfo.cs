@@ -2,11 +2,11 @@
 
 using System;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using AFLVS = GooglePlayGames.BasicApi.FriendsListVisibilityStatus;
+using AFLVS = GooglePlayGames.Api.FriendsListVisibilityStatus;
 
 using JCPII = GooglePlayGames.Android.Java.CurrentPlayerInfo.Instance;
 using JFLVS = GooglePlayGames.Android.Java.Player.FriendsListVisibilityStatus;

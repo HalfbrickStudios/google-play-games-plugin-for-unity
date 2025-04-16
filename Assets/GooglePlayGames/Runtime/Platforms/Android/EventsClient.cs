@@ -8,10 +8,10 @@ using UnityEngine;
 
 using GooglePlayGames.Android.Java;
 
-using ADS  = GooglePlayGames.BasicApi.DataSource;
-using AIE  = GooglePlayGames.BasicApi.Events.IEvent;
-using AIEC = GooglePlayGames.BasicApi.Events.IEventsClient;
-using ARS  = GooglePlayGames.BasicApi.ResponseStatus;
+using ADS  = GooglePlayGames.Api.DataSource;
+using AIE  = GooglePlayGames.Api.Events.IEvent;
+using AIEC = GooglePlayGames.Api.Events.IEventsClient;
+using ARS  = GooglePlayGames.Api.ResponseStatus;
 
 using JECI = GooglePlayGames.Android.Java.EventsClient.Instance;
 

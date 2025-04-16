@@ -21,8 +21,8 @@ namespace SmokeTest
     using System;
     using System.Linq;
     using GooglePlayGames;
-    using GooglePlayGames.BasicApi;
-    using GooglePlayGames.BasicApi.SavedGame;
+    using GooglePlayGames.Api;
+    using GooglePlayGames.Api.SavedGame;
     using UnityEngine;
 
     public class EventsGUI : MonoBehaviour
@@ -89,7 +89,7 @@ namespace SmokeTest
                     mStatus += "Events: [" +
                                 string.Join(",", events.Select(g => g.Id).ToArray()) + "]";
                     events.ForEach(e =>
-                        GooglePlayGames.OurUtils.Logger.d("Retrieved event: " + e));
+                        GooglePlayGames.Utils.Logger.d("Retrieved event: " + e));
                 });
         }
 
@@ -107,7 +107,7 @@ namespace SmokeTest
                     {
                         mStatus += "Event: [" + fetchedEvent.Id + ", " + fetchedEvent.Description + "]: " +
                                     fetchedEvent.CurrentCount;
-                        GooglePlayGames.OurUtils.Logger.d("Fetched event: " + fetchedEvent);
+                        GooglePlayGames.Utils.Logger.d("Fetched event: " + fetchedEvent);
                     }
 
                 });

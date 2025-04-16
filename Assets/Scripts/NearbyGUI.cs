@@ -19,7 +19,7 @@ namespace SmokeTest
     using System;
     using System.Collections.Generic;
     using GooglePlayGames;
-    using GooglePlayGames.BasicApi.Nearby;
+    using GooglePlayGames.Api.Nearby;
     using UnityEngine;
 #if UNITY_ANDROID && UNITY_2019
     using UnityEngine.Android;

@@ -1,4 +1,4 @@
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
 using UAJC = UnityEngine.AndroidJavaClass;
 using UAJO = UnityEngine.AndroidJavaObject;

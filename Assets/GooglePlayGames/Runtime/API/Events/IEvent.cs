@@ -14,7 +14,7 @@
 //    limitations under the License.
 // </copyright>
 
-namespace GooglePlayGames.BasicApi.Events {
+namespace GooglePlayGames.Api.Events {
 
     public enum EventVisibility {
         Hidden   = 1,

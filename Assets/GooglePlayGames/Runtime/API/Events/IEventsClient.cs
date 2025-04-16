@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GooglePlayGames.BasicApi.Events {
+namespace GooglePlayGames.Api.Events {
 
     public interface IEventsClient {
 

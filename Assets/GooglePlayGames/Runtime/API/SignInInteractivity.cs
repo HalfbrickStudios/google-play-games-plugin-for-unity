@@ -1,4 +1,4 @@
-namespace GooglePlayGames.BasicApi {
+namespace GooglePlayGames.Api {
 
     public enum SignInInteractivity {
         CanPromptAlways = 1,

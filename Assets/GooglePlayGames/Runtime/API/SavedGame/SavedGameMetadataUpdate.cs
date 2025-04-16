@@ -16,9 +16,9 @@
 
 using System;
 
-using GooglePlayGames.OurUtils;
+using GooglePlayGames.Utils;
 
-namespace GooglePlayGames.BasicApi.SavedGame {
+namespace GooglePlayGames.Api.SavedGame {
 
     public readonly struct SavedGameMetadataUpdate {
 

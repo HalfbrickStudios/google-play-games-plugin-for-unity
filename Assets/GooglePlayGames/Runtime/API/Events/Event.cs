@@ -1,4 +1,4 @@
-﻿namespace GooglePlayGames.BasicApi.Events {
+﻿namespace GooglePlayGames.Api.Events {
 
     internal sealed class Event : IEvent {
 

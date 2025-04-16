@@ -16,7 +16,7 @@
 
 using System;
 
-namespace GooglePlayGames.BasicApi.SavedGame {
+namespace GooglePlayGames.Api.SavedGame {
 
     public interface ISavedGameMetadata {
         string   CoverImageUrl         { get; }
