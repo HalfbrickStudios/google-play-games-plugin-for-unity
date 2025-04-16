@@ -6,7 +6,7 @@ using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JO = GooglePlayGames.JavaObject;
+using JO = GooglePlayGames.Android.JavaObject;
 
 using JCI = GooglePlayGames.Android.Java.Class.Instance;
 using JOI = GooglePlayGames.Android.Java.Object.Instance;

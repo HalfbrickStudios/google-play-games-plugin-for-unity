@@ -3,11 +3,11 @@
 using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
-using JCI   = GooglePlayGames.Android.Java.Context.Instance;
+using JCI = GooglePlayGames.Android.Java.Context.Instance;
 using JPGSC = GooglePlayGames.Android.Java.PlayGamesSdk.Class;
-using JUP   = GooglePlayGames.Android.Java.UnityPlayer;
+using JUP = GooglePlayGames.Android.Java.UnityPlayer;
 
 namespace GooglePlayGames.Android.Java {
 

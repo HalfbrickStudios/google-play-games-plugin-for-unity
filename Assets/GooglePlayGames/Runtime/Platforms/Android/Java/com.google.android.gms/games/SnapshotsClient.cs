@@ -6,19 +6,19 @@ using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
-using JAD   = GooglePlayGames.Android.Java.AnnotatedData;
-using JDOC  = GooglePlayGames.Android.Java.SnapshotsClient.DataOrConflict;
-using JOI   = GooglePlayGames.Android.Java.Object.Instance;
-using JT    = GooglePlayGames.Android.Java.Task;
-using JSBI  = GooglePlayGames.Android.Java.SnapshotMetadataBuffer.Instance;
-using JSI   = GooglePlayGames.Android.Java.Snapshot.Instance;
-using JSCI  = GooglePlayGames.Android.Java.SnapshotsClient.SnapshotConflict.Instance;
+using JAD = GooglePlayGames.Android.Java.AnnotatedData;
+using JDOC = GooglePlayGames.Android.Java.SnapshotsClient.DataOrConflict;
+using JOI = GooglePlayGames.Android.Java.Object.Instance;
+using JT = GooglePlayGames.Android.Java.Task;
+using JSBI = GooglePlayGames.Android.Java.SnapshotMetadataBuffer.Instance;
+using JSI = GooglePlayGames.Android.Java.Snapshot.Instance;
+using JSCI = GooglePlayGames.Android.Java.SnapshotsClient.SnapshotConflict.Instance;
 using JSCsI = GooglePlayGames.Android.Java.SnapshotContents.Instance;
 using JSsCC = GooglePlayGames.Android.Java.SnapshotsClient.Class;
 using JSsCI = GooglePlayGames.Android.Java.SnapshotsClient.Instance;
-using JSMI  = GooglePlayGames.Android.Java.SnapshotMetadata.Instance;
+using JSMI = GooglePlayGames.Android.Java.SnapshotMetadata.Instance;
 using JSMCI = GooglePlayGames.Android.Java.SnapshotMetadataChange.Instance;
 
 namespace GooglePlayGames.Android.Java {

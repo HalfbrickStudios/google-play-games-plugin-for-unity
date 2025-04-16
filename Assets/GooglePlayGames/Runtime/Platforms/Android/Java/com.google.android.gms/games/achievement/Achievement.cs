@@ -6,7 +6,7 @@ using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
 using JAI = GooglePlayGames.Android.Java.Achievement.Instance;
 using JAC = GooglePlayGames.Android.Java.Achievement.Class;

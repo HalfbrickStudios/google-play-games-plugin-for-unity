@@ -5,12 +5,12 @@ using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
-using JAI  = GooglePlayGames.Android.Java.Activity.Instance;
+using JAI = GooglePlayGames.Android.Java.Activity.Instance;
 using JCCI = GooglePlayGames.Android.Java.ConnectionsClient.Instance;
-using JCI  = GooglePlayGames.Android.Java.Context.Instance;
-using JNC  = GooglePlayGames.Android.Java.Nearby.Class;
+using JCI = GooglePlayGames.Android.Java.Context.Instance;
+using JNC = GooglePlayGames.Android.Java.Nearby.Class;
 
 namespace GooglePlayGames.Android.Java {
 

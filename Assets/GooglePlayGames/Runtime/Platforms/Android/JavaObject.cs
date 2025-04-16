@@ -1,10 +1,11 @@
-using System;
+#if UNITY_ANDROID
 
+using System;
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-namespace GooglePlayGames {
+namespace GooglePlayGames.Android {
 
     internal class JavaObject : UAJO {
 
@@ -65,3 +66,5 @@ namespace GooglePlayGames {
     }
 
 }
+
+#endif

@@ -6,15 +6,15 @@ using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
-using JCPII  = GooglePlayGames.Android.Java.CurrentPlayerInfo.Instance;
+using JCPII = GooglePlayGames.Android.Java.CurrentPlayerInfo.Instance;
 using JFLVSC = GooglePlayGames.Android.Java.Player.FriendsListVisibilityStatus.Class;
-using JOI    = GooglePlayGames.Android.Java.Object.Instance;
-using JPFSC  = GooglePlayGames.Android.Java.Player.PlayerFriendStatus.Class;
-using JP     = GooglePlayGames.Android.Java.Player;
-using JPI    = GooglePlayGames.Android.Java.Player.Instance;
-using JPRII  = GooglePlayGames.Android.Java.PlayerRelationshipInfo.Instance;
+using JOI = GooglePlayGames.Android.Java.Object.Instance;
+using JPFSC = GooglePlayGames.Android.Java.Player.PlayerFriendStatus.Class;
+using JP = GooglePlayGames.Android.Java.Player;
+using JPI = GooglePlayGames.Android.Java.Player.Instance;
+using JPRII = GooglePlayGames.Android.Java.PlayerRelationshipInfo.Instance;
 
 namespace GooglePlayGames.Android.Java {
 

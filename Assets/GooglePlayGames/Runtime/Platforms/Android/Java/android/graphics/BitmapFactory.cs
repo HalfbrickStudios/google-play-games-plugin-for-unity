@@ -2,10 +2,10 @@
 
 using GooglePlayGames.Utils;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
 using JBFC = GooglePlayGames.Android.Java.BitmapFactory.Class;
-using JBI  = GooglePlayGames.Android.Java.Bitmap.Instance;
+using JBI = GooglePlayGames.Android.Java.Bitmap.Instance;
 
 namespace GooglePlayGames.Android.Java {
 

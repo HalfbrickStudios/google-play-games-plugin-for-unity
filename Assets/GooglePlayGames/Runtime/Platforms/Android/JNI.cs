@@ -3,9 +3,9 @@ using System.Reflection;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JO = GooglePlayGames.JavaObject;
+using JO = GooglePlayGames.Android.JavaObject;
 
-namespace GooglePlayGames {
+namespace GooglePlayGames.Android {
 
     internal static class Jni {
 

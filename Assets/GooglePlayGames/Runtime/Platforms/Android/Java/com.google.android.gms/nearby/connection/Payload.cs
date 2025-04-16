@@ -6,13 +6,13 @@ using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
-using JP   = GooglePlayGames.Android.Java.Payload;
-using JPC  = GooglePlayGames.Android.Java.Payload.Class;
-using JPI  = GooglePlayGames.Android.Java.Payload.Instance;
+using JP = GooglePlayGames.Android.Java.Payload;
+using JPC = GooglePlayGames.Android.Java.Payload.Class;
+using JPI = GooglePlayGames.Android.Java.Payload.Instance;
 using JPTC = GooglePlayGames.Android.Java.Payload.Type.Class;
-using JOI  = GooglePlayGames.Android.Java.Object.Instance;
+using JOI = GooglePlayGames.Android.Java.Object.Instance;
 
 namespace GooglePlayGames.Android.Java {
 

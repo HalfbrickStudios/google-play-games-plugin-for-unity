@@ -6,14 +6,14 @@ using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
-using ALC  = GooglePlayGames.Api.LeaderboardCollection;
+using ALC = GooglePlayGames.Api.LeaderboardCollection;
 using ALTS = GooglePlayGames.Api.LeaderboardTimeSpan;
 
 using JLVC = GooglePlayGames.Android.Java.LeaderboardVariant.Class;
 using JLVI = GooglePlayGames.Android.Java.LeaderboardVariant.Instance;
-using JOI  = GooglePlayGames.Android.Java.Object.Instance;
+using JOI = GooglePlayGames.Android.Java.Object.Instance;
 
 namespace GooglePlayGames.Android.Java {
 

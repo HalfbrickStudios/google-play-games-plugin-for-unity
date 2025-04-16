@@ -4,7 +4,7 @@ using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
 using JTC = GooglePlayGames.Android.Java.Tasks.Class;
 using JTI = GooglePlayGames.Android.Java.Task.Instance;

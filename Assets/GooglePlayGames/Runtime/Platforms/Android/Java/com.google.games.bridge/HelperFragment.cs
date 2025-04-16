@@ -18,14 +18,14 @@
 
 using GooglePlayGames.Utils;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
 using JAEI = GooglePlayGames.Android.Java.ApiException.Instance;
-using JAI  = GooglePlayGames.Android.Java.Activity.Instance;
+using JAI = GooglePlayGames.Android.Java.Activity.Instance;
 using JHFC = GooglePlayGames.Android.Java.HelperFragment.Class;
-using JEI  = GooglePlayGames.Android.Java.Exception.Instance;
-using JTI  = GooglePlayGames.Android.Java.Task.Instance;
-using JVI  = GooglePlayGames.Android.Java.View.Instance;
+using JEI = GooglePlayGames.Android.Java.Exception.Instance;
+using JTI = GooglePlayGames.Android.Java.Task.Instance;
+using JVI = GooglePlayGames.Android.Java.View.Instance;
 
 namespace GooglePlayGames.Android.Java {
 

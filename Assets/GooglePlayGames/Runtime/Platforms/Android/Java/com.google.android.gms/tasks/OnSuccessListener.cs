@@ -8,7 +8,7 @@ using GooglePlayGames.Utils;
 using UAJO = UnityEngine.AndroidJavaObject;
 using UAJP = UnityEngine.AndroidJavaProxy;
 
-using JO = GooglePlayGames.JavaObject;
+using JO = GooglePlayGames.Android.JavaObject;
 
 namespace GooglePlayGames.Android.Java {
 

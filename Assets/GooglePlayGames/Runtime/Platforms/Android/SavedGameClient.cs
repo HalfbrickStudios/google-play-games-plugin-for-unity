@@ -135,10 +135,10 @@ namespace GooglePlayGames.Android {
                     }
                     result.Add(element);
                 }
-                callback(ASGRS.Success, result);
+                callback.Invoke(ASGRS.Success, result);
             }).JAddOnFailureListener(jException => {
                 Logger.d("FetchAllSavedGames failed: " + jException.JToString());
-                callback(JPlayClient.GetSavedGameRequestStatus(), new List<AISGM>());
+                callback.Invoke(JPlayClient.GetSavedGameRequestStatus(), new List<AISGM>());
             });
         }
 
@@ -227,7 +227,7 @@ namespace GooglePlayGames.Android {
 
             if (maxDisplayedSavedGames <= 0) {
                 Logger.e("maxDisplayedSavedGames must be greater than 0");
-                callback(ASUS.BadInputError, null);
+                callback.Invoke(ASUS.BadInputError, null);
                 return;
             }
 

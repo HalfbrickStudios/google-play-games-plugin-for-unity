@@ -2,9 +2,9 @@
 
 using GooglePlayGames.Utils;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
-using JAI  = GooglePlayGames.Android.Java.Activity.Instance;
+using JAI = GooglePlayGames.Android.Java.Activity.Instance;
 using JUPC = GooglePlayGames.Android.Java.UnityPlayer.Class;
 
 namespace GooglePlayGames.Android.Java {

@@ -201,7 +201,7 @@ namespace GooglePlayGames.Android {
             if (!isAuthenticated) {
                 lock (m_authStateLock) {
                     Logger.e("Returning an error code.");
-                    callback(ASIS.Canceled);
+                    callback.Invoke(ASIS.Canceled);
                 }
                 return;
             }

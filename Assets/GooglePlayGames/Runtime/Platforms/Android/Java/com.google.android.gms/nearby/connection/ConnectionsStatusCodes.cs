@@ -2,7 +2,7 @@
 
 using GooglePlayGames.Utils;
 
-using JC = GooglePlayGames.JavaClass;
+using JC = GooglePlayGames.Android.JavaClass;
 
 using JCSC = GooglePlayGames.Android.Java.ConnectionsStatusCodes.Class;
 
