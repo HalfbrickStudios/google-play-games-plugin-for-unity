@@ -49,6 +49,7 @@ using AUS   = GooglePlayGames.Api.UiStatus;
 
 using GPGHO = GooglePlayGames.Utils.PlayGamesHelperObject;
 
+using APGC   = GooglePlayGames.Android.PlayGamesClient;
 using APGCAS = GooglePlayGames.Android.PlayGamesClient.AuthState;
 
 using JLSBI = GooglePlayGames.Android.Java.LeaderboardScoreBuffer.Instance;
@@ -56,6 +57,7 @@ using JLSsI = GooglePlayGames.Android.Java.LeaderboardsClient.LeaderboardScores.
 using JOI   = GooglePlayGames.Android.Java.Object.Instance;
 using JPG   = GooglePlayGames.Android.Java.PlayGames;
 using JPGS  = GooglePlayGames.Android.Java.PlayGamesSdk;
+using GooglePlayGames.Config;
 
 namespace GooglePlayGames.Android {
 
@@ -66,17 +68,17 @@ namespace GooglePlayGames.Android {
             Unauthenticated = 0,
         }
 
-        private volatile APGCAS m_authState = APGCAS.Unauthenticated;
-        private readonly object m_authStateLock = new();
-        private volatile AIEC m_eventsClient = null;
-        private UIUP[] m_friends = new UIUP[0];
-        private readonly int m_friendsMaxResults = 200;
-        private readonly object m_gameServicesLock = new();
-        private ALFS m_lastLoadFriendsStatus = ALFS.Unknown;
-        private readonly int m_leaderboardMaxResults = 25;
-        private volatile AISGC m_savedGameClient = null;
-        private volatile AP m_user = null;
-        private UAJO m_friendsResolutionException = null;
+        private volatile APGCAS m_authState                  = APGCAS.Unauthenticated;
+        private readonly object m_authStateLock              = new();
+        private volatile AIEC   m_eventsClient               = null;
+        private          UIUP[] m_friends                    = new UIUP[0];
+        private readonly int    m_friendsMaxResults          = 200;
+        private          UAJO   m_friendsResolutionException = null;
+        private readonly object m_gameServicesLock           = new();
+        private          ALFS   m_lastLoadFriendsStatus      = ALFS.Unknown;
+        private readonly int    m_leaderboardMaxResults      = 25;
+        private volatile AISGC  m_savedGameClient            = null;
+        private volatile AP     m_user                       = null;
 
         private static bool IsApiException(JOI exception)
         {
@@ -92,32 +94,37 @@ namespace GooglePlayGames.Android {
 
         private void Authenticate(bool isAutoSignIn, Action<ASIS> callback)
         {
+            const string method = "PlayGamesClient.Authenticate(bool, Action<SignInStatus>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             lock (m_authStateLock) {
                 if (m_authState == APGCAS.Authenticated) {
-                    Logger.d("Already authenticated.");
+                    Logger.d("AND: User is already authenticated; returning a success code");
                     callback.Invoke(ASIS.Success);
                     return;
                 }
             }
 
             using var jClient = JPG.JGetGamesSignInClient();
-            using var jTask = isAutoSignIn ? jClient.JIsAuthenticated() : jClient.JSignIn();
+            using var jTask   = isAutoSignIn ? jClient.JIsAuthenticated() : jClient.JSignIn();
             jTask.JAddOnSuccessListener(jResponse => {
-                SignInOnResult(jResponse.IsAuthenticated(), callback);
+                Logger.t($"AND: Success {method}");
+                OnSignInResult(jResponse.IsAuthenticated(), callback);
             }).JAddOnFailureListener(jException => {
-                Logger.e("Authentication failed - " + jException.JToString());
+                Logger.t($"AND: Failure {method}");
+                Logger.w($"AND: {jException.JToString()}");
                 callback.Invoke(ASIS.InternalError);
             });
         }
 
         private ALSD CreateLeaderboardScoreData(string id, ALC collection, ALTS span, ARS status, JLSsI jScores)
         {
-            var result = Utility.ToAndroidLeaderboardScoreData(jScores, id, status, collection, span);
+                  var result       = Utility.ToAndroidLeaderboardScoreData(jScores, id, status, collection, span);
             using var jLeaderboard = jScores.JGetLeaderboard();
-            using var jVariants = jLeaderboard.JGetVariants();
-            using var jVariant = jVariants.JGet(0);
+            using var jVariants    = jLeaderboard.JGetVariants();
+            using var jVariant     = jVariants.JGet(0);
             if (jVariant.HasPlayerInfo()) {
                 result.PlayerScore = Utility.ToAndroidPlayerGameScore(jVariant, id, m_user.Id);
             }
@@ -127,24 +134,30 @@ namespace GooglePlayGames.Android {
 
         private void LoadAllFriends(int pageSize, bool reload, bool more, Action<bool> callback)
         {
+            const string method = "PlayGamesClient.LoadAllFriends(int, bool, bool, Action<bool>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             LoadFriendsPaginated(pageSize, more, reload, result => {
                 m_lastLoadFriendsStatus = result;
                 switch (result) {
                     case ALFS.Completed:
+                        Logger.d("AND: Friends list loaded successfully");
                         callback.Invoke(true);
                         break;
                     case ALFS.LoadMore:
+                        Logger.d("AND: Friends list loaded partially");
                         LoadAllFriends(pageSize, reload: false, more: true, callback);
                         break;
                     case ALFS.ResolutionRequired:
                     case ALFS.InternalError:
                     case ALFS.NotAuthorized:
+                        Logger.d("AND: Friends list failed to load");
                         callback.Invoke(false);
                         break;
                     default:
-                        Logger.d("There was an error when loading friends." + result);
+                        Logger.d("AND: Friends list failed to load (unreachable code?)");
                         callback.Invoke(false);
                         break;
                 }
@@ -153,12 +166,16 @@ namespace GooglePlayGames.Android {
 
         private void LoadFriendsPaginated(int size, bool more, bool reload, Action<ALFS> callback)
         {
+            const string method = "PlayGamesClient.LoadFriendsPaginated(int, bool, bool, Action<LoadFriendsStatus>)";
+            Logger.t($"AND: Calling {method}");
+
             m_friendsResolutionException = null;
             callback = Utility.ToUiAction(callback);
 
             using var jClient = JPG.JGetPlayersClient();
             using var jTask   = more ? jClient.JLoadMoreFriends(size) : jClient.JLoadFriends(size, reload);
             jTask.JAddOnSuccessListener(jData => {
+                Logger.t($"AND: Success {method}");
                 using (var jPlayers = jData.JGet()) {
                     using (var jBundle = jPlayers.JGetMetadata()) {
                         var cursor = jBundle?.GetString("next_page_token");
@@ -168,6 +185,8 @@ namespace GooglePlayGames.Android {
                 }
                 callback.Invoke(m_lastLoadFriendsStatus);
             }).JAddOnFailureListener(jException => {
+                Logger.t($"AND: Failure {method}");
+                Logger.d("AND: " + jException.JToString());
                 // HelperFragmentClass.Instance.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
                 //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
@@ -194,20 +213,23 @@ namespace GooglePlayGames.Android {
             });
         }
 
-        private void SignInOnResult(bool isAuthenticated, Action<ASIS> callback)
+        private void OnSignInResult(bool isAuthenticated, Action<ASIS> callback)
         {
-            callback = Utility.ToUiAction(callback);
+            const string method = "PlayGamesClient.OnSignInResult(bool, Action<SignInStatus>)";
+            Logger.t($"AND: Calling {method}");
 
             if (!isAuthenticated) {
                 lock (m_authStateLock) {
-                    Logger.e("Returning an error code.");
+                    Logger.d("AND: Sign in result is NOT authenticated; returning a cancelation error");
                     callback.Invoke(ASIS.Canceled);
                 }
                 return;
             }
 
-            using var jTask = JPG.JGetPlayersClient().JGetCurrentPlayer();
+            using var jClient = JPG.JGetPlayersClient();
+            using var jTask   = jClient.JGetCurrentPlayer();
             jTask.JAddOnCompleteListener(jIt => {
+                Logger.t($"AND: Completed {method}");
                 if (jIt.JIsSuccessful()) {
                     using (var jData = jIt.JGetResult()) {
                         using var jPlayer = jData.JGet();
@@ -218,16 +240,19 @@ namespace GooglePlayGames.Android {
                         m_savedGameClient = new SavedGameClient(this);
                     }
                     m_authState = APGCAS.Authenticated;
+                    Logger.d("AND: Sign in result is authenticated; returning a success code");
                     callback.Invoke(ASIS.Success);
-                    Logger.d("Authentication succeeded");
                     LoadAchievements(ignore => { });
                 } else {
                     if (jIt.JIsCanceled()) {
+                        Logger.d("AND: Sign in result is canceled; returning a cancelation error");
                         callback.Invoke(ASIS.Canceled);
                         return;
                     }
-                    using var jException = jIt.JGetException();
-                    Logger.e("Authentication failed - " + jException.JToString());
+                    Logger.d("AND: Sign in result is NOT authenticated; returning an internal error");
+                    using (var jException = jIt.JGetException()) {
+                        Logger.e("AND: " + jException.JToString());
+                    }
                     callback.Invoke(ASIS.InternalError);
                 }
             });
@@ -237,6 +262,9 @@ namespace GooglePlayGames.Android {
 
         public void AskForLoadFriendsResolution(Action<AUS> callback)
         {
+            const string method = "PlayGamesClient.AskForLoadFriendsResolution(Action<UiStatus>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             if (m_friendsResolutionException != null) {
@@ -244,13 +272,16 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            Logger.d("The developer asked for access to the friends list but there is no intent to trigger the UI. " +
-                     "This may be because the user has granted access already or the game has not called loadFriends() before.");
+            Logger.d("AND: The developer asked for access to the friends list but there is no intent to trigger the UI.\n" +
+                     "AND: This may be because the user has granted access already or the game has not called loadFriends() before.");
             using var jClient = JPG.JGetPlayersClient();
             using var jTask   = jClient.JLoadFriends(size: 1, reload: false);
             jTask.JAddOnSuccessListener(jData => {
+                Logger.t($"AND: Success {method}");
                 callback.Invoke(AUS.Valid);
             }).JAddOnFailureListener(jException => {
+                Logger.t($"AND: Failure {method}");
+                Logger.d("AND: " + jException.JToString());
                 // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
                 //         m_friendsResolutionException = exception.Call<AndroidJavaObject>("getResolution");
@@ -271,48 +302,83 @@ namespace GooglePlayGames.Android {
             });
         }
 
-        public void Authenticate(Action<ASIS> callback) => Authenticate(true, callback);
+        public void Authenticate(Action<ASIS> callback)
+        {
+            const string method = "PlayGamesClient.Authenticate(Action<SignInStatus>)";
+            Logger.t($"AND: Calling {method}");
+
+            Authenticate(true, callback);
+        }
 
         public AIEC GetEventsClient()
         {
+            const string method = "PlayGamesClient.GetEventsClient()";
+            Logger.t($"AND: Calling {method}");
+
             lock (m_gameServicesLock) {
                 return m_eventsClient;
             }
         }
 
-        public UIUP[] GetFriends() => m_friends;
+        public UIUP[] GetFriends()
+        {
+            const string method = "PlayGamesClient.GetFriends()";
+            Logger.t($"AND: Calling {method}");
+
+            return m_friends;
+        }
 
         public void GetFriendsListVisibility(bool reload, Action<AFLVS> callback)
         {
+            const string method = "PlayGamesClient.GetFriendsListVisibility(bool, Action<FriendsListVisibilityStatus>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             using var jClient = JPG.JGetPlayersClient();
             using var jTask   = jClient.JGetCurrentPlayer(reload);
             jTask.JAddOnSuccessListener(jData => {
-                using var jPlayer = jData.JGet();
-                using var jInfo = jPlayer.JGetCurrentPlayerInfo();
-                callback.Invoke(jInfo.GetFriendsListVisibilityStatus());
+                Logger.t($"AND: Success {method}");
+                AFLVS status;
+                using (var jPlayer = jData.JGet())
+                using (var jInfo = jPlayer.JGetCurrentPlayerInfo()) {
+                    status = jInfo.GetFriendsListVisibilityStatus();
+                }
+                callback.Invoke(status);
             }).JAddOnFailureListener(jException => {
+                Logger.t($"AND: Failure {method}");
+                Logger.d("AND: " + jException.JToString());
                 callback.Invoke(AFLVS.NetworkError);
             });
         }
 
-        public ALFS GetLastLoadFriendsStatus() => m_lastLoadFriendsStatus;
+        public ALFS GetLastLoadFriendsStatus()
+        {
+            const string method = "PlayGamesClient.GetLastLoadFriendsStatus()";
+            Logger.t($"AND: Calling {method}");
+
+            return m_lastLoadFriendsStatus;
+        }
 
         public void GetPlayerStats(Action<ACSC, APS> callback)
         {
+            const string method = "PlayGamesClient.GetPlayerStats(Action<CommonStatusCodes, PlayerStats>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             using var jClient = JPG.JGetPlayerStatsClient();
             using var jTask   = jClient.JLoadPlayerStats(reload: false);
             jTask.JAddOnSuccessListener(jData => {
+                Logger.t($"AND: Success {method}");
                 var stats = null as APS;
                 using (var jStats = jData.JGet()) {
                     stats = Utility.ToAndroidPlayerStats(jStats);
                 }
                 callback.Invoke(ACSC.Success, stats);
             }).JAddOnFailureListener(jException => {
-                Logger.e("GetPlayerStats failed: " + jException.JToString());
+                Logger.t($"AND: Failure {method}");
+                Logger.d("AND: " + jException.JToString());
                 var statusCode = IsAuthenticated() ? ACSC.InternalError : ACSC.SignInRequired;
                 callback.Invoke(statusCode, new APS());
             });
@@ -320,19 +386,43 @@ namespace GooglePlayGames.Android {
 
         public AISGC GetSavedGameClient()
         {
+            const string method = "PlayGamesClient.GetSavedGameClient()";
+            Logger.t($"AND: Calling {method}");
+
             lock (m_gameServicesLock) {
                 return m_savedGameClient;
             }
         }
 
-        public string GetUserDisplayName() => m_user?.UserName;
+        public string GetUserDisplayName()
+        {
+            const string method = "PlayGamesClient.GetUserDisplayName()";
+            Logger.t($"AND: Calling {method}");
 
-        public string GetUserId() => m_user?.Id;
+            return m_user?.UserName;
+        }
 
-        public string GetUserImageUrl() => m_user?.AvatarURL;
+        public string GetUserId()
+        {
+            const string method = "PlayGamesClient.GetUserId()";
+            Logger.t($"AND: Calling {method}");
+
+            return m_user?.Id;
+        }
+
+        public string GetUserImageUrl()
+        {
+            const string method = "PlayGamesClient.GetUserImageUrl()";
+            Logger.t($"AND: Calling {method}");
+
+            return m_user?.AvatarUrl;
+        }
 
         public void IncrementAchievement(string id, int steps, Action<bool> callback)
         {
+            const string method = "PlayGamesClient.IncrementAchievement(string, int, Action<bool>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
@@ -348,46 +438,82 @@ namespace GooglePlayGames.Android {
 
         public bool IsAuthenticated()
         {
+            const string method = "PlayGamesClient.IsAuthenticated()";
+            Logger.t($"AND: Calling {method}");
+
             lock (m_authStateLock) {
                 return m_authState == APGCAS.Authenticated;
             }
         }
 
-        public int LeaderboardMaxResults() => m_leaderboardMaxResults;
+        public int LeaderboardMaxResults()
+        {
+            const string method = "PlayGamesClient.LeaderboardMaxResults()";
+            Logger.t($"AND: Calling {method}");
+
+            return m_leaderboardMaxResults;
+        }
 
         public void LoadAchievements(Action<AA[]> callback)
         {
+            const string method = "PlayGamesClient.LoadAchievements(Action<Achievement[]>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             using var jClient = JPG.JGetAchievementsClient();
             using var jTask   = jClient.JLoad(reload: false);
             jTask.JAddOnSuccessListener(jData => {
+                Logger.t($"AND: Success {method}");
                 var achievements = null as AA[];
                 using (var jAchievements = jData.JGet()) {
                     achievements = Utility.ToAndroidAchievement(jAchievements).ToArray();
                 }
                 callback.Invoke(achievements);
             }).JAddOnFailureListener(jException => {
-                Logger.e("LoadAchievements failed: " + jException.JToString());
+                Logger.t($"AND: Failure {method}");
+                Logger.d("AND: " + jException.JToString());
                 callback.Invoke(new AA[0]);
             });
         }
 
-        public void LoadFriends(Action<bool> callback) => LoadAllFriends(m_friendsMaxResults, reload: false, more: false, callback);
+        public void LoadFriends(Action<bool> callback)
+        {
+            const string method = "PlayGamesClient.LoadFriends(Action<bool>)";
+            Logger.t($"AND: Calling {method}");
 
-        public void LoadFriends(int size, bool reload, Action<ALFS> callback) => LoadFriendsPaginated(size, more: false, reload, callback);
+            LoadAllFriends(m_friendsMaxResults, reload: false, more: false, callback);
+        }
 
-        public void LoadMoreFriends(int size, Action<ALFS> callback) => LoadFriendsPaginated(size, more: true, reload: false, callback);
+        public void LoadFriends(int size, bool reload, Action<ALFS> callback)
+        {
+            const string method = "PlayGamesClient.LoadFriends(int, bool, Action<LoadFriendsStatus>)";
+            Logger.t($"AND: Calling {method}");
+
+            LoadFriendsPaginated(size, more: false, reload, callback);
+        }
+
+        public void LoadMoreFriends(int size, Action<ALFS> callback)
+        {
+            const string method = "PlayGamesClient.LoadMoreFriends(int, Action<LoadFriendsStatus>)";
+            Logger.t($"AND: Calling {method}");
+
+            LoadFriendsPaginated(size, more: true, reload: false, callback);
+        }
 
         public void LoadMoreScores(ASPC token, int rows, Action<ALSD> callback)
         {
+            const string method = "PlayGamesClient.LoadMoreScores(ASPC, int, Action<LeaderboardScoreData>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             using var jClient       = JPG.JGetLeaderboardsClient();
-            using var jLeaderboards = (JLSBI)token.LeaderboardScoreBuffer;
+            using var jLeaderboards = (JLSBI)token.Token;
                   var  direction    = Utility.ToJavaPageDirection(token.Direction);
             using var jTask         = jClient.JLoadMoreScores(jLeaderboards, rows, direction);
             jTask.JAddOnSuccessListener(jData => {
+                Logger.t($"AND: Success {method}");
                 var leaderboard = null as ALSD;
                 using (var jScores = jData.JGet()) {
                     var status = jData.GetResponseStatus();
@@ -395,6 +521,8 @@ namespace GooglePlayGames.Android {
                 }
                 callback.Invoke(leaderboard);
             }).JAddOnFailureListener(jException => {
+                Logger.t($"AND: Failure {method}");
+                Logger.d("AND: " + jException.JToString());
                 // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
                 //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
@@ -403,13 +531,15 @@ namespace GooglePlayGames.Android {
                 //         m_friendsResolutionException = null;
                 //     }
                 // });
-                Logger.e("LoadMoreScores failed: " + jException.JToString());
                 callback.Invoke(new ALSD(token.LeaderboardId, ARS.InternalError));
             });
         }
 
         public void LoadScores(string id, ALS start, int rows, ALC collection, ALTS span, Action<ALSD> callback)
         {
+            const string method = "PlayGamesClient.LoadScores(string, LeaderboardStart, int, LeaderboardCollection, LeaderboardTimeSpan, Action<LeaderboardScoreData>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             using var jClient     = JPG.JGetLeaderboardsClient();
@@ -419,12 +549,15 @@ namespace GooglePlayGames.Android {
                                         ? jClient.JLoadTopScores(id, jSpan, jCollection, rows)
                                         : jClient.JLoadPlayerCenteredScores(id, jSpan, jCollection, rows);
             jtask.JAddOnSuccessListener(jData => {
+                Logger.t($"AND: Success {method}");
                 var data = null as ALSD;
                 using (var jScores = jData.JGet()) {
                     data = CreateLeaderboardScoreData(id, collection, span, jData.GetResponseStatus(), jScores);
                 }
                 callback.Invoke(data);
             }).JAddOnFailureListener(jException => {
+                Logger.t($"AND: Failure {method}");
+                Logger.d("AND: " + jException.JToString());
                 // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
                 //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
@@ -433,13 +566,15 @@ namespace GooglePlayGames.Android {
                 //         m_friendsResolutionException = null;
                 //     }
                 // });
-                Logger.e("LoadScores failed: " + jException.JToString());
                 callback.Invoke(new ALSD(id, ARS.InternalError));
             });
         }
 
         public void LoadUsers(string[] userIds, Action<UIUP[]> callback)
         {
+            const string method = "PlayGamesClient.LoadUsers(string[], Action<IUserProfile[]>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
@@ -455,6 +590,7 @@ namespace GooglePlayGames.Android {
             for (var i = 0; i < count; i += 1) {
                 using var jTask = jClient.JLoadPlayer(userIds[i]);
                 jTask.JAddOnSuccessListener(jData => {
+                    Logger.t($"AND: Success number {i}/{count} of {method}");
                     using (var jPlayer = jData.JGet()) {
                         var id = jPlayer.GetPlayerId();
                         for (var j = 0; j < count; j += 1) {
@@ -469,7 +605,8 @@ namespace GooglePlayGames.Android {
                         if (acc == count) callback.Invoke(users);
                     }
                 }).JAddOnFailureListener(jException => {
-                    Logger.e("LoadUsers failed for index " + i + " with: " + jException.JToString());
+                    Logger.t($"AND: Failure number {i}/{count} of {method}");
+                    Logger.d("AND: " + jException.JToString());
                     lock (@lock) {
                         acc += 1;
                         if (acc == count) callback.Invoke(users);
@@ -478,37 +615,64 @@ namespace GooglePlayGames.Android {
             }
         }
 
-        public void ManuallyAuthenticate(Action<ASIS> callback) => Authenticate(false, callback);
+        public void ManuallyAuthenticate(Action<ASIS> callback)
+        {
+            const string method = "PlayGamesClient.ManuallyAuthenticate(Action<SignInStatus>)";
+            Logger.t($"AND: Calling {method}");
+
+            Authenticate(false, callback);
+        }
 
         public void RequestRecallAccessToken(Action<ARA> callback)
         {
+            const string method = "PlayGamesClient.RequestRecallAccessToken(Action<RecallAccess>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             using var jClient = JPG.JGetRecallClient();
             using var jTask   = jClient.JRequestRecallAccess();
             jTask.JAddOnSuccessListener(jAccess => {
+                Logger.t($"AND: Success {method}");
                 var id = jAccess.GetSessionId();
                 callback.Invoke(new ARA(id));
             }).JAddOnFailureListener(jException => {
-                Logger.e("Requesting Recall access task failed - " + jException.JToString());
+                Logger.t($"AND: Failure {method}");
+                Logger.d("AND: " + jException.JToString());
                 callback.Invoke(null);
             });
         }
 
         public void RequestServerSideAccess(bool reload, Action<string> callback)
         {
+            const string method = "PlayGamesClient.RequestServerSideAccess(bool, Action<string>)";
+            Logger.t($"AND: Calling {method}");
+
+            if (!GameInformation.HasInstance) {
+                throw new NullReferenceException("The GameInformation instance is not available");
+            } else if (!GameInformation.Instance.HasWebId) {
+                throw new InvalidOperationException("The GameInformation instance is missing the Web Client Id; make sure it's configured");
+            }
+
             callback = Utility.ToUiAction(callback);
 
             using var jClient = JPG.JGetGamesSignInClient();
-            using var jTask   = jClient.JRequestServerSideAccess(reload: true, webId: string.Empty);
-            jTask.JAddOnSuccessListener(callback).JAddOnFailureListener(jException => {
-                Logger.e("Requesting server side access task failed - " + jException.JToString());
+            using var jTask   = jClient.JRequestServerSideAccess(reload: true, webId: GameInformation.Instance.WebId);
+            jTask.JAddOnSuccessListener(token => {
+                Logger.t($"AND: Success {method}");
+                callback.Invoke(token);
+            }).JAddOnFailureListener(jException => {
+                Logger.t($"AND: Failure {method}");
+                Logger.d("AND: " + jException.JToString());
                 callback.Invoke(null);
             });
         }
 
         public void RevealAchievement(string achId, Action<bool> callback)
         {
+            const string method = "PlayGamesClient.RevealAchievement(string, Action<bool>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
@@ -523,6 +687,9 @@ namespace GooglePlayGames.Android {
 
         public void SetStepsAtLeast(string achId, int steps, Action<bool> callback)
         {
+            const string method = "PlayGamesClient.SetStepsAtLeast(string, int, Action<bool>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
@@ -537,6 +704,9 @@ namespace GooglePlayGames.Android {
 
         public void ShowAchievementsUI(Action<AUS> callback)
         {
+            const string method = "PlayGamesClient.ShowAchievementsUI(Action<UiStatus>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
             if (!IsAuthenticated()) {
                 callback.Invoke(AUS.NotAuthorized);
@@ -547,12 +717,19 @@ namespace GooglePlayGames.Android {
 
         public void ShowCompareProfileWithAlternativeNameHintsUI(string playerId, string otherPlayerInGameName, string currentPlayerInGameName, Action<AUS> callback)
         {
+            const string method = "PlayGamesClient.ShowCompareProfileWithAlternativeNameHintsUI(string, string, string, Action<UiStatus>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
+
             // HelperFragmentClass.ShowCompareProfileWithAlternativeNameHintsUI(playerId, otherPlayerInGameName, currentPlayerInGameName, AsOnGameThreadCallback(callback));
         }
 
         public void ShowLeaderboardUI(string leaderboardId, ALTS span, Action<AUS> callback)
         {
+            const string method = "PlayGamesClient.ShowLeaderboardUI(string, LeaderboardTimeSpan, Action<UiStatus>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
@@ -569,6 +746,9 @@ namespace GooglePlayGames.Android {
 
         public void SubmitScore(string id, long score, string metadata, Action<bool> callback)
         {
+            const string method = "PlayGamesClient.SubmitScore(string, long, string, Action<bool>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
@@ -583,6 +763,9 @@ namespace GooglePlayGames.Android {
 
         public void SubmitScore(string leaderboardId, long score, Action<bool> callback)
         {
+            const string method = "PlayGamesClient.SubmitScore(string, long, Action<bool>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
@@ -597,6 +780,9 @@ namespace GooglePlayGames.Android {
 
         public void UnlockAchievement(string achId, Action<bool> callback)
         {
+            const string method = "PlayGamesClient.UnlockAchievement(string, Action<bool>)";
+            Logger.t($"AND: Calling {method}");
+
             callback = Utility.ToUiAction(callback);
 
             if (!IsAuthenticated()) {
@@ -610,6 +796,35 @@ namespace GooglePlayGames.Android {
         }
 
         #endregion IPlayGamesClient implementation
+
+        #region Object implementation
+
+        public override string ToString() => $"PlayGamesClient(authState: {m_authState}, authStateLock: {m_authStateLock}, eventsClient: {m_eventsClient}, friends: {m_friends}, friendsMaxResults: {m_friendsMaxResults}, friendsResolutionException: {m_friendsResolutionException}, gameServicesLock: {m_gameServicesLock}, lastLoadFriendsStatus: {m_lastLoadFriendsStatus}, leaderboardMaxResults: {m_leaderboardMaxResults}, savedGameClient: {m_savedGameClient}, user: {m_user})";
+
+        public override int GetHashCode()
+        {
+            var hash1 = HashCode.Combine(m_authState,        m_authStateLock,         m_eventsClient,          m_friends,         m_friendsMaxResults, m_friendsResolutionException);
+            var hash2 = HashCode.Combine(m_gameServicesLock, m_lastLoadFriendsStatus, m_leaderboardMaxResults, m_savedGameClient, m_user);
+            return HashCode.Combine(hash1, hash2);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (other is not APGC it) return false;
+            return m_authState                          ==     it.m_authState &&
+                   m_authStateLock                      ==     it.m_authStateLock &&
+                   m_eventsClient                      .Equals(it.m_eventsClient) &&
+                   m_friends                   .SequenceEqual (it.m_friends) &&
+                   m_friendsMaxResults                  ==     it.m_friendsMaxResults &&
+                   m_friendsResolutionException        .Equals(it.m_friendsResolutionException) &&
+                   m_gameServicesLock                   ==     it.m_gameServicesLock &&
+                   m_lastLoadFriendsStatus              ==     it.m_lastLoadFriendsStatus &&
+                   m_leaderboardMaxResults              ==     it.m_leaderboardMaxResults &&
+                   m_savedGameClient                   .Equals(it.m_savedGameClient) &&
+                   m_user                              .Equals(it.m_user);
+        }
+
+        #endregion Object implementation
 
     }
 

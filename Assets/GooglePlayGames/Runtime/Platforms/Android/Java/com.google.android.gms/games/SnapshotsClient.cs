@@ -52,19 +52,19 @@ namespace GooglePlayGames.Android.Java {
 
                 public JSCI JGetConflict()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.getConflict()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.getConflict()");
                     return Call<JSCI>("getConflict");
                 }
 
                 public T JGetData()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.getData()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.getData()");
                     return Call<T>("getData");
                 }
 
                 public bool IsConflict()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.isConflict()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.isConflict()");
                     return Call<bool>("isConflict");
                 }
 
@@ -95,25 +95,25 @@ namespace GooglePlayGames.Android.Java {
 
                 public string GetConflictId()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.getConflictId()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.getConflictId()");
                     return Call<string>("getConflictId");
                 }
 
                 public JSI JGetConflictingSnapshot()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.getConflictingSnapshot()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.getConflictingSnapshot()");
                     return Call<JSI>("getConflictingSnapshot");
                 }
 
                 public JSI JGetSnapshot()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.getSnapshot()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.getSnapshot()");
                     return Call<JSI>("getSnapshot");
                 }
 
                 public JSCsI JGetResolutionSnapshotContents()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.getResolutionSnapshotContents()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.getResolutionSnapshotContents()");
                     return Call<JSCsI>("getResolutionSnapshotContents");
                 }
 
@@ -200,37 +200,37 @@ namespace GooglePlayGames.Android.Java {
 
             public JT.Instance<JSMI> JCommitAndClose(JSI jSnapshot, JSMCI jChange)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.commitAndClose(Snapshot, SnapshotMetadataChange)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.commitAndClose(Snapshot, SnapshotMetadataChange)");
                 return Call<UAJO>("commitAndClose", jSnapshot, jChange) as JT.Instance<JSMI>;
             }
 
             public JT.Instance<string> JDelete(JSMI jSnapshotMetadata)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.delete(SnapshotMetadata)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.delete(SnapshotMetadata)");
                 return Call<UAJO>("delete", jSnapshotMetadata) as JT.Instance<string>;
             }
 
             public JT.Instance<JDOC.Instance<JSI>> JOpen(string filename, bool create, int jPolicy)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.open(string, bool, ResolutionPolicy)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.open(string, bool, ResolutionPolicy)");
                 return Call<UAJO>("open", filename, create, jPolicy) as JT.Instance<JDOC.Instance<JSI>>;
             }
 
             public JT.Instance<JAD.Instance<JSBI>> JLoad(bool reload)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.load(bool)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.load(bool)");
                 return Call<UAJO>("load", reload) as JT.Instance<JAD.Instance<JSBI>>;
             }
 
             public JT.Instance<JDOC.Instance<JSI>> JResolveConflict(string conflict, string snapshot, JSMCI jChange, JSCsI jContents)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.resolveConflict(string, string, SnapshotMetadataChange, SnapshotContents)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.resolveConflict(string, string, SnapshotMetadataChange, SnapshotContents)");
                 return Call<UAJO>("resolveConflict", conflict, snapshot, jChange, jContents) as JT.Instance<JDOC.Instance<JSI>>;
             }
 
             public JT.Instance<JDOC.Instance<JSI>> JResolveConflict(string conflict, JSI jSnapshot)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.resolveConflict(string, Snapshot)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.resolveConflict(string, Snapshot)");
                 return Call<UAJO>("resolveConflict", conflict, jSnapshot) as JT.Instance<JDOC.Instance<JSI>>;
             }
 

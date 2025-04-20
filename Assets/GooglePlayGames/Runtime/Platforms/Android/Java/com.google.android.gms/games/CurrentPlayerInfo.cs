@@ -38,7 +38,7 @@ namespace GooglePlayGames.Android.Java {
 
             public int JGetFriendsListVisibilityStatus()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getFriendsListVisibilityStatus()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getFriendsListVisibilityStatus()");
                 return Call<int>("getFriendsListVisibilityStatus");
             }
 

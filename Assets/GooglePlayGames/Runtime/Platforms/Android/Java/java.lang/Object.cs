@@ -39,13 +39,13 @@ namespace GooglePlayGames.Android.Java {
 
             public JCI JGetClass()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getClass()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getClass()");
                 return Get<JCI>("getClass");
             }
 
             public string JToString()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.toString()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.toString()");
                 return Call<string>("toString");
             }
 

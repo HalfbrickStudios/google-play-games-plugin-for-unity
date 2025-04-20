@@ -9,12 +9,14 @@ using GooglePlayGames.Utils;
 
 using Logger = GooglePlayGames.Utils.Logger;
 
-using AAR   = GooglePlayGames.Api.Nearby.AdvertisingResult;
-using ACRes = GooglePlayGames.Api.Nearby.ConnectionResponse;
-using ACReq = GooglePlayGames.Api.Nearby.ConnectionRequest;
-using AIDL  = GooglePlayGames.Api.Nearby.IDiscoveryListener;
-using AIML  = GooglePlayGames.Api.Nearby.IMessageListener;
-using ANCC  = GooglePlayGames.Api.Nearby.NearbyConnectionConfiguration;
+using AAR    = GooglePlayGames.Api.Nearby.AdvertisingResult;
+using ACRes  = GooglePlayGames.Api.Nearby.ConnectionResponse;
+using ACReq  = GooglePlayGames.Api.Nearby.ConnectionRequest;
+using AIDL   = GooglePlayGames.Api.Nearby.IDiscoveryListener;
+using AIML   = GooglePlayGames.Api.Nearby.IMessageListener;
+using ANCCfg = GooglePlayGames.Api.Nearby.NearbyConnectionConfiguration;
+
+using ANCC = GooglePlayGames.Android.NearbyConnectionClient;
 
 using JAO    = GooglePlayGames.Android.Java.AdvertisingOptions;
 using JAOI   = GooglePlayGames.Android.Java.AdvertisingOptions.Instance;
@@ -46,11 +48,11 @@ namespace GooglePlayGames.Android {
         private static string ReadServiceId()
         {
             using var jActivity = JUP.JCurrentActivity;
-            var package         = jActivity.GetPackageName();
+                  var package   = jActivity.GetPackageName();
             using var jManager  = jActivity.JGetPackageManager();
             using var jInfo     = jManager.JGetApplicationInfo(package, ApplicationInfoFlags);
             using var jBundle   = jInfo.JMetaData;
-            var id              = jBundle.GetString(ServiceIdKey);
+                  var id        = jBundle.GetString(ServiceIdKey);
             Logger.d("SystemId from Manifest: " + id);
             return id;
         }
@@ -89,99 +91,186 @@ namespace GooglePlayGames.Android {
 
         public void AcceptConnectionRequest(string id, byte[] payload, AIML listener)
         {
+            const string method = "INearbyConnectionClient.AcceptConnectionRequest(string, byte[], IMessageListener)";
+            Logger.t($"AND: Calling {method}");
+
             Misc.CheckNotNull(listener, nameof(listener));
+
             MessageListener     = new UiMessageListener(listener);
-            var proxy           = JPCPC.MakeProxy(listener: listener);
+                  var proxy     = JPCPC.MakeProxy(listener: listener);
             using var jCallback = JPCP.MakeInstance(proxy);
             using var jTask     = m_client.JAcceptConnection(id, jCallback);
         }
 
         public void DisconnectFromEndpoint(string id)
         {
+            const string method = "INearbyConnectionClient.DisconnectFromEndpoint(string)";
+            Logger.t($"AND: Calling {method}");
+
             Misc.CheckNotNull(id, nameof(id));
+
             m_client.DisconnectFromEndpoint(id);
         }
 
         public string GetAppBundleId()
         {
+            const string method = "INearbyConnectionClient.GetAppBundleId()";
+            Logger.t($"AND: Calling {method}");
+
             using var jActivity = JUP.JCurrentActivity;
             return jActivity.GetPackageName();
         }
 
-        public string GetServiceId() => ServiceId;
+        public string GetServiceId()
+        {
+            const string method = "INearbyConnectionClient.GetServiceId()";
+            Logger.t($"AND: Calling {method}");
 
-        public int MaxReliableMessagePayloadLength() => ANCC.MaxReliableMessagePayloadLength;
+            return ServiceId;
+        }
 
-        public int MaxUnreliableMessagePayloadLength() => ANCC.MaxUnreliableMessagePayloadLength;
+        public int MaxReliableMessagePayloadLength()
+        {
+            const string method = "INearbyConnectionClient.MaxReliableMessagePayloadLength()";
+            Logger.t($"AND: Calling {method}");
+
+            return ANCCfg.MaxReliableMessagePayloadLength;
+        }
+
+        public int MaxUnreliableMessagePayloadLength()
+        {
+            const string method = "INearbyConnectionClient.MaxUnreliableMessagePayloadLength()";
+            Logger.t($"AND: Calling {method}");
+
+            return ANCCfg.MaxUnreliableMessagePayloadLength;
+        }
 
         public void RejectConnectionRequest(string id)
         {
+            const string method = "INearbyConnectionClient.RejectConnectionRequest(string)";
+            Logger.t($"AND: Calling {method}");
+
             Misc.CheckNotNull(id, nameof(id));
+            
             using var jTask = m_client.JRejectConnection(id);
         }
 
         public void SendConnectionRequest(string name, string id, byte[] payload, Action<ACRes> onCallback, AIML listener)
         {
+            const string method = "INearbyConnectionClient.SendConnectionRequest(string, string, byte[], Action<ConnectionResponse>, IMessageListener)";
+            Logger.t($"AND: Calling {method}");
+
             Misc.CheckNotNull(listener, nameof(listener));
-            var wrapped         = new UiMessageListener(listener);
-            var jProxy          = JCLCPC.MakeProxy(m_client, listener, onCallback);
+
+                  var wrapped   = new UiMessageListener(listener);
+                  var jProxy    = JCLCPC.MakeProxy(m_client, listener, onCallback);
             using var jCallback = JCLCP.MakeInstance(jProxy);
             using var jTask     = m_client.JRequestConnection(name, id, jCallback);
         }
 
-        public void SendReliable(List<string> ids, byte[] payload) => InternalSend(ids, payload);
+        public void SendReliable(List<string> ids, byte[] payload)
+        {
+            const string method = "INearbyConnectionClient.SendReliable(List<string>, byte[])";
+            Logger.t($"AND: Calling {method}");
 
-        public void SendUnreliable(List<string> ids, byte[] payload) => InternalSend(ids, payload);
+            InternalSend(ids, payload);
+        }
+
+        public void SendUnreliable(List<string> ids, byte[] payload)
+        {
+            const string method = "INearbyConnectionClient.SendUnreliable(List<string>, byte[])";
+            Logger.t($"AND: Calling {method}");
+
+            InternalSend(ids, payload);
+        }
 
         public void StartAdvertising(string name, List<string> ids, TimeSpan? duration, Action<AAR> resultCallback, Action<ACReq> requestCallback)
         {
+            const string method = "INearbyConnectionClient.StartAdvertising(string, List<string>, TimeSpan?, Action<AdvertisingResult>, Action<ConnectionRequest>)";
+            Logger.t($"AND: Calling {method}");
+
             Misc.CheckNotNull(resultCallback, nameof(resultCallback));
             Misc.CheckNotNull(requestCallback, nameof(requestCallback));
             if (duration.HasValue && duration.Value.Ticks < 0) {
                 throw new InvalidOperationException(nameof(duration) + " must be positive");
             }
-
             requestCallback = Utility.ToUiAction(requestCallback);
             resultCallback  = Utility.ToUiAction(resultCallback);
 
-            var proxy           = JCLCPC.MakeProxy(this, resultCallback, requestCallback);
+                  var proxy     = JCLCPC.MakeProxy(this, resultCallback, requestCallback);
             using var jCallback = JCLCP.MakeInstance(proxy);
             using var jOptions  = CreateAdvertisingOptions();
             using var jTask     = m_client.JStartAdvertising(name, GetServiceId(), jCallback, jOptions);
-            jTask.JAddOnSuccessListener(() => NearbyHelperObject.StartAdvertisingTimer(duration));
+            jTask.JAddOnSuccessListener(() => {
+                Logger.t($"AND: Success {method}");
+                NearbyHelperObject.StartAdvertisingTimer(duration);
+            });
         }
 
         public void StopAdvertising()
         {
+            const string method = "INearbyConnectionClient.StopAdvertising()";
+            Logger.t($"AND: Calling {method}");
+
             m_client.StopAdvertising();
             MessageListener = null;
         }
 
         public void StopAllConnections()
         {
+            const string method = "INearbyConnectionClient.StopAllConnections()";
+            Logger.t($"AND: Calling {method}");
+
             m_client.StopAllEndpoints();
             MessageListener = null;
         }
 
-        public void StopDiscovery(string id) => m_client.StopDiscovery();
+        public void StopDiscovery(string id)
+        {
+            const string method = "INearbyConnectionClient.StopDiscovery(string)";
+            Logger.t($"AND: Calling {method}");
+
+            m_client.StopDiscovery();
+        }
 
         public void StartDiscovery(string id, TimeSpan? duration, AIDL listener)
         {
+            const string method = "INearbyConnectionClient.StartDiscovery(string, TimeSpan?, IDiscoveryListener)";
+            Logger.t($"AND: Calling {method}");
+
             Misc.CheckNotNull(id, nameof(id));
             Misc.CheckNotNull(listener, nameof(listener));
             if (duration.HasValue && duration.Value.Ticks < 0) {
                 throw new InvalidOperationException(nameof(duration) + " must be positive");
             }
 
-            var wrapped         = new UiDiscoveryListener(listener);
-            var proxy           = JEDCPC.MakeProxy(wrapped);
+                  var wrapped   = new UiDiscoveryListener(listener);
+                  var proxy     = JEDCPC.MakeProxy(wrapped);
             using var jCallback = JEDCP.MakeInstance(proxy);
             using var jOptions  = CreateDiscoveryOptions();
             using var jTask     = m_client.JStartDiscovery(id, jCallback, jOptions);
-            jTask.JAddOnSuccessListener(() => NearbyHelperObject.StartDiscoveryTimer(duration));
+            jTask.JAddOnSuccessListener(() => {
+                Logger.t($"AND: Success {method}");
+                NearbyHelperObject.StartDiscoveryTimer(duration);
+            });
         }
 
         #endregion INearbyConnectionClient implementation
+
+        #region Object implementation
+
+        public override string ToString() => $"NearbyConnectionClient(client: {m_client}, listener: {MessageListener})";
+
+        public override int GetHashCode() => HashCode.Combine(m_client, MessageListener);
+
+        public override bool Equals(object other)
+        {
+            if (other is not ANCC it) return false;
+            return m_client       .Equals(it.m_client) &&
+                   MessageListener.Equals(it.MessageListener);
+        }
+
+        #endregion Object implementation
 
     }
 

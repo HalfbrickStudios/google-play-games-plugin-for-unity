@@ -101,43 +101,43 @@ namespace GooglePlayGames.Android.Java {
 
             public int JGetCollection()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getCollection()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getCollection()");
                 return Call<int>("getCollection");
             }
 
             public long GetNumScores()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getNumScores()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getNumScores()");
                 return Call<long>("getNumScores");
             }
 
             public long GetPlayerRank()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getPlayerRank()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getPlayerRank()");
                 return Call<long>("getPlayerRank");
             }
 
             public string GetPlayerScoreTag()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getPlayerScoreTag()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getPlayerScoreTag()");
                 return Call<string>("getPlayerScoreTag");
             }
 
             public long GetRawPlayerScore()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getRawPlayerScore()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getRawPlayerScore()");
                 return Call<long>("getRawPlayerScore");
             }
 
             public int JGetTimeSpan()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getTimeSpan()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getTimeSpan()");
                 return Call<int>("getTimeSpan");
             }
 
             public bool HasPlayerInfo()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.hasPlayerInfo()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.hasPlayerInfo()");
                 return Call<bool>("hasPlayerInfo");
             }
 

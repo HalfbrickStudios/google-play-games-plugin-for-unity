@@ -35,19 +35,19 @@ namespace GooglePlayGames.Android.Java {
 
             public bool IsClosed()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.isClosed()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.isClosed()");
                 return Call<bool>("isClosed");
             }
 
             public byte[] ReadFully()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.readFully()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.readFully()");
                 return Call<byte[]>("readFully");
             }
 
             public bool WriteBytes(byte[] bytes)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.writeBytes(byte[])");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.writeBytes(byte[])");
                 Misc.CheckNotNull(bytes, nameof(bytes));
                 return Call<bool>("writeBytes", bytes);
             }

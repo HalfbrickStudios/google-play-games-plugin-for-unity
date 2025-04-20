@@ -37,7 +37,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JT.Instance<JRAI> JRequestRecallAccess()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.requestRecallAccess()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.requestRecallAccess()");
                 return Call<JT.Instance<JRAI>>("requestRecallAccess");
             }
 

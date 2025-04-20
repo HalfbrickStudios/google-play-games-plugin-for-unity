@@ -37,19 +37,19 @@ namespace GooglePlayGames.Android.Java {
 
             public JSI JFreeze()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.freeze()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.freeze()");
                 return Call<UAJO>("freeze") as JSI;
             }
 
             public JSMI JGetMetadata()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getMetadata()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getMetadata()");
                 return Call<UAJO>("getMetadata") as JSMI;
             }
 
             public JSCI JGetSnapshotContents()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getSnapshotContents()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getSnapshotContents()");
                 return Call<UAJO>("getSnapshotContents") as JSCI;
             }
 

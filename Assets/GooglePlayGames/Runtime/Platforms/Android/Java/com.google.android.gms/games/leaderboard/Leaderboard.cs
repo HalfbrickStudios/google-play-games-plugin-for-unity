@@ -37,13 +37,13 @@ namespace GooglePlayGames.Android.Java {
 
             public string GetDisplayName()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getDisplayName()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getDisplayName()");
                 return Call<string>("getDisplayName");
             }
 
             public JAL.Instance<JLVI> JGetVariants()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getVariants()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getVariants()");
                 return Call<UAJO>("getVariants") as JAL.Instance<JLVI>;
             }
 

@@ -32,7 +32,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JBI JDecodeByteArray(byte[] bytes, int offset, int length)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.decodeByteArray(byte[], int, int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.decodeByteArray(byte[], int, int)");
                 Misc.CheckNotNull(bytes, nameof(bytes));
                 return CallStatic<JBI>("decodeByteArray", bytes, offset, length);
             }

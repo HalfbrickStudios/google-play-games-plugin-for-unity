@@ -45,7 +45,7 @@ namespace GooglePlayGames.Android.Java {
 
                 internal Proxy(AIDL listener, JEDCPCPFD onFound, JEDCPCPLD onLost) : base(FullyQualifiedClassName)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.ctor(IDiscoveryListener, Action<string, DiscoveredEndpointInfo>, Action<string>)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.ctor(IDiscoveryListener, Action<string, DiscoveredEndpointInfo>, Action<string>)");
                     if (onFound != null) OnEndpointFound += onFound;
                     if (onLost  != null) OnEndpointLost  += onLost;
                     m_listener = listener;
@@ -56,7 +56,7 @@ namespace GooglePlayGames.Android.Java {
                 [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
                 public void onEndpointFound(string id, JDEII jInfo)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.onEndpointFound(string, DiscoveredEndpointInfo)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.onEndpointFound(string, DiscoveredEndpointInfo)");
                     OnEndpointFound?.Invoke(id, jInfo);
                     m_listener?.OnEndpointFound(CreateEndPointDetails(id, jInfo));
                 }
@@ -64,7 +64,7 @@ namespace GooglePlayGames.Android.Java {
                 [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
                 public void onEndpointLost(string id)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.onEndpointLost(string)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.onEndpointLost(string)");
                     OnEndpointLost?.Invoke(id);
                     m_listener?.OnEndpointLost(id);
                 }

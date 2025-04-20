@@ -35,7 +35,7 @@ namespace GooglePlayGames.Android.Java {
 
             public string GetSessionId()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getSessionId()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getSessionId()");
                 return Call<string>("getSessionId");
             }
 

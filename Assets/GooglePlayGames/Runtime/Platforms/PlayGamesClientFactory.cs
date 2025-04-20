@@ -32,14 +32,14 @@ namespace GooglePlayGames {
         internal static AIPGC GetPlatformPlayGamesClient()
         {
             if (Application.isEditor) {
-                Logger.d("Creating IPlayGamesClient in editor, using DummyClient.");
+                Logger.d("GPG: Creating IPlayGamesClient in editor, using DummyClient");
                 return new ADC();
             }
 #if UNITY_ANDROID
-            Logger.d("Creating Android IPlayGamesClient Client");
+            Logger.d("GPG: Creating Android IPlayGamesClient Client");
             return new APGC();
 #else
-            Logger.d("Cannot create IPlayGamesClient for unknown platform, returning DummyClient");
+            Logger.d("GPG: Cannot create IPlayGamesClient for unknown platform, returning DummyClient");
             return new ADC();
 #endif
         }

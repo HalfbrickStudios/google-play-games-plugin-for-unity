@@ -35,7 +35,7 @@ namespace GooglePlayGames.Android.Java {
 
             public string GetName()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getName()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getName()");
                 return Call<string>("getName");
             }
 

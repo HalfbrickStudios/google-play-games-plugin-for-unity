@@ -610,6 +610,23 @@ namespace GooglePlayGames {
 
         #endregion ISocialPlatform implementation
 
+        #region Object implementation
+
+        public override string ToString() => $"PlayGamesPlatform(client: {m_client}, defaultLeaderboardId: {m_defaultLeaderboardId}, idMap: {m_idMap}, LocalUser: {LocalUser})";
+
+        public override int GetHashCode() => HashCode.Combine(m_client, m_defaultLeaderboardId, m_idMap, LocalUser);
+
+        public override bool Equals(object other)
+        {
+            if (other is not GPGP it) return false;
+            return m_client                      .Equals(it.m_client)               &&
+                   m_defaultLeaderboardId        .Equals(it.m_defaultLeaderboardId) &&
+                   m_idMap               .SequenceEqual (it.m_idMap)                &&
+                   LocalUser                     .Equals(it.LocalUser);
+        }
+
+        #endregion Object implementation
+
     }
 
 }

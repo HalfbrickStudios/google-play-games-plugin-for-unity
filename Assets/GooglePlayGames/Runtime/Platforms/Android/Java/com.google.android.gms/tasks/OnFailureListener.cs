@@ -28,14 +28,14 @@ namespace GooglePlayGames.Android.Java {
 
             internal Proxy(OnFailureDelegate callback) : base(FullyQualifiedClassName)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.ctor()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.ctor()");
                 if (callback != null) OnFailure += callback;
             }
 
             [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
             internal void onFailure(JEI jException)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.onFailure(Exception)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onFailure(Exception)");
                 if (jException is IDisposable disposable) {
                     using (disposable) {
                         OnFailure?.Invoke(jException);

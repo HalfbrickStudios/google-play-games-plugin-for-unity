@@ -16,6 +16,8 @@
 
 using System;
 
+using APS = GooglePlayGames.Api.PlayerStats;
+
 namespace GooglePlayGames.Api {
 
     public sealed class PlayerStats {
@@ -70,6 +72,30 @@ namespace GooglePlayGames.Api {
         public bool Valid => IsValid;
 
         #endregion Backward compatibility layer
+
+        #region Object implementation
+
+        public override string ToString() => $"PlayerStats({base.ToString()})";
+
+        public override int GetHashCode() => HashCode.Combine(GetType(), ToString());
+
+        public override bool Equals(object other)
+        {
+            if (other is not APS it) return false;
+            return AvgSessionLength       == it.AvgSessionLength &&
+                   ChurnProbability       == it.ChurnProbability &&
+                   DaysSinceLastPlayed    == it.DaysSinceLastPlayed &&
+                   HighSpenderProbability == it.HighSpenderProbability &&
+                   IsValid                == it.IsValid &&
+                   NumberOfPurchases      == it.NumberOfPurchases &&
+                   NumberOfSessions       == it.NumberOfSessions &&
+                   SessPercentile         == it.SessPercentile &&
+                   SpendPercentile        == it.SpendPercentile &&
+                   SpendProbability       == it.SpendProbability &&
+                   TotalSpendNext28Days   == it.TotalSpendNext28Days;
+        }
+
+        #endregion Object implementation
 
     }
 

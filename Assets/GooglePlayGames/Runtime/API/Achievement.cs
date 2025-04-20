@@ -16,6 +16,8 @@
 
 using System;
 
+using AA = GooglePlayGames.Api.Achievement;
+
 namespace GooglePlayGames.Api {
 
     public sealed class Achievement {
@@ -48,10 +50,30 @@ namespace GooglePlayGames.Api {
 
         #region Object implementation
 
-        public override string ToString()
+        public override string ToString() => $"Achievement(CurrentSteps: {CurrentSteps}, Description: {Description}, Id: {Id}, IsIncremental: {IsIncremental}, IsRevealed: {IsRevealed}, IsUnlocked: {IsUnlocked}, LastModifiedTime: {LastModifiedTime}, Name: {Name}, Points: {Points}, RevealedImageUrl: {RevealedImageUrl}, TotalSteps: {TotalSteps}, UnlockedImageUrl: {UnlockedImageUrl})";
+
+        public override int GetHashCode()
         {
-            var type = IsIncremental ? "INCREMENTAL" : "STANDARD";
-            return $"[Achievement] id={Id}, name={Name}, desc={Description}, type={type}, revealed={IsRevealed}, unlocked={IsUnlocked}, steps={CurrentSteps}/{TotalSteps}";
+            var hash1 = HashCode.Combine(CurrentSteps, Description, Id, IsIncremental, IsRevealed, IsUnlocked);
+            var hash2 = HashCode.Combine(LastModifiedTime, Name, Points, RevealedImageUrl, TotalSteps, UnlockedImageUrl);
+            return HashCode.Combine(hash1, hash2);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (other is not AA it) return false;
+            return CurrentSteps     ==     it.CurrentSteps      &&
+                   Description     .Equals(it.Description)      &&
+                   Id              .Equals(it.Id)               &&
+                   IsIncremental    ==     it.IsIncremental     &&
+                   IsRevealed       ==     it.IsRevealed        &&
+                   IsUnlocked       ==     it.IsUnlocked        &&
+                   LastModifiedTime.Equals(it.LastModifiedTime) &&
+                   Name            .Equals(it.Name)             &&
+                   Points           ==     it.Points            &&
+                   RevealedImageUrl.Equals(it.RevealedImageUrl) &&
+                   TotalSteps       ==     it.TotalSteps        &&
+                   UnlockedImageUrl.Equals(it.UnlockedImageUrl);
         }
 
         #endregion Object implementation

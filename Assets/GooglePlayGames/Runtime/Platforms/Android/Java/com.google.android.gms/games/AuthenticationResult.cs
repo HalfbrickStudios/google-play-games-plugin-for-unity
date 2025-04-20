@@ -35,7 +35,7 @@ namespace GooglePlayGames.Android.Java {
 
             public bool IsAuthenticated()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.isAuthenticated()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.isAuthenticated()");
                 return Call<bool>("isAuthenticated");
             }
 

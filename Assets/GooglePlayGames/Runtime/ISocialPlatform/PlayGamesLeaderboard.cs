@@ -23,6 +23,7 @@ using UR  = UnityEngine.SocialPlatforms.Range;
 using UTS = UnityEngine.SocialPlatforms.TimeScope;
 using UUS = UnityEngine.SocialPlatforms.UserScope;
 
+using GPGL = GooglePlayGames.PlayGamesLeaderboard;
 using GPGP = GooglePlayGames.PlayGamesPlatform;
 using GPGS = GooglePlayGames.PlayGamesScore;
 
@@ -37,8 +38,8 @@ namespace GooglePlayGames {
             Id = id;
         }
 
-        private          string[]   m_users = null;
-        private readonly List<GPGS> m_scores          = new();
+        private          string[]   m_users  = null;
+        private readonly List<GPGS> m_scores = new();
 
         public string Id             { get; private  set; }
         public bool   IsLoading      { get; internal set; }
@@ -118,6 +119,34 @@ namespace GooglePlayGames {
         public void SetUserFilter(string[] ids) => m_users = ids;
 
         #endregion
+
+        #region Object implementation
+
+        public override string ToString() => $"PlayGamesLeaderboard(Id: {Id}, IsLoading: {IsLoading}, LocalUserScore: {LocalUserScore}, MaxRange: {MaxRange}, Range: {Range}, scores: {m_scores}, TimeScope: {TimeScope}, Title: {Title}, UserScope: {UserScope}, users: {m_users})";
+
+        public override int GetHashCode()
+        {
+            var hash1 = HashCode.Combine(Id,       IsLoading, LocalUserScore, MaxRange,  Range);
+            var hash2 = HashCode.Combine(m_scores, TimeScope, Title,          UserScope, m_users);
+            return HashCode.Combine(hash1, hash2);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (other is not GPGL it) return false;
+            return Id            .Equals(it.Id)             &&
+                   IsLoading      ==     it.IsLoading       &&
+                   LocalUserScore.Equals(it.LocalUserScore) &&
+                   MaxRange       ==     it.MaxRange        &&
+                   Range         .Equals(it.Range)          &&
+                   m_scores      .Equals(it.m_scores)       &&
+                   TimeScope      ==     it.TimeScope       &&
+                   Title         .Equals(it.Title)          &&
+                   UserScope      ==     it.UserScope       &&
+                   m_users        ==     it.m_users;
+        }
+
+        #endregion Object implementation
 
     }
 

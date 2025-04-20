@@ -18,7 +18,8 @@ using System;
 
 using GooglePlayGames.Utils;
 
-using AIS = GooglePlayGames.Api.Nearby.InitializationStatus;
+using AIS  = GooglePlayGames.Api.Nearby.InitializationStatus;
+using ANCC = GooglePlayGames.Api.Nearby.NearbyConnectionConfiguration;
 
 namespace GooglePlayGames.Api.Nearby {
 
@@ -39,8 +40,23 @@ namespace GooglePlayGames.Api.Nearby {
             LocalClientId          = clientId;
         }
 
-        public long        LocalClientId          { get; }
         public Action<AIS> InitializationCallback { get; }
+        public long        LocalClientId          { get; }
+
+        #region Object implementation
+
+        public override string ToString() => $"NearbyConnectionConfiguration(InitializationCallback: {InitializationCallback}, LocalClientId: {LocalClientId})";
+        
+        public override int GetHashCode() => HashCode.Combine(InitializationCallback, LocalClientId);
+
+        public override bool Equals(object other)
+        {
+            if (other is not ANCC it) return false;
+            return InitializationCallback.Equals(it.InitializationCallback) &&
+                   LocalClientId          ==     it.LocalClientId;
+        }
+
+        #endregion Object implementation
 
     }
 

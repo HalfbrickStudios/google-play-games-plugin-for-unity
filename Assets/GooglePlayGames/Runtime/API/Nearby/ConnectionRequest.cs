@@ -14,8 +14,12 @@
 //    limitations under the License.
 // </copyright>
 
+using System;
+using System.Linq;
+
 using GooglePlayGames.Utils;
 
+using ACR = GooglePlayGames.Api.Nearby.ConnectionRequest;
 using AED = GooglePlayGames.Api.Nearby.EndpointDetails;
 
 namespace GooglePlayGames.Api.Nearby {
@@ -31,6 +35,21 @@ namespace GooglePlayGames.Api.Nearby {
 
         public byte[] Payload        { get; }
         public AED    RemoteEndpoint { get; }
+
+        #region Object implementation
+
+        public override string ToString() => $"ConnectionRequest(Payload: bytes[{Payload.Length}], RemoteEndpoint: {RemoteEndpoint})";
+
+        public override int GetHashCode() => HashCode.Combine(Payload, RemoteEndpoint);
+
+        public override bool Equals(object other)
+        {
+            if (other is not ACR it) return false;
+            return Payload       .SequenceEqual (it.Payload) &&
+                   RemoteEndpoint        .Equals(it.RemoteEndpoint);
+        }
+
+        #endregion Object implementation
 
     }
 

@@ -34,7 +34,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JTI JWhenAll(UAJO jTasks)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.whenAll(Task[])");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.whenAll(Task[])");
                 return CallStatic<UAJO>("whenAll", jTasks) as JTI;
             }
 

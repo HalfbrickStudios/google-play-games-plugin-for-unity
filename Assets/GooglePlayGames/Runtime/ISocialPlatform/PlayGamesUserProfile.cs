@@ -33,12 +33,12 @@ namespace GooglePlayGames {
 
     public class PlayGamesUserProfile : UIUP {
 
-        private          UT2D m_image          = null;
-        private volatile bool m_imageIsLoading = false;
+        private          UT2D m_image   = null;
+        private volatile bool m_loading = false;
 
         internal PlayGamesUserProfile(string userName, string userId, string avatar)
         {
-            m_imageIsLoading = false;
+            m_loading = false;
             
             SetAvatarUrl(avatar);
             Id       = userId;
@@ -48,7 +48,7 @@ namespace GooglePlayGames {
 
         internal PlayGamesUserProfile(string userName, string userId, string avatar, bool friend)
         {
-            m_imageIsLoading = false;
+            m_loading = false;
             
             AvatarUrl = avatar;
             Id        = userId;
@@ -57,16 +57,16 @@ namespace GooglePlayGames {
         }
 
         public string AvatarUrl { get; private set; }
-        public string UserName  { get; private set; }
         public string Id        { get; private set; }
         public bool   IsFriend  { get; private set; }
+        public string UserName  { get; private set; }
         
         public UT2D Image
         {
             get {
-                if (!m_imageIsLoading && m_image == null && !string.IsNullOrEmpty(AvatarUrl)) {
+                if (!m_loading && m_image == null && !string.IsNullOrEmpty(AvatarUrl)) {
                     Logger.d("Starting to load image: " + AvatarUrl);
-                    m_imageIsLoading = true;
+                    m_loading = true;
                     PlayGamesHelperObject.RunOnUiThread(LoadImage());
                 }
                 return m_image;
@@ -89,17 +89,17 @@ namespace GooglePlayGames {
                     Image = UT2D.blackTexture;
                     Logger.e("Error downloading image: " + www.error);
                 }
-                m_imageIsLoading = false;
+                m_loading = false;
             } else {
                 Logger.e("No URL found.");
                 Image = UT2D.blackTexture;
-                m_imageIsLoading = false;
+                m_loading = false;
             }
         }
 
         protected void ResetIdentity(string userName, string userId, string avatar)
         {
-            m_imageIsLoading = false;
+            m_loading = false;
             
             if (AvatarUrl != avatar) {
                 Image = null;
@@ -143,17 +143,20 @@ namespace GooglePlayGames {
 
         #region Object implementation
 
-        public override bool Equals(object obj)
+        public override string ToString() => $"PlayGamesUserProfile(AvatarUrl: {AvatarUrl}, Id: {Id}, image: {m_image}, IsFriend: {IsFriend}, loading: {m_loading}, State: {State})";
+
+        public override int GetHashCode() => HashCode.Combine(AvatarUrl, Id, m_image, IsFriend, m_loading, UserName);
+
+        public override bool Equals(object other)
         {
-            if (obj == null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj is not GPGUP other) return false;
-            return StringComparer.Ordinal.Equals(Id, other.Id);
+            if (other is not GPGUP it) return false;
+            return AvatarUrl.Equals(it.AvatarUrl) &&
+                   Id       .Equals(it.Id)        &&
+                   m_image  .Equals(it.m_image)   &&
+                   IsFriend  ==     it.IsFriend   &&
+                   m_loading ==     it.m_loading  &&
+                   UserName .Equals(it.UserName);
         }
-
-        public override int GetHashCode() => typeof(GPGUP).GetHashCode() ^ Id.GetHashCode();
-
-        public override string ToString() => $"[Player: '{UserName}' (id {Id})]";
 
         #endregion Object implementation
 

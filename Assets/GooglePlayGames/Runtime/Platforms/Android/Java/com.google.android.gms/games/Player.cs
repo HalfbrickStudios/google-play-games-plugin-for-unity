@@ -147,31 +147,31 @@ namespace GooglePlayGames.Android.Java {
 
             public JCPII JGetCurrentPlayerInfo()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getCurrentPlayerInfo()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getCurrentPlayerInfo()");
                 return Call<JCPII>("getCurrentPlayerInfo");
             }
 
             public string GetDisplayName()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getDisplayName()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getDisplayName()");
                 return Call<string>("getDisplayName");
             }
 
             public string GetIconImageUrl()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getIconImageUrl()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getIconImageUrl()");
                 return Call<string>("getIconImageUrl");
             }
 
             public JPRII JGetRelationshipInfo()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getRelationshipInfo()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getRelationshipInfo()");
                 return Call<JPRII>("getRelationshipInfo");
             }
 
             public string GetPlayerId()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getPlayerId()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getPlayerId()");
                 return Call<string>("getPlayerId");
             }
 

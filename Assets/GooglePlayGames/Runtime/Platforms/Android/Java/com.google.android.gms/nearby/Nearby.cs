@@ -39,14 +39,14 @@ namespace GooglePlayGames.Android.Java {
 
             public JCCI JGetConnectionsClient(JCI jContext)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getConnectionsClient(Context)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getConnectionsClient(Context)");
                 Misc.CheckNotNull(jContext, nameof(jContext));
                 return CallStatic<UAJO>("getConnectionsClient", jContext) as JCCI;
             }
 
             public JCCI JGetConnectionsClient(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getConnectionsClient(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getConnectionsClient(Activity)");
                 Misc.CheckNotNull(jActivity, nameof(jActivity));
                 return CallStatic<UAJO>("getConnectionsClient", jActivity) as JCCI;
             }

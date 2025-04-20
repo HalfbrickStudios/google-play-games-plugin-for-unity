@@ -19,6 +19,7 @@ using System.Collections.Generic;
 
 using UnityEngine.SocialPlatforms;
 
+using ALSD = GooglePlayGames.Api.LeaderboardScoreData;
 using APGS = GooglePlayGames.PlayGamesScore;
 using ARS  = GooglePlayGames.Api.ResponseStatus;
 using ASPC = GooglePlayGames.Api.ScorePageCursor;
@@ -79,9 +80,20 @@ namespace GooglePlayGames.Api {
 
         #region Object implementation
 
-        public override string ToString()
+        public override string ToString() => $"LeaderboardScoreData(ApproximateCount: {ApproximateCount}, Id: {Id}, NextPageCursor: {NextPageCursor}, PlayerScore: {PlayerScore}, PreviousPageCursor: {PreviousPageCursor}, Status: {Status}, Title: {Title})";
+
+        public override int GetHashCode() => HashCode.Combine(ApproximateCount, Id, NextPageCursor, PlayerScore, PreviousPageCursor, Status, Title);
+
+        public override bool Equals(object other)
         {
-            return $"[LeaderboardScoreData: mId={Id}, mStatus={Status}, mApproxCount={ApproximateCount}, mTitle={Title}]";
+            if (other is not ALSD it) return false;
+            return ApproximateCount   ==     it.ApproximateCount    &&
+                   Id                .Equals(it.Id)                 &&
+                   NextPageCursor    .Equals(it.NextPageCursor)     &&
+                   PlayerScore       .Equals(it.PlayerScore)        &&
+                   PreviousPageCursor.Equals(it.PreviousPageCursor) &&
+                   Status             ==     it.Status              &&
+                   Title             .Equals(it.Title);
         }
 
         #endregion Object implementation

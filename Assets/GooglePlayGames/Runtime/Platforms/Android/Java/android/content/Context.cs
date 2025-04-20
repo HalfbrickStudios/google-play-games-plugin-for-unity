@@ -36,13 +36,13 @@ namespace GooglePlayGames.Android.Java {
 
             public string GetPackageName()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getPackageName()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getPackageName()");
                 return Call<string>("getPackageName");
             }
 
             public JPMI JGetPackageManager()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getPackageManager()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getPackageManager()");
                 return Call<JPMI>("getPackageManager");
             }
 

@@ -17,6 +17,7 @@
 using System;
 
 using GPGP = GooglePlayGames.PlayGamesPlatform;
+using GPGS = GooglePlayGames.PlayGamesScore;
 
 using UIS = UnityEngine.SocialPlatforms.IScore;
 
@@ -56,6 +57,25 @@ namespace GooglePlayGames {
         public void ReportScore(Action<bool> callback) => GPGP.Instance.ReportScore(Value, LeaderboardId, MetaData, callback);
 
         #endregion IScore implementation
+
+        #region Object implementation
+
+        public override string ToString() => $"PlayGamesScore(Date: {Date}, LeaderboardId: {LeaderboardId}, MetaData: {MetaData}, Rank: {Rank}, UserId: {UserId}, Value: {Value})";
+
+        public override int GetHashCode() => HashCode.Combine(Date, LeaderboardId, MetaData, Rank, UserId, Value);
+
+        public override bool Equals(object other)
+        {
+            if (other is not GPGS it) return false;
+            return Date         .Equals(it.Date)          &&
+                   LeaderboardId.Equals(it.LeaderboardId) &&
+                   MetaData     .Equals(it.MetaData)      &&
+                   Rank          ==     it.Rank           &&
+                   UserId       .Equals(it.UserId)        &&
+                   Value         ==     it.Value;
+        }
+
+        #endregion Object implementation
 
     }
 

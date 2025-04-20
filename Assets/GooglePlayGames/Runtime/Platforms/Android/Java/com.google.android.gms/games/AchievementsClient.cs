@@ -38,7 +38,7 @@ namespace GooglePlayGames.Android.Java {
 
             public void Increment(string id, int steps)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.increment(string, int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.increment(string, int)");
                 Misc.CheckNotNull(id, nameof(id));
                 Misc.CheckPositive(steps, nameof(steps));
                 Call("increment", id, steps);
@@ -46,20 +46,20 @@ namespace GooglePlayGames.Android.Java {
 
             public JT.Instance<JAD.Instance<JABI>> JLoad(bool reload)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.reload(bool)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.reload(bool)");
                 return Call<JT.Instance<JAD.Instance<JABI>>>("load", reload);
             }
 
             public void Reveal(string id)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.reveal(string)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.reveal(string)");
                 Misc.CheckNotNull(id, nameof(id));
                 Call("reveal", id);
             }
 
             public void SetSteps(string id, int steps)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.setSteps(string, int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.setSteps(string, int)");
                 Misc.CheckNotNull(id, nameof(id));
                 Misc.CheckPositive(steps, nameof(steps));
                 Call("setSteps", id, steps);
@@ -67,7 +67,7 @@ namespace GooglePlayGames.Android.Java {
 
             public void Unlock(string id)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.unlock(string)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.unlock(string)");
                 Misc.CheckNotNull(id, nameof(id));
                 Call("unlock", id);
             }

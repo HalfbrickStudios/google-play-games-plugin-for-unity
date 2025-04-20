@@ -35,7 +35,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JBI JGetMetadata()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getMetadata()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getMetadata()");
                 return Call<JBI>("getMetadata");
             }
 

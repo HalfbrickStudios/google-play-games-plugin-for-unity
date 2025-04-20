@@ -36,7 +36,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JAII JGetApplicationInfo(string package, int flags)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getApplicationInfo(string, int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getApplicationInfo(string, int)");
                 Misc.CheckNotNull(package, nameof(package));
                 return Call<JAII>("getApplicationInfo", package, flags);
             }

@@ -27,14 +27,14 @@ namespace GooglePlayGames.Android.Java {
 
             internal Proxy(OnCompleteDelegate callback = null) : base(FullyQualifiedClassName)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.ctor()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.ctor()");
                 if (callback != null) OnComplete += callback;
             }
 
             [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
             internal void onComplete(JT.Instance<TResult> jTask)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.onComplete(Task<TResult>)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onComplete(Task<TResult>)");
                 if (jTask is IDisposable disposable) {
                     using (disposable) {
                         OnComplete?.Invoke(jTask);

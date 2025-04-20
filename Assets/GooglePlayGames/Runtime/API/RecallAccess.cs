@@ -16,6 +16,8 @@
 
 using System;
 
+using ARA = GooglePlayGames.Api.RecallAccess;
+
 namespace GooglePlayGames.Api {
 
     public sealed class RecallAccess {
@@ -33,6 +35,20 @@ namespace GooglePlayGames.Api {
         public string sessionId { get => SessionId; set => SessionId = value; }
 
         #endregion Backward compatibility layer
+
+        #region Object implementation
+
+        public override string ToString() => $"RecallAccess(SessionId: {SessionId})";
+
+        public override int GetHashCode() => HashCode.Combine(SessionId);
+
+        public override bool Equals(object other)
+        {
+            if (other is not ARA it) return false;
+            return SessionId.Equals(it.SessionId);
+        }
+
+        #endregion Object implementation
 
     }
 

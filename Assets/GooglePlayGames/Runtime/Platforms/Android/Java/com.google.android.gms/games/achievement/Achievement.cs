@@ -98,68 +98,68 @@ namespace GooglePlayGames.Android.Java {
 
             public string GetAchievementId()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getAchievementId()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getAchievementId()");
                 return Call<string>("getAchievementId");
             }
 
             public int GetCurrentSteps()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getCurrentSteps()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getCurrentSteps()");
                 return Call<int>("getCurrentSteps");
             }
 
             public string GetDescription()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getDescription()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getDescription()");
                 return Call<string>("getDescription");
             }
 
             public long GetLastUpdatedTimestamp()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getLastUpdatedTimestamp()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getLastUpdatedTimestamp()");
                 return Call<long>("getLastUpdatedTimestamp");
             }
 
             public string GetName()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getName()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getName()");
                 return Call<string>("getName");
             }
 
             public string GetRevealedImageUrl()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getRevealedImageUrl()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getRevealedImageUrl()");
                 return Call<string>("getRevealedImageUrl");
             }
 
             public int JGetState()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getState()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getState()");
                 return Call<int>("getState");
             }
 
             public int GetTotalSteps()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getTotalSteps()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getTotalSteps()");
                 return Call<int>("getTotalSteps");
             }
 
 
             public int JGetType()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getType()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getType()");
                 return Call<int>("getType");
             }
 
             public string GetUnlockedImageUrl()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getUnlockedImageUrl()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getUnlockedImageUrl()");
                 return Call<string>("getUnlockedImageUrl");
             }
 
             public ulong GetXpValue()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getXpValue()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getXpValue()");
                 return Call<ulong>("getXpValue");
             }
 

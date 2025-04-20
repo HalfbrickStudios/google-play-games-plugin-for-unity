@@ -36,37 +36,37 @@ namespace GooglePlayGames.Android.Java {
 
             public string GetEventId()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getEventId()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getEventId()");
                 return Call<string>("getEventId");
             }
 
             public string GetName()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getName()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getName()");
                 return Call<string>("getName");
             }
 
             public string GetDescription()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getDescription()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getDescription()");
                 return Call<string>("getDescription");
             }
 
             public string GetIconImageUrl()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getIconImageUrl()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getIconImageUrl()");
                 return Call<string>("getIconImageUrl");
             }
 
             public long GetValue()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getValue()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getValue()");
                 return Call<long>("getValue");
             }
 
             public bool IsVisible()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.isVisible()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.isVisible()");
                 return Call<bool>("isVisible");
             }
 

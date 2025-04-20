@@ -88,7 +88,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JPI JFromBytes(byte[] bytes)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.fromBytes(byte[])");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.fromBytes(byte[])");
                 Misc.CheckNotNull(bytes, nameof(bytes));
                 return CallStatic<JPI>("fromBytes", bytes);
             }
@@ -113,13 +113,13 @@ namespace GooglePlayGames.Android.Java {
 
             public byte[] AsBytes()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.asBytes()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.asBytes()");
                 return Call<byte[]>("asBytes");
             }
 
             public int JGetType()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getType()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getType()");
                 return Call<int>("getType");
             }
 

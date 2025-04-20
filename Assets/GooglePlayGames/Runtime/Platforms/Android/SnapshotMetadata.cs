@@ -8,6 +8,8 @@ using UAJO = UnityEngine.AndroidJavaObject;
 
 using AISGM = GooglePlayGames.Api.SavedGame.ISavedGameMetadata;
 
+using ASM = GooglePlayGames.Android.SnapshotMetadata;
+
 using JSCI = GooglePlayGames.Android.Java.SnapshotContents.Instance;
 using JSI  = GooglePlayGames.Android.Java.Snapshot.Instance;
 using JSMI = GooglePlayGames.Android.Java.SnapshotMetadata.Instance;
@@ -36,6 +38,14 @@ namespace GooglePlayGames.Android {
 
         public bool? IsClosed() => JSnapshotContents?.IsClosed();
 
+        #region Backward compatibility
+
+        [Obsolete("Use JSnapshot instead")]         public UAJO JavaSnapshot => JSnapshot;
+        [Obsolete("Use JSnapshotMetadata instead")] public UAJO JavaMetadata => JSnapshotMetadata;
+        [Obsolete("Use JSnapshotContents instead")] public UAJO JavaContents => JSnapshotContents;
+
+        #endregion Backward compatibility
+
         #region ISavedGameMetadata implementation
 
         public string   CoverImageUrl        => JSnapshotMetadata.GetCoverImageUrl();
@@ -47,13 +57,21 @@ namespace GooglePlayGames.Android {
 
         #endregion ISavedGameMetadata implementation
 
-        #region Backward compatibility
+        #region Object implementation
 
-        [Obsolete("Use JSnapshot instead")]         public UAJO JavaSnapshot => JSnapshot;
-        [Obsolete("Use JSnapshotMetadata instead")] public UAJO JavaMetadata => JSnapshotMetadata;
-        [Obsolete("Use JSnapshotContents instead")] public UAJO JavaContents => JSnapshotContents;
+        public override string ToString() => $"SnapshotMetadata(JSnapshot: {JSnapshot}, JSnapshotContents: {JSnapshotContents}, JSnapshotMetadata: {JSnapshotMetadata})";
 
-        #endregion Backward compatibility
+        public override int GetHashCode() => HashCode.Combine(JSnapshot, JSnapshotContents, JSnapshotMetadata);
+
+        public override bool Equals(object other)
+        {
+            if (other is not ASM it) return false;
+            return JSnapshot        .Equals(it.JSnapshot)         &&
+                   JSnapshotContents.Equals(it.JSnapshotContents) &&
+                   JSnapshotMetadata.Equals(it.JSnapshotMetadata);
+        }
+
+        #endregion Object implementation
 
     }
 

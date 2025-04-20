@@ -14,7 +14,12 @@
 //    limitations under the License.
 // </copyright>
 
+using System;
+
+using GooglePlayGames.Android.Java;
 using GooglePlayGames.Utils;
+
+using AED = GooglePlayGames.Api.Nearby.EndpointDetails;
 
 namespace GooglePlayGames.Api.Nearby {
 
@@ -30,6 +35,22 @@ namespace GooglePlayGames.Api.Nearby {
         public string EndpointId { get; }
         public string Name       { get; }
         public string ServiceId  { get; }
+
+        #region Object implementation
+
+        public override string ToString() => $"EndpointDetails(EndpointId: {EndpointId}, Name: {Name}, ServiceId: {ServiceId})";
+
+        public override int GetHashCode() => HashCode.Combine(EndpointId, Name, ServiceId);
+
+        public override bool Equals(object other)
+        {
+            if (other is not AED it) return false;
+            return EndpointId.Equals(it.EndpointId) &&
+                   Name      .Equals(it.Name)       &&
+                   ServiceId .Equals(it.ServiceId);
+        }
+
+        #endregion Object implementation
 
     }
 

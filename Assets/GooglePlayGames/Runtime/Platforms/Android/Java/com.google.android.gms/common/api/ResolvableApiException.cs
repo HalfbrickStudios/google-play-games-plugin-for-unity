@@ -35,7 +35,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JOI JGetResolution()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getResolution()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getResolution()");
                 return Call<JOI>("getResolution");
             }
 

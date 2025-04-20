@@ -42,13 +42,13 @@ namespace GooglePlayGames.Android.Java {
 
             public void DisconnectFromEndpoint(string id)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.disconnectFromEndpoint(string)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.disconnectFromEndpoint(string)");
                 Call("disconnectFromEndpoint", id);
             }
 
             public JTI JAcceptConnection(string id, JPCPI callback)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.acceptConnection(string, PayloadCallbackProxy)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.acceptConnection(string, PayloadCallbackProxy)");
                 Misc.CheckNotNull(id, nameof(id));
                 Misc.CheckNotNull(callback, nameof(callback));
                 return Call<JTI>("acceptConnection", id, callback);
@@ -56,14 +56,14 @@ namespace GooglePlayGames.Android.Java {
 
             public JTI JRejectConnection(string id)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.rejectConnection(string)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.rejectConnection(string)");
                 Misc.CheckNotNull(id, nameof(id));
                 return Call<JTI>("rejectConnection", id);
             }
 
             public JTI JRequestConnection(string name, string id, JCLCPI jCallback)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.requestConnection(string, string, ConnectionLifecycleCallbackProxy)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.requestConnection(string, string, ConnectionLifecycleCallbackProxy)");
                 Misc.CheckNotNull(name, nameof(name));
                 Misc.CheckNotNull(id, nameof(id));
                 Misc.CheckNotNull(jCallback, nameof(jCallback));
@@ -72,7 +72,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JTI JSendPayload(JOI jIds, JPI jPayload)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.sendPayload(Object, Payload)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.sendPayload(Object, Payload)");
                 Misc.CheckNotNull(jIds, nameof(jIds));
                 Misc.CheckNotNull(jPayload, nameof(jPayload));
                 return Call<JTI>("sendPayload", jIds, jPayload);
@@ -80,7 +80,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JTI JStartAdvertising(string name, string service, JCLCPI jCallback, JAOI jOptions)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.startAdvertising(string, string, ConnectionLifecycleCallbackProxy, AdvertisingOptions)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.startAdvertising(string, string, ConnectionLifecycleCallbackProxy, AdvertisingOptions)");
                 Misc.CheckNotNull(name, nameof(name));
                 Misc.CheckNotNull(service, nameof(service));
                 Misc.CheckNotNull(jCallback, nameof(jCallback));
@@ -90,7 +90,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JTI JStartDiscovery(string service, JEDCPCI jCallback, JDOI jOptions)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.startDiscovery(string, EndpointDiscoveryCallbackProxy, DiscoveryOptions)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.startDiscovery(string, EndpointDiscoveryCallbackProxy, DiscoveryOptions)");
                 Misc.CheckNotNull(service, nameof(service));
                 Misc.CheckNotNull(jCallback, nameof(jCallback));
                 Misc.CheckNotNull(jOptions, nameof(jOptions));
@@ -99,19 +99,19 @@ namespace GooglePlayGames.Android.Java {
 
             public void StopAdvertising()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.stopAdvertising()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.stopAdvertising()");
                 Call("stopAdvertising");
             }
 
             public void StopAllEndpoints()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.stopAllEndpoints()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.stopAllEndpoints()");
                 Call("stopAllEndpoints");
             }
 
             public void StopDiscovery()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.stopDiscovery()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.stopDiscovery()");
                 Call("stopDiscovery");
             }
 

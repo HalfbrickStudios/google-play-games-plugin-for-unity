@@ -20,6 +20,7 @@ using UILU = UnityEngine.SocialPlatforms.ILocalUser;
 using UIUP = UnityEngine.SocialPlatforms.IUserProfile;
 using UUS  = UnityEngine.SocialPlatforms.UserState;
 
+using GPGLU = GooglePlayGames.PlayGamesLocalUser;
 using GPGP  = GooglePlayGames.PlayGamesPlatform;
 using GPGUP = GooglePlayGames.PlayGamesUserProfile;
 
@@ -126,6 +127,21 @@ namespace GooglePlayGames {
         public void LoadFriends (Action<bool>         callback) => m_platform.LoadFriends(this, callback);
 
         #endregion ILocalUser implementation
+
+        #region Object implementation
+
+        public override string ToString() => $"PlayGamesLocalUser({base.ToString()}, platform: {m_platform}, stats: {m_stats})";
+
+        public override int GetHashCode() => HashCode.Combine(m_platform, m_stats);
+
+        public override bool Equals(object other)
+        {
+            if (other is not GPGLU it) return false;
+            return m_platform.Equals(it.m_platform) &&
+                   m_stats    ==     it.m_stats;
+        }
+
+        #endregion Object implementation
 
     }
 

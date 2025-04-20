@@ -40,26 +40,26 @@ namespace GooglePlayGames.Android.Java {
 
             public JTI JAddOnSuccessListener(JOSL.Proxy<JOI> jListener)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.addOnSuccessListener(OnSuccessListener)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.addOnSuccessListener(OnSuccessListener)");
                 Misc.CheckNotNull(jListener, nameof(jListener));
                 return Call<UAJO>("addOnSuccessListener", jListener) as JTI;
             }
 
             public JEI JGetException()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getException()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getException()");
                 return Call<UAJO>("getException") as JEI;
             }
 
             public bool JIsCanceled()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.isCanceled()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.isCanceled()");
                 return Call<bool>("isCanceled");
             }
 
             public bool JIsSuccessful()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.isSuccessful()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.isSuccessful()");
                 return Call<bool>("isSuccessful");
             }
 
@@ -83,28 +83,28 @@ namespace GooglePlayGames.Android.Java {
 
             public Instance<TResult> JAddOnCompleteListener(JOCL.Proxy<TResult> jListener)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.addOnCompleteListener(OnCompleteListener)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.addOnCompleteListener(OnCompleteListener)");
                 Misc.CheckNotNull(jListener, nameof(jListener));
                 return Call<UAJO>("addOnCompleteListener", jListener) as Instance<TResult>;
             }
 
             public Instance<TResult> JAddOnFailureListener(JOFL.Proxy jListener)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.addOnFailureListener(OnFailureListener)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.addOnFailureListener(OnFailureListener)");
                 Misc.CheckNotNull(jListener, nameof(jListener));
                 return Call<UAJO>("addOnFailureListener", jListener) as Instance<TResult>;
             }
 
             public Instance<TResult> JAddOnSuccessListener(JOSL.Proxy<TResult> jListener)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.addOnSuccessListener(OnSuccessListener)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.addOnSuccessListener(OnSuccessListener)");
                 Misc.CheckNotNull(jListener, nameof(jListener));
                 return Call<UAJO>("addOnSuccessListener", jListener) as Instance<TResult>;
             }
 
             public TResult JGetResult()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.getResult()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.getResult()");
                 return Call<TResult>("getResult");
             }
 

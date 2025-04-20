@@ -38,7 +38,7 @@ namespace GooglePlayGames.Android.Java {
 
             public void Increment(string id, int steps)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.increment(string, int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.increment(string, int)");
                 Misc.CheckNotNull(id, nameof(id));
                 Misc.CheckPositive(steps, nameof(steps));
                 Call("increment", id, steps);
@@ -46,13 +46,13 @@ namespace GooglePlayGames.Android.Java {
 
             public JT.Instance<JAD.Instance<JEBI>> JLoad(bool reload)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.load(bool)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.load(bool)");
                 return Call<UAJO>("load", reload) as JT.Instance<JAD.Instance<JEBI>>;
             }
 
             public JT.Instance<JAD.Instance<JEBI>> JLoadByIds(bool reload, params string[] ids)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.loadByIds(bool, string[])");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.loadByIds(bool, string[])");
                 Misc.CheckNotNull(ids, nameof(ids));
                 return Call<UAJO>("loadByIds", reload, ids) as JT.Instance<JAD.Instance<JEBI>>;
             }

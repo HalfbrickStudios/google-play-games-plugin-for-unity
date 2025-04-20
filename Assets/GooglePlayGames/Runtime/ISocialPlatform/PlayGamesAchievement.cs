@@ -25,6 +25,7 @@ using UT2D = UnityEngine.Texture2D;
 using UWR  = UnityEngine.Networking.UnityWebRequest;
 using UWRT = UnityEngine.Networking.UnityWebRequestTexture;
 
+using GPGA  = GooglePlayGames.PlayGamesAchievement;
 using GPGP  = GooglePlayGames.PlayGamesPlatform;
 using GPGRP = GooglePlayGames.ReportProgress;
 
@@ -131,6 +132,36 @@ namespace GooglePlayGames {
         public void ReportProgress(Action<bool> callback) => m_progressCallback?.Invoke(Id, PercentCompleted, callback);
 
         #endregion IAchievement and IAchievementDescription implementation
+
+        #region Object implementation
+
+        public override string ToString() => $"PlayGamesAchievement(CurrentSteps: {CurrentSteps}, description: {m_description}, Id: {Id}, image: {m_image}, imageFetcher: {m_imageFetcher}, IsCompleted: {IsCompleted}, IsHidden: {IsHidden}, IsIncremental: {IsIncremental}, LastReportedDate: {LastReportedDate}, PercentCompleted: {PercentCompleted}, Points: {Points}, progressCallback: {m_progressCallback}, revealedImageUrl: {m_revealedImageUrl}, Title: {Title}, TotalSteps: {TotalSteps}, unlockedImageUrl: {m_unlockedImageUrl})";
+
+        public override int GetHashCode()
+        {
+            var hash1 = HashCode.Combine(CurrentSteps,     m_description,    Id,     m_image,            m_imageFetcher,     IsCompleted, IsHidden,   IsIncremental);
+            var hash2 = HashCode.Combine(LastReportedDate, PercentCompleted, Points, m_progressCallback, m_revealedImageUrl, Title,       TotalSteps, m_unlockedImageUrl);
+            return HashCode.Combine(hash1, hash2);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (other is not GPGA it) return false;
+            return Id              .Equals(it.Id)               &&
+                   m_description   .Equals(it.m_description)    &&
+                   m_image         .Equals(it.m_image)          &&
+                   m_imageFetcher  .Equals(it.m_imageFetcher)   &&
+                   IsCompleted      ==     it.IsCompleted       &&
+                   IsHidden         ==     it.IsHidden          &&
+                   IsIncremental    ==     it.IsIncremental     &&
+                   LastReportedDate.Equals(it.LastReportedDate) &&
+                   PercentCompleted.Equals(it.PercentCompleted) &&
+                   Points           ==     it.Points            &&
+                   Title           .Equals(it.Title)            &&
+                   TotalSteps       ==     it.TotalSteps;
+        }
+
+        #endregion Object implementation
 
     }
 

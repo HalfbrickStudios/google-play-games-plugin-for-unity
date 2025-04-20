@@ -34,19 +34,19 @@ namespace GooglePlayGames.Android.Java {
 
             public T JGet(int index)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.get(int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.get(int)");
                 return Call<T>("get", index);
             }
 
             public int GetCount()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getCount()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getCount()");
                 return Call<int>("getCount");
             }
 
             public void Release()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.release()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.release()");
                 Call("release");
             }
 

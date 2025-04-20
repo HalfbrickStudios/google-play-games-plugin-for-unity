@@ -22,6 +22,7 @@ using UIUP = UnityEngine.SocialPlatforms.IUserProfile;
 
 using AA    = GooglePlayGames.Api.Achievement;
 using ACSC  = GooglePlayGames.Api.CommonStatusCodes;
+using ADC   = GooglePlayGames.Api.DummyClient;
 using AFLVS = GooglePlayGames.Api.FriendsListVisibilityStatus;
 using AIEC  = GooglePlayGames.Api.Events.IEventsClient;
 using AIPGC = GooglePlayGames.Api.IPlayGamesClient;
@@ -42,199 +43,216 @@ namespace GooglePlayGames.Api {
 
     internal sealed class DummyClient : AIPGC {
 
-        private static void LogUsage() => Logger.d("Received method call on DummyClient - using stub implementation.");
+        private void LogDummy(string method)
+        {
+            Logger.t($"NO-OP: Dummy implementation called INearbyConnectionClient.{method}");
+        }
 
         #region IPlayGamesClient implementation
 
         public void AskForLoadFriendsResolution(Action<AUS> callback)
         {
-            LogUsage();
+            LogDummy("AskForLoadFriendsResolution(Action<UiStatus>)");
             callback?.Invoke(AUS.VersionUpdateRequired);
         }
 
         public void Authenticate(Action<ASIS> callback)
         {
-            LogUsage();
+            LogDummy("Authenticate(Action<SignInStatus>)");
             callback?.Invoke(ASIS.Canceled);
         }
 
         public AIEC GetEventsClient()
         {
-            LogUsage();
+            LogDummy("GetEventsClient()");
             return null;
         }
 
         public UIUP[] GetFriends()
         {
-            LogUsage();
+            LogDummy("GetFriends()");
             return new UIUP[0];
         }
 
         public void GetFriendsListVisibility(bool reload, Action<AFLVS> callback)
         {
-            LogUsage();
+            LogDummy("GetFriendsListVisibility(bool, Action<FriendsListVisibilityStatus>)");
             callback?.Invoke(AFLVS.Unknown);
         }
 
         public ALFS GetLastLoadFriendsStatus()
         {
-            LogUsage();
+            LogDummy("GetLastLoadFriendsStatus()");
             return ALFS.Unknown;
         }
 
         public void GetPlayerStats(Action<ACSC, APS> callback)
         {
-            LogUsage();
+            LogDummy("GetPlayerStats(Action<CommonStatusCodes, PlayerStats>)");
             callback?.Invoke(ACSC.ApiNotConnected, new APS());
         }
 
         public AISGC GetSavedGameClient()
         {
-            LogUsage();
+            LogDummy("GetSavedGameClient()");
             return null;
         }
 
         public string GetUserDisplayName()
         {
-            LogUsage();
+            LogDummy("GetUserDisplayName()");
             return "Player";
         }
 
         public string GetUserId()
         {
-            LogUsage();
+            LogDummy("GetUserId()");
             return "DummyID";
         }
 
         public string GetUserImageUrl()
         {
-            LogUsage();
+            LogDummy("GetUserImageUrl()");
             return null;
         }
 
         public void IncrementAchievement(string id, int steps, Action<bool> callback)
         {
-            LogUsage();
+            LogDummy("IncrementAchievement(string, int, Action<bool>)");
             callback?.Invoke(false);
         }
 
         public bool IsAuthenticated()
         {
-            LogUsage();
+            LogDummy("IsAuthenticated()");
             return false;
         }
 
-        public int LeaderboardMaxResults() => 25;
+        public int LeaderboardMaxResults()
+        {
+            LogDummy("LeaderboardMaxResults()");
+            return 25;
+        }
 
         public void LoadAchievements(Action<AA[]> callback)
         {
-            LogUsage();
+            LogDummy("LoadAchievements(Action<Achievement[]>)");
             callback?.Invoke(null);
         }
 
         public void LoadFriends(Action<bool> callback)
         {
-            LogUsage();
+            LogDummy("LoadFriends(Action<bool>)");
             callback?.Invoke(false);
         }
 
         public void LoadFriends(int size, bool reload, Action<ALFS> callback)
         {
-            LogUsage();
+            LogDummy("LoadFriends(int, bool, Action<LoadFriendsStatus>)");
             callback?.Invoke(ALFS.Unknown);
         }
 
         public void LoadMoreFriends(int size, Action<ALFS> callback)
         {
-            LogUsage();
+            LogDummy("LoadFriends(int, Action<LoadFriendsStatus>)");
             callback?.Invoke(ALFS.Unknown);
         }
 
         public void LoadMoreScores(ASPC cursor, int size, Action<ALSD> callback)
         {
-            LogUsage();
+            LogDummy("LoadMoreScores(ScorePageCursor, int, Action<LeaderboardScoreData>)");
             callback?.Invoke(new ALSD(cursor.LeaderboardId, ARS.LicenseCheckFailed));
         }
 
         public void LoadScores(string leaderboardId, ALS start, int size, ALC collection, ALTS span, Action<ALSD> callback)
         {
-            LogUsage();
+            LogDummy("LoadScores(string, LeaderboardStart, int, LeaderboardCollection, LeaderboardTimeSpan, Action<LeaderboardScoreData>)");
             callback?.Invoke(new ALSD(leaderboardId, ARS.LicenseCheckFailed));
         }
 
         public void LoadUsers(string[] ids, Action<UIUP[]> callback)
         {
-            LogUsage();
+            LogDummy("LoadUsers(string[], Action<IUserProfile[]>)");
             callback?.Invoke(null);
         }
 
         public void ManuallyAuthenticate(Action<ASIS> callback)
         {
-            LogUsage();
+            LogDummy("ManuallyAuthenticate(Action<SignInStatus>)");
             callback?.Invoke(ASIS.Canceled);
         }
 
         public void RequestRecallAccessToken(Action<ARA> callback)
         {
-            LogUsage();
+            LogDummy("RequestRecallAccessToken(Action<RecallAccess>)");
             callback?.Invoke(null);
         }
 
         public void RequestServerSideAccess(bool refresh, Action<string> callback)
         {
-            LogUsage();
+            LogDummy("RequestServerSideAccess(bool, Action<string>)");
             callback?.Invoke(null);
         }
 
         public void RevealAchievement(string id, Action<bool> callback)
         {
-            LogUsage();
+            LogDummy("RevealAchievement(string, Action<bool>)");
             callback?.Invoke(false);
         }
 
         public void SetStepsAtLeast(string id, int steps, Action<bool> callback)
         {
-            LogUsage();
+            LogDummy("SetStepsAtLeast(string, int, Action<bool>)");
             callback?.Invoke(false);
         }
 
         public void ShowAchievementsUI(Action<AUS> callback)
         {
-            LogUsage();
+            LogDummy("ShowAchievementsUI(Action<UiStatus>)");
             callback?.Invoke(AUS.VersionUpdateRequired);
         }
 
         public void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string comparandUserName, string userName, Action<AUS> callback)
         {
-            LogUsage();
+            LogDummy("ShowCompareProfileWithAlternativeNameHintsUI(string, string, string, Action<UiStatus>)");
             callback?.Invoke(AUS.VersionUpdateRequired);
         }
 
         public void ShowLeaderboardUI(string id, ALTS span, Action<AUS> callback)
         {
-            LogUsage();
+            LogDummy("ShowLeaderboardUI(string, LeaderboardTimeSpan, Action<UiStatus>)");
             callback?.Invoke(AUS.VersionUpdateRequired);
         }
 
         public void SubmitScore(string leaderboardId, long score, Action<bool> callback)
         {
-            LogUsage();
+            LogDummy("SubmitScore(string, long, Action<bool>)");
             callback?.Invoke(false);
         }
 
         public void SubmitScore(string leaderboardId, long score, string metadata, Action<bool> callback)
         {
-            LogUsage();
+            LogDummy("SubmitScore(string, long, string, Action<bool>)");
             callback?.Invoke(false);
         }
 
         public void UnlockAchievement(string id, Action<bool> callback)
         {
-            LogUsage();
+            LogDummy("UnlockAchievement(string, Action<bool>)");
             callback?.Invoke(false);
         }
 
         #endregion IPlayGamesClient implementation
+
+        #region Object implementation
+
+        public override string ToString() => "DummyClient()";
+
+        public override int GetHashCode() => HashCode.Combine(GetType(), ToString());
+
+        public override bool Equals(object other) => other is ADC;
+
+        #endregion Object implementation
 
     }
 

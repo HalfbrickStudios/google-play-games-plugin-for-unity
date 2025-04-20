@@ -45,19 +45,19 @@ namespace GooglePlayGames.Android.Java {
 
                 public JLI JGetLeaderboard()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.getLeaderboard()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.getLeaderboard()");
                     return Call<JLI>("getLeaderboard");
                 }
 
                 public JLSBI JGetScores()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.getScores()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.getScores()");
                     return Call<JLSBI>("getScores");
                 }
 
                 public void Release()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.release()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.release()");
                     Call("release");
                 }
 
@@ -101,31 +101,31 @@ namespace GooglePlayGames.Android.Java {
 
             public JT.Instance<JAD.Instance<JLSsI>> JLoadMoreScores(JLSBI lsbo, int rows, int direction)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.loadMoreScores(LeaderboardScoreBuffer, int, int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.loadMoreScores(LeaderboardScoreBuffer, int, int)");
                 return Call<JT.Instance<JAD.Instance<JLSsI>>>("loadMoreScores", lsbo, rows, direction);
             }
 
             public JT.Instance<JAD.Instance<JLSsI>> JLoadPlayerCenteredScores(string id, int span, int collection, int rows)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.loadPlayerCenteredScores(string, TimeSpan, Collection, int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.loadPlayerCenteredScores(string, TimeSpan, Collection, int)");
                 return Call<JT.Instance<JAD.Instance<JLSsI>>>("loadPlayerCenteredScores", id, span, collection, rows);
             }
 
             public JT.Instance<JAD.Instance<JLSsI>> JLoadTopScores(string id, int span, int collection, int rows)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.loadTopScores(string, TimeSpan, Collection, int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.loadTopScores(string, TimeSpan, Collection, int)");
                 return Call<JT.Instance<JAD.Instance<JLSsI>>>("loadTopScores", id, span, collection, rows);
             }
 
             public void SubmitScore(string id, long score)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.submitScore(string, long)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.submitScore(string, long)");
                 Call("submitScore", id, score);
             }
 
             public void SubmitScore(string id, long score, string metadata)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.submitScore(string, long, string)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.submitScore(string, long, string)");
                 Call("submitScore", id, score, metadata);
             }
 

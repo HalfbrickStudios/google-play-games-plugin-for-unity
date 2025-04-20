@@ -14,13 +14,27 @@
 //    limitations under the License.
 // </copyright>
 
+using System;
+
 using GPGUP = GooglePlayGames.PlayGamesUserProfile;
+
+using APP = GooglePlayGames.Api.PlayerProfile;
 
 namespace GooglePlayGames.Api {
 
     internal sealed class PlayerProfile : GPGUP {
 
         internal PlayerProfile(string playerName, string playerId, string avatar, bool friend) : base(playerName, playerId, avatar, friend) { }
+
+        #region Object implementation
+
+        public override string ToString() => $"PlayerProfile({base.ToString()})";
+
+        public override int GetHashCode() => HashCode.Combine(GetType(), ToString());
+
+        public override bool Equals(object other) => base.Equals(other) && other is APP;
+
+        #endregion Object implementation
 
     }
 

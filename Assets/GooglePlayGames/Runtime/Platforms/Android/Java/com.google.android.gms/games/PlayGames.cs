@@ -57,49 +57,49 @@ namespace GooglePlayGames.Android.Java {
 
             public JACI JGetAchievementsClient(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getAchievementsClient(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getAchievementsClient(Activity)");
                 return CallStatic<JACI>("getAchievementsClient", jActivity);
             }
 
             public JECI JGetEventsClient(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getEventsClient(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getEventsClient(Activity)");
                 return CallStatic<JECI>("getEventsClient", jActivity);
             }
 
             public JGSII JGetGamesSignInClient(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getGamesSignInClient(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getGamesSignInClient(Activity)");
                 return CallStatic<JGSII>("getGamesSignInClient", jActivity);
             }
 
             public JLCI JGetLeaderboardsClient(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getLeaderboardsClient(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getLeaderboardsClient(Activity)");
                 return CallStatic<JLCI>("getLeaderboardsClient", jActivity);
             }
 
             public JPCI JGetPlayersClient(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getPlayersClient(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getPlayersClient(Activity)");
                 return CallStatic<JPCI>("getPlayersClient", jActivity);
             }
 
             public JPSCI JGetPlayerStatsClient(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getPlayerStatsClient(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getPlayerStatsClient(Activity)");
                 return CallStatic<JPSCI>("getPlayerStatsClient", jActivity);
             }
 
             public JRCI JGetRecallClient(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getRecallClient(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getRecallClient(Activity)");
                 return CallStatic<JRCI>("getRecallClient", jActivity);
             }
 
             public JSCI JGetSnapshotsClient(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getSnapshotsClient(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getSnapshotsClient(Activity)");
                 return CallStatic<JSCI>("getSnapshotsClient", jActivity);
             }
 

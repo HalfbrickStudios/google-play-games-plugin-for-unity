@@ -30,7 +30,7 @@ namespace GooglePlayGames.Android.Java {
 
             internal Proxy(bool dispose, OnSuccessDelegate callback = null) : base(FullyQualifiedClassName)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.ctor()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.ctor()");
                 m_dispose = dispose;
                 if (callback != null) OnSuccess += callback;
             }
@@ -38,7 +38,7 @@ namespace GooglePlayGames.Android.Java {
             [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
             internal void onSuccess(UAJO result)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.onSuccess(AndroidJavaObject)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onSuccess(AndroidJavaObject)");
                 var tresult = typeof(TResult);
                 var tuajo   = typeof(UAJO);
                 if (Jni.IsStrictSubclass(tresult, typeof(JO))) {
@@ -53,7 +53,7 @@ namespace GooglePlayGames.Android.Java {
             [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
             internal void onSuccess(TResult result)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<TResult>.onSuccess(TResult)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onSuccess(TResult)");
                 OnSuccessHandler(result);
             }
 

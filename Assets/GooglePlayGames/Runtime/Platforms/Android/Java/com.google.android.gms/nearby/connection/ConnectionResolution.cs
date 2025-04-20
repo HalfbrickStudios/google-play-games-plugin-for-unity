@@ -36,7 +36,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JSI JGetStatus()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getStatus()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getStatus()");
                 return Call<JSI>("getStatus");
             }
 

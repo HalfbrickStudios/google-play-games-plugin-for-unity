@@ -80,7 +80,7 @@ namespace GooglePlayGames.Android.Java {
 
                 internal Proxy(ANCC client, JCLCPCPAD onResult, JCLCPCPCReqD onRequest) : base(FullyQualifiedClassName)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.ctor(INearbyConnectionClient, Action<AdvertisingResult>, Action<ConnectionRequest>)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.ctor(INearbyConnectionClient, Action<AdvertisingResult>, Action<ConnectionRequest>)");
                     m_isAdvertising = true;
                     m_aClient        = client;
                     if (onResult  != null) OnAdvertisingResult += onResult;
@@ -89,7 +89,7 @@ namespace GooglePlayGames.Android.Java {
 
                 public Proxy(JCCI client, AIML listener, JCLCPCPCResD onResponse) : base(FullyQualifiedClassName)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.ctor(ConnectionsClient, IMessageListener, Action<ConnectionResponse>)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.ctor(ConnectionsClient, IMessageListener, Action<ConnectionResponse>)");
                     m_isAdvertising = false;
                     m_jClient       = client;
                     m_listener      = listener;
@@ -99,7 +99,7 @@ namespace GooglePlayGames.Android.Java {
                 [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
                 public void onConnectionInitiated(string id, JCII jInfo)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.onConnectionInitiated(string, ConnectionInfo)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.onConnectionInitiated(string, ConnectionInfo)");
                     if (m_isAdvertising) {
                         m_endpoint = jInfo.GetEndpointName();
                         var request = new ACReq(id, m_endpoint, m_aClient.GetServiceId(), new byte[0]);
@@ -114,7 +114,7 @@ namespace GooglePlayGames.Android.Java {
                 [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
                 public void onConnectionResult(string id, JCRI jResolution)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.onConnectionInitiated(string, ConnectionResolution)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.onConnectionInitiated(string, ConnectionResolution)");
                     if (m_isAdvertising) {
                         var status = 0;
                         using (var jStatus = jResolution.JGetStatus()) {
@@ -149,7 +149,7 @@ namespace GooglePlayGames.Android.Java {
                 [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
                 public void onDisconnected(string id)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.onDisconnected(string)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.onDisconnected(string)");
                     if (m_isAdvertising) {
                         m_aClient.MessageListener?.OnRemoteEndpointDisconnected(id);
                     } else {

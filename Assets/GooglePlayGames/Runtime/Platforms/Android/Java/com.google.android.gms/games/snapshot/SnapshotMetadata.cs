@@ -35,43 +35,43 @@ namespace GooglePlayGames.Android.Java {
 
             public string GetCoverImageUrl()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getCoverImageUrl()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getCoverImageUrl()");
                 return Call<string>("getCoverImageUrl");
             }
 
             public string GetDescription()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getDescription()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getDescription()");
                 return Call<string>("getDescription");
             }
 
             public JSMI JFreeze()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.freeze()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.freeze()");
                 return Call<JSMI>("freeze");
             }
 
             public long GetLastModifiedTimestamp()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getLastModifiedTimestamp()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getLastModifiedTimestamp()");
                 return Call<long>("getLastModifiedTimestamp");
             }
 
             public long GetPlayedTime()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getPlayedTime()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getPlayedTime()");
                 return Call<long>("getPlayedTime");
             }
 
             public string GetSnapshotId()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getSnapshotId()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getSnapshotId()");
                 return Call<string>("getSnapshotId");
             }
 
             public string GetUniqueName()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getUniqueName()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getUniqueName()");
                 return Call<string>("getUniqueName");
             }
 

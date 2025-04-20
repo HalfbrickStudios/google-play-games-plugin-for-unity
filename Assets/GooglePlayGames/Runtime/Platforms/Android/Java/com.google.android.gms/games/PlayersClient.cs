@@ -39,31 +39,31 @@ namespace GooglePlayGames.Android.Java {
 
             public JT.Instance<JAD.Instance<JPI>> JGetCurrentPlayer()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getCurrentPlayer()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getCurrentPlayer()");
                 return Call<JT.Instance<JAD.Instance<JPI>>>("getCurrentPlayer");
             }
 
             public JT.Instance<JAD.Instance<JPI>> JGetCurrentPlayer(bool reload)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getCurrentPlayer(bool)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getCurrentPlayer(bool)");
                 return Call<JT.Instance<JAD.Instance<JPI>>>("getCurrentPlayer", reload);
             }
 
             public JT.Instance<JAD.Instance<JPBI>> JLoadFriends(int size, bool reload)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.loadFriends(int, bool)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.loadFriends(int, bool)");
                 return Call<JT.Instance<JAD.Instance<JPBI>>>("loadFriends", size, reload);
             }
 
             public JT.Instance<JAD.Instance<JPBI>> JLoadMoreFriends(int size)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.loadMoreFriends(int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.loadMoreFriends(int)");
                 return Call<JT.Instance<JAD.Instance<JPBI>>>("loadMoreFriends", size);
             }
 
             public JT.Instance<JAD.Instance<JPI>> JLoadPlayer(string id)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.loadPlayer(string)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.loadPlayer(string)");
                 return Call<JT.Instance<JAD.Instance<JPI>>>("loadPlayer", id);
             }
 

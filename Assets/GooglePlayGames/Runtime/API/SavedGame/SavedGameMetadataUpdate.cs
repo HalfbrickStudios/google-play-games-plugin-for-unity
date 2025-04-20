@@ -15,6 +15,7 @@
 // </copyright>
 
 using System;
+using System.Linq;
 
 using GooglePlayGames.Utils;
 
@@ -75,7 +76,43 @@ namespace GooglePlayGames.Api.SavedGame {
 
             public readonly ASGMU Build() => new(this);
 
+            #region Object implementation
+
+            public override readonly string ToString() => $"SavedGameMetadataUpdate.Builder(IsCoverImageUpdated: {IsCoverImageUpdated}, IsDescriptionUpdated: {IsDescriptionUpdated}, UpdatedDescription: {UpdatedDescription}, UpdatedPlayedTime: {UpdatedPlayedTime}, UpdatedPngCoverImage: bytes[{UpdatedPngCoverImage.Length}])";
+
+            public override readonly int GetHashCode() => HashCode.Combine(IsCoverImageUpdated, IsDescriptionUpdated, UpdatedDescription, UpdatedPlayedTime, UpdatedPngCoverImage);
+
+            public override readonly bool Equals(object other)
+            {
+                if (other is not ASGMUB it) return false;
+                return IsCoverImageUpdated          ==     it.IsCoverImageUpdated  &&
+                       IsDescriptionUpdated         ==     it.IsDescriptionUpdated &&
+                       UpdatedDescription          .Equals(it.UpdatedDescription)  &&
+                       UpdatedPlayedTime           .Equals(it.UpdatedPlayedTime)   &&
+                       UpdatedPngCoverImage.SequenceEqual (it.UpdatedPngCoverImage);
+            }
+
+            #endregion Object implementation
+
         }
+
+        #region Object implementation
+
+        public override string ToString() => $"SavedGameMetadataUpdate(IsCoverImageUpdated: {IsCoverImageUpdated}, IsDescriptionUpdated: {IsDescriptionUpdated}, UpdatedDescription: {UpdatedDescription}, UpdatedPlayedTime: {UpdatedPlayedTime}, UpdatedPngCoverImage: bytes[{UpdatedPngCoverImage.Length}])";
+
+        public override int GetHashCode() => HashCode.Combine(IsCoverImageUpdated, IsDescriptionUpdated, UpdatedDescription, UpdatedPlayedTime, UpdatedPngCoverImage);
+
+        public override bool Equals(object other)
+        {
+            if (other is not ASGMU it) return false;
+            return IsCoverImageUpdated          ==     it.IsCoverImageUpdated  &&
+                   IsDescriptionUpdated         ==     it.IsDescriptionUpdated &&
+                   UpdatedDescription          .Equals(it.UpdatedDescription)  &&
+                   UpdatedPlayedTime           .Equals(it.UpdatedPlayedTime)   &&
+                   UpdatedPngCoverImage.SequenceEqual (it.UpdatedPngCoverImage);
+        }
+
+        #endregion Object implementation
 
     }
 

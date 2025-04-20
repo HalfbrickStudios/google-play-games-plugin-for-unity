@@ -58,43 +58,43 @@ namespace GooglePlayGames.Android.Java {
 
             public JVI JGetDecorView(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getDecorView(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getDecorView(Activity)");
                 return CallStatic<JVI>("getDecorView", jActivity);
             }
 
             public bool IsResolutionRequired(JAEI jException)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.isResolutionRequired(Exception)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.isResolutionRequired(Exception)");
                 return CallStatic<bool>("isResolutionRequired", jException);
             }
 
             public JTI JShowAchievementUi(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.showAchievementUi(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.showAchievementUi(Activity)");
                 return CallStatic<JTI>("showAchievementUi", jActivity);
             }
 
             public JTI JShowAllLeaderboardsUi(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.showAllLeaderboardsUi(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.showAllLeaderboardsUi(Activity)");
                 return CallStatic<JTI>("showAllLeaderboardsUi", jActivity);
             }
 
             public JTI JShowLeaderboardUi(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.showLeaderboardUi(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.showLeaderboardUi(Activity)");
                 return CallStatic<JTI>("showLeaderboardUi", jActivity);
             }
 
             public JTI JShowLeaderboardUi(JAI jActivity, JEI jException)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.askForLoadFriendsResolution(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.askForLoadFriendsResolution(Activity)");
                 return CallStatic<JTI>("askForLoadFriendsResolution", jActivity, jException);
             }
 
             public void ShowCaptureOverlayUi(JAI jActivity)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.showCaptureOverlayUi(Activity)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.showCaptureOverlayUi(Activity)");
                 CallStatic("showCaptureOverlayUi", jActivity);
             }
 

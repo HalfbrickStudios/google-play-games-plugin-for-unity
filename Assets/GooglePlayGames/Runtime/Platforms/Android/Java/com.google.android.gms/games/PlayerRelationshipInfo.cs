@@ -36,7 +36,7 @@ namespace GooglePlayGames.Android.Java {
 
             public int JGetFriendStatus()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getFriendStatus()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getFriendStatus()");
                 return Call<int>("getFriendStatus");
             }
 

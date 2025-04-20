@@ -45,27 +45,27 @@ namespace GooglePlayGames.Android.Java {
 
                 public JSMCI JBuild()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.build()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.build()");
                     return Call<JSMCI>("build");
                 }
 
                 public JSMCBI JSetCoverImage(JBI jBitmap)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.setCoverImage(Bitmap)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.setCoverImage(Bitmap)");
                     Misc.CheckNotNull(jBitmap, nameof(jBitmap));
                     return Call<JSMCBI>("setCoverImage", jBitmap);
                 }
 
                 public JSMCBI JSetDescription(string description)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.setDescription(string)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.setDescription(string)");
                     Misc.CheckNotNull(description, nameof(description));
                     return Call<JSMCBI>("setDescription", description);
                 }
 
                 public JSMCBI JSetPlayedTimeMillis(long time)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.setPlayedTimeMillis(long)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.setPlayedTimeMillis(long)");
                     return Call<JSMCBI>("setPlayedTimeMillis", time);
                 }
 

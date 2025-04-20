@@ -38,7 +38,7 @@ namespace GooglePlayGames.Android.Java {
 
             public JT.Instance<JAD.Instance<JPSI>> JLoadPlayerStats(bool reload)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.loadPlayerStats(bool)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.loadPlayerStats(bool)");
                 return Call<JT.Instance<JAD.Instance<JPSI>>>("loadPlayerStats", reload);
             }
 

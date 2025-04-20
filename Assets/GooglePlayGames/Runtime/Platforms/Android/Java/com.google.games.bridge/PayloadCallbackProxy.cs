@@ -50,7 +50,7 @@ namespace GooglePlayGames.Android.Java {
                 [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
                 public void onPayloadReceiveds(string id, JPI jPayload)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.onPayloadReceiveds(string, Payload)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.onPayloadReceiveds(string, Payload)");
                     OnPayloadReceiveds?.Invoke(id, jPayload);
                     if (jPayload.JGetType() != JPT.BYTES) return;
                     m_listener?.OnMessageReceived(id, jPayload.AsBytes(), reliable: true);

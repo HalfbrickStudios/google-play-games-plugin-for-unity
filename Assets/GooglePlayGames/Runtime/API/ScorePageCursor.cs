@@ -14,8 +14,11 @@
 //    limitations under the License.
 // </copyright>
 
+using System;
+
 using ALC  = GooglePlayGames.Api.LeaderboardCollection;
 using ALTS = GooglePlayGames.Api.LeaderboardTimeSpan;
+using ASPC = GooglePlayGames.Api.ScorePageCursor;
 using ASPD = GooglePlayGames.Api.ScorePageDirection;
 
 namespace GooglePlayGames.Api {
@@ -29,20 +32,36 @@ namespace GooglePlayGames.Api {
 
         internal ScorePageCursor(object token, string leaderboardId, ALC collection, ALTS span, ASPD direction)
         {
-            LeaderboardScoreBuffer = token;
-            
-            Collection     = collection;
-            Direction      = direction;
-            LeaderboardId  = leaderboardId;
-            TimeSpan       = span;
+            Collection    = collection;
+            Direction     = direction;
+            LeaderboardId = leaderboardId;
+            TimeSpan      = span;
+            Token         = token;
         }
 
-        internal object LeaderboardScoreBuffer { get; }
+        public ALC      Collection    { get; }
+        public ASPD     Direction     { get; }
+        public string   LeaderboardId { get; }
+        public ALTS     TimeSpan      { get; }
+        internal object Token         { get; }
 
-        public ALC    Collection    { get; }
-        public ASPD   Direction     { get; }
-        public string LeaderboardId { get; }
-        public ALTS   TimeSpan      { get; }
+        #region Object implementation
+
+        public override string ToString() => $"ScorePageCursor(Collection: {Collection}, Direction: {Direction}, LeaderboardId: {LeaderboardId}, TimeSpan: {TimeSpan}, Token: {Token})";
+
+        public override int GetHashCode() => HashCode.Combine(Collection, Direction, LeaderboardId, TimeSpan);
+
+        public override bool Equals(object other)
+        {
+            if (other is not ASPC it) return false;
+            return Collection    ==     it.Collection     &&
+                   Direction     ==     it.Direction      &&
+                   LeaderboardId.Equals(it.LeaderboardId) &&
+                   TimeSpan      ==     it.TimeSpan;
+
+        }
+
+        #endregion Object implementation
 
     }
 

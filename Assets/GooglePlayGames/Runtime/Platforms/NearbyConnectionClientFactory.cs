@@ -34,14 +34,14 @@ namespace GooglePlayGames {
         public static void Create(Action<AINCC> callback)
         {
             if (Application.isEditor) {
-                Logger.d("Creating INearbyConnection in editor, using DummyClient.");
+                Logger.d("GPG: Creating INearbyConnection in editor, using DummyClient");
                 callback?.Invoke(new ADNCC());
             }
 #if UNITY_ANDROID
-            Logger.d("Creating Android INearbyConnection Client");
+            Logger.d("GPG: Creating Android INearbyConnection Client");
             callback?.Invoke(new ANCC());
 #else
-            Logger.d("Cannot create INearbyConnection for unknown platform, returning DummyClient");
+            Logger.d("GPG: Cannot create INearbyConnection for unknown platform, returning DummyClient");
             callback?.Invoke(new ADNCC());
 #endif
         }

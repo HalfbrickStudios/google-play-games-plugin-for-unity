@@ -45,13 +45,13 @@ namespace GooglePlayGames.Android.Java {
 
                 public JAOI JBuild()
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.build()");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.build()");
                     return Call<JAOI>("build");
                 }
 
                 public JAOBI JSetStrategy(JSI jStrategy)
                 {
-                    Logger.t($"JNI: Call {FullyQualifiedClassName}.setStrategy(Strategy)");
+                    Logger.t($"JNI: Calling {FullyQualifiedClassName}.setStrategy(Strategy)");
                     return Call<JAOBI>("setStrategy", jStrategy);
                 }
 

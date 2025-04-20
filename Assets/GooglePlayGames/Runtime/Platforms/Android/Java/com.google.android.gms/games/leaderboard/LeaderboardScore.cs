@@ -36,31 +36,31 @@ namespace GooglePlayGames.Android.Java {
 
             public long GetRank()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getRank()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getRank()");
                 return Call<long>("getRank");
             }
 
             public long GetRawScore()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getRawScore()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getRawScore()");
                 return Call<long>("getRawScore");
             }
 
             public JPI JGetScoreHolder()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getScoreHolder()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getScoreHolder()");
                 return Call<JPI>("getScoreHolder");
             }
 
             public string GetScoreTag()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getScoreTag()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getScoreTag()");
                 return Call<string>("getScoreTag");
             }
 
             public long GetTimestampMillis()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getTimestampMillis()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getTimestampMillis()");
                 return Call<long>("getTimestampMillis");
             }
 

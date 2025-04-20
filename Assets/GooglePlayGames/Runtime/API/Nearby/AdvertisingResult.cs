@@ -14,8 +14,11 @@
 //    limitations under the License.
 // </copyright>
 
+using System;
+
 using GooglePlayGames.Utils;
 
+using AR  = GooglePlayGames.Api.Nearby.AdvertisingResult;
 using ARS = GooglePlayGames.Api.ResponseStatus;
 
 namespace GooglePlayGames.Api.Nearby {
@@ -32,6 +35,21 @@ namespace GooglePlayGames.Api.Nearby {
         public ARS    Status            { get; }
 
         public bool Succeeded => Status == ARS.Success;
+
+        #region Object implementation
+
+        public override string ToString() => $"AdvertisingResult(LocalEndpointName: {LocalEndpointName}, Status: {Status})";
+
+        public override int GetHashCode() => HashCode.Combine(LocalEndpointName, Status);
+
+        public override bool Equals(object other)
+        {
+            if (other is not AR it) return false;
+            return LocalEndpointName.Equals(it.LocalEndpointName) &&
+                   Status            ==     it.Status;
+        }
+
+        #endregion Object implementation
 
     }
 

@@ -35,13 +35,13 @@ namespace GooglePlayGames.Android.Java {
 
             public string GetEndpointName()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getEndpointName()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getEndpointName()");
                 return Call<string>("getEndpointName");
             }
 
             public string GetServiceId()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.getServiceId()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getServiceId()");
                 return Call<string>("getServiceId");
             }
 

@@ -37,19 +37,19 @@ namespace GooglePlayGames.Android.Java {
 
             public JT.Instance<JARI> JIsAuthenticated()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.isAuthenticated()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.isAuthenticated()");
                 return Call<JT.Instance<JARI>>("isAuthenticated");
             }
 
             public JT.Instance<JARI> JSignIn()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.signIn()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.signIn()");
                 return Call<JT.Instance<JARI>>("signIn");
             }
 
             public JT.Instance<string> JRequestServerSideAccess(string webId, bool reload)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.requestServerSideAccess(string, bool)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.requestServerSideAccess(string, bool)");
                 Misc.CheckNotNull(webId, nameof(webId));
                 return Call<JT.Instance<string>>("requestServerSideAccess", webId, reload);
             }

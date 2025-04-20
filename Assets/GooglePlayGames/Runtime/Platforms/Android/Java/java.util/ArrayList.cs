@@ -34,13 +34,13 @@ namespace GooglePlayGames.Android.Java {
 
             public bool Add(E element)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<E>.add(E)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<E>.add(E)");
                 return Call<bool>("add", element);
             }
 
             public E JGet(int index)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}<E>.get(int)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<E>.get(int)");
                 return Call<E>("get", index);
             }
 

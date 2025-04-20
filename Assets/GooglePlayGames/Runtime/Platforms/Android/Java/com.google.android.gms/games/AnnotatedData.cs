@@ -37,13 +37,13 @@ namespace GooglePlayGames.Android.Java {
 
             public T JGet()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.get()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.get()");
                 return Call<T>("get");
             }
 
             public bool IsStale()
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.isStale()");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.isStale()");
                 return Call<bool>("isStale");
             }
 

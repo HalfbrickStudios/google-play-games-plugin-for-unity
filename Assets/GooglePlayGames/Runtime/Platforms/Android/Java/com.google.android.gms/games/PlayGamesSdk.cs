@@ -33,7 +33,7 @@ namespace GooglePlayGames.Android.Java {
 
             public void Initialize(JCI jContext)
             {
-                Logger.t($"JNI: Call {FullyQualifiedClassName}.initialize(Context)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.initialize(Context)");
                 Misc.CheckNotNull(jContext, nameof(jContext));
                 CallStatic("initialize", jContext);
             }

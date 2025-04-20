@@ -22,6 +22,7 @@ using GooglePlayGames.Utils;
 using AAR   = GooglePlayGames.Api.Nearby.AdvertisingResult;
 using ACReq = GooglePlayGames.Api.Nearby.ConnectionRequest;
 using ACRes = GooglePlayGames.Api.Nearby.ConnectionResponse;
+using ADNCC = GooglePlayGames.Api.Nearby.DummyNearbyConnectionClient;
 using AIDL  = GooglePlayGames.Api.Nearby.IDiscoveryListener;
 using AINCC = GooglePlayGames.Api.Nearby.INearbyConnectionClient;
 using AIML  = GooglePlayGames.Api.Nearby.IMessageListener;
@@ -31,73 +32,113 @@ namespace GooglePlayGames.Api.Nearby {
 
     internal sealed class DummyNearbyConnectionClient : AINCC {
 
+        private void LogDummy(string method)
+        {
+            Logger.t($"NO-OP: Dummy implementation called INearbyConnectionClient.{method}");
+        }
+
         public void AcceptConnectionRequest(string endpointId, byte[] payload, AIML listener)
         {
-            Logger.d("AcceptConnectionRequest in dummy implementation called");
+            LogDummy("AcceptConnectionRequest(string, byte[], IMessageListener)");
         }
 
         public void DisconnectFromEndpoint(string endpointId)
         {
-            Logger.d("DisconnectFromEndpoint in dummy implementation called");
+            LogDummy("DisconnectFromEndpoint(string)");
         }
 
-        public string GetAppBundleId() => "dummy.bundle.id";
+        public string GetAppBundleId()
+        {
+            LogDummy("GetAppBundleId()");
+            return "dummy.bundle.id";
+        }
 
-        public string GetServiceId() => "dummy.service.id";
+        public string GetServiceId()
+        {
+            LogDummy("GetServiceId()");
+            return "dummy.service.id";
+        }
 
-        public string LocalDeviceId() => "DummyDevice";
+        public string LocalDeviceId()
+        {
+            LogDummy("LocalDeviceId()");
+            return "DummyDevice";
+        }
 
-        public string LocalEndpointId() => string.Empty;
+        public string LocalEndpointId()
+        {
+            LogDummy("LocalEndpointId()");
+            return string.Empty;
+        }
 
-        public int MaxReliableMessagePayloadLength() => ANCC.MaxReliableMessagePayloadLength;
+        public int MaxReliableMessagePayloadLength()
+        {
+            LogDummy("MaxReliableMessagePayloadLength()");
+            return ANCC.MaxReliableMessagePayloadLength;
+        }
 
-        public int MaxUnreliableMessagePayloadLength() => ANCC.MaxUnreliableMessagePayloadLength;
+        public int MaxUnreliableMessagePayloadLength()
+        {
+            LogDummy("MaxUnreliableMessagePayloadLength()");
+            return ANCC.MaxUnreliableMessagePayloadLength;
+        }
 
         public void RejectConnectionRequest(string endpointId)
         {
-            Logger.d("RejectConnectionRequest in dummy implementation called");
+            LogDummy("RejectConnectionRequest(string)");
         }
 
         public void SendConnectionRequest(string endpointName, string endpointId, byte[] payload, Action<ACRes> callback, AIML listener)
         {
-            Logger.d("SendConnectionRequest called from dummy implementation");
+            LogDummy("SendConnectionRequest(string, string, byte[], Action<ConnectionResponse>, IMessageListener)");
             callback?.Invoke(ACRes.Rejected(0, string.Empty));
         }
 
         public void SendReliable(List<string> endpointIds, byte[] payload)
         {
-            Logger.d("SendReliable called from dummy implementation");
+            LogDummy("SendReliable(List<string>, byte[])");
         }
 
         public void SendUnreliable(List<string> endpointIds, byte[] payload)
         {
-            Logger.d("SendUnreliable called from dummy implementation");
+            LogDummy("SendUnreliable(List<string>, byte[])");
         }
 
         public void StartAdvertising(string name, List<string> serviceIds, TimeSpan? duration, Action<AAR> onResult, Action<ACReq> onRequest)
         {
+            LogDummy("StartAdvertising(string, List<string>, TimeSpan, Action<AdvertisingResult>, Action<ConnectionRequest>)");
             onResult?.Invoke(new AAR(ResponseStatus.LicenseCheckFailed, string.Empty));
         }
 
         public void StartDiscovery(string serviceId, TimeSpan? timeout, AIDL listener)
         {
-            Logger.d("StartDiscovery in dummy implementation called");
+            LogDummy("StartDiscovery(string, TimeSpan, IDiscoveryListener)");
         }
 
         public void StopAdvertising()
         {
-            Logger.d("StopAvertising in dummy implementation called");
+            LogDummy("StopAdvertising()");
         }
 
         public void StopAllConnections()
         {
-            Logger.d("StopAllConnections in dummy implementation called");
+            LogDummy("StopAllConnections()");
         }
 
         public void StopDiscovery(string serviceId)
         {
-            Logger.d("StopDiscovery in dummy implementation called");
+            LogDummy("StopDiscovery(string)");
         }
+
+        #region Object implementation
+
+        public override string ToString() => "DummyNearbyConnectionClient()";
+
+        public override int GetHashCode() => HashCode.Combine(GetType(), ToString());
+
+        public override bool Equals(object other) => other is ADNCC;
+
+        #endregion Object implementation
 
     }
 

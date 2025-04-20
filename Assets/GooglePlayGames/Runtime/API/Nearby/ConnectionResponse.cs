@@ -14,6 +14,9 @@
 //    limitations under the License.
 // </copyright>
 
+using System;
+using System.Linq;
+
 using GooglePlayGames.Utils;
 
 using ACR  = GooglePlayGames.Api.Nearby.ConnectionResponse;
@@ -58,6 +61,23 @@ namespace GooglePlayGames.Api.Nearby {
         public byte[] Payload          { get; }
         public string RemoteEndpointId { get; }
         public ACRS   ResponseStatus   { get; }
+
+        #region Object implementation
+
+        public override string ToString() => $"ConnectionResponse(LocalClientId: {LocalClientId}, Payload: bytes[{Payload.Length}], RemoteEndpointId: {RemoteEndpointId}, ResponseStatus: {ResponseStatus})";
+
+        public override int GetHashCode() => HashCode.Combine(LocalClientId, Payload, RemoteEndpointId, ResponseStatus);
+
+        public override bool Equals(object other)
+        {
+            if (other is not ACR it) return false;
+            return LocalClientId            ==     it.LocalClientId     &&
+                   Payload         .SequenceEqual (it.Payload)          &&
+                   RemoteEndpointId        .Equals(it.RemoteEndpointId) &&
+                   ResponseStatus           ==     it.ResponseStatus;
+        }
+
+        #endregion Object implementation
 
     }
 
