@@ -27,6 +27,7 @@ using UnityEditor;
 using UnityEngine;
 
 using Google;
+using GooglePlayGames.Config;
 
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
@@ -341,12 +342,29 @@ namespace GooglePlayGames.Editor {
 
         public static void UpdateGameInfo()
         {
-            var contents = ReadEditorTemplate("GameInfo.cs");
-            foreach (var ent in s_replacements) {
-                var value = ProjectSettings.Instance.Get(ent.Value);
-                contents = contents.Replace(ent.Key, value);
+            var info = GameInformation.Instance;
+            if (info == null) {
+                Debug.Log("GPG: Creating GameInformation asset");
+                EnsureDirExists("Assets/Resources");
+                info = GameInformation.CreateAsset();
+                return;
             }
-            WriteFile(GameInfoPath, contents);
+            if (info == null) {
+                Debug.LogError("GPG: Failed to read/create the GameInformation asset");
+                return;
+            }
+            var appId = ProjectSettings.Instance.Get(KEY_APP_ID);
+            var svcId = ProjectSettings.Instance.Get(KEY_SERVICE_ID);
+            var webId = ProjectSettings.Instance.Get(KEY_WEB_CLIENT_ID);
+            var changed = info.AppId != appId || info.NearbyId != svcId || info.WebId != webId;
+            if (changed) {
+                info.AppId    = appId;
+                info.NearbyId = svcId;
+                info.WebId    = webId;
+                EditorUtility.SetDirty(info);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
         }
 
         private static void WriteFile(string file, string body)
