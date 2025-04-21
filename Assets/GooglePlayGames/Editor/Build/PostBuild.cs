@@ -16,8 +16,9 @@
 
 #if UNITY_EDITOR && UNITY_ANDROID
 
-using System.IO;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using System.Xml;
 
 using UnityEditor;
@@ -25,12 +26,11 @@ using UnityEditor.Android;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
+using GooglePlayGames.Config;
+
 using static GooglePlayGames.Editor.Strings;
 using static GooglePlayGames.Editor.Utils;
 using static GooglePlayGames.Editor.UI.Utils;
-using GooglePlayGames.Config;
-using System.Net.NetworkInformation;
-using System.Xml.Linq;
 
 namespace GooglePlayGames.Editor.Build {
 
@@ -55,40 +55,60 @@ namespace GooglePlayGames.Editor.Build {
             var document = new XmlDocument();
             document.LoadXml(text);
 
-            var manifest = document.SelectSingleNode("/manifest");
+            var manifest = document.SelectSingleNode("manifest");
             if (manifest == null) {
                 Debug.LogError($"GPG: Manifest node not found in AndroidManifest.xml @ {path}");
                 return;
             }
+            if (manifest.Attributes["xmlns:android"] == null) {
+                Debug.LogWarning($"GPG: Manifest is missing the xmlns:android namespace");
+                var attribute = document.CreateAttribute("xmlns:android");
+                attribute.Value = "http://schemas.android.com/apk/res/android";
+                manifest.Attributes.Append(attribute);
+            }
+            var android = manifest.Attributes["xmlns:android"].Value;
 
-            var application = manifest.SelectSingleNode("/application");
+            var application = manifest.SelectSingleNode("application");
             if (application == null) {
                 Debug.LogError($"GPG: Application node not found in AndroidManifest.xml @ {path}");
                 return;
             }
 
+            var manager = new XmlNamespaceManager(document.NameTable);
+            if (!manager.HasNamespace("android")) {
+                manager.AddNamespace("android", android);
+            }
+            if (!manager.HasNamespace("android")) {
+                Debug.LogError($"GPG: android XML namespace not found in AndroidManifest.xml @ {path}");
+                return;
+            }
+
 
             var name = "com.google.android.gms.games.unityVersion";
-            var node = application.SelectSingleNode($"/meta-data[@android:name='{name}']");
-            if (node != null) {
+            var node = application.SelectNodes($"meta-data[@android:name='{name}']", manager).OfType<XmlNode>().ToList();
+            if (node.Count > 0) {
                 Debug.LogWarning($"GPG: Metadata with {name} already exists in AndroidManifest.xml, overwritting it!");
-                node.ParentNode.RemoveChild(node);
+                foreach (var it in node) {
+                    it.ParentNode.RemoveChild(it);
+                }
             }
             var element = document.CreateElement("meta-data");
-            element.SetAttribute("android:name", name);
-            element.SetAttribute("android:value", $"\\u003{Version.VersionString}");
+            element.SetAttribute("name", android, name);
+            element.SetAttribute("value", android, $"\\u003{Version.VersionString}");
             application.AppendChild(element);
 
 
             name = "com.google.games.bridge.NativeBridgeActivity";
-            node = application.SelectSingleNode($"/activity[@android:name='{name}']");
-            if (node != null) {
+            node = application.SelectNodes($"activity[@android:name='{name}']", manager).OfType<XmlNode>().ToList();
+            if (node.Count > 0) {
                 Debug.LogWarning($"GPG: Activity with {name} already exists in AndroidManifest.xml, overwritting it!");
-                node.ParentNode.RemoveChild(node);
+                foreach (var it in node) {
+                    it.ParentNode.RemoveChild(it);
+                }
             }
             element = document.CreateElement("activity");
-            element.SetAttribute("android:name", name);
-            element.SetAttribute("android:theme", "@android:style/Theme.Translucent.NoTitleBar.Fullscreen");
+            element.SetAttribute("name", android, name);
+            element.SetAttribute("theme", android, "@android:style/Theme.Translucent.NoTitleBar.Fullscreen");
             application.AppendChild(element);
 
 
@@ -96,44 +116,48 @@ namespace GooglePlayGames.Editor.Build {
                 var info = GameInformation.Instance;
                 if (info.HasAppId) {
                     name = "com.google.android.gms.games.APP_ID";
-                    node = application.SelectSingleNode($"/meta-data[@android:name='{name}']");
-                    if (node != null) {
+                    node = application.SelectNodes($"meta-data[@android:name='{name}']", manager).OfType<XmlNode>().ToList();
+                    if (node.Count > 0) {
                         Debug.LogWarning($"GPG: Metadata with {name} already exists in AndroidManifest.xml, overwritting it!");
-                        node.ParentNode.RemoveChild(node);
+                        foreach (var it in node) {
+                            it.ParentNode.RemoveChild(it);
+                        }
                     }
                     element = document.CreateElement("meta-data");
-                    element.SetAttribute("android:name", name);
-                    element.SetAttribute("android:value", $"\\u003{info.AppId}");
+                    element.SetAttribute("name", android, name);
+                    element.SetAttribute("value", android, $"\\u003{info.AppId}");
                     application.AppendChild(element);
                 }
 
 
                 if (info.HasNearbyId) {
                     name = "com.google.android.gms.nearby.connection.SERVICE_ID";
-                    node = application.SelectSingleNode($"/meta-data[@android:name='{name}']");
-                    if (node != null) {
+                    node = application.SelectNodes($"meta-data[@android:name='{name}']", manager).OfType<XmlNode>().ToList();
+                    if (node.Count > 0) {
                         Debug.LogWarning($"GPG: Metadata with {name} already exists in AndroidManifest.xml, overwritting it!");
-                        node.ParentNode.RemoveChild(node);
+                        foreach (var it in node) {
+                            it.ParentNode.RemoveChild(it);
+                        }
                     }
                     element = document.CreateElement("meta-data");
-                    element.SetAttribute("android:name", name);
-                    element.SetAttribute("android:value", info.NearbyId);
+                    element.SetAttribute("name", android, name);
+                    element.SetAttribute("value", android, info.NearbyId);
                     application.AppendChild(element);
 
 
                     var permissions = new[] { "ACCESS_COARSE_LOCATION", "CHANGE_WIFI_STATE", "BLUETOOTH", "BLUETOOTH_ADMIN", "CHANGE_WIFI_STATE"};
                     foreach (var it in permissions) {
                         name = $"android.permission.{it}";
-                        node = manifest.SelectSingleNode($"/uses-permission[@android:name='{name}']");
-                        if (node != null) {
+                        node = application.SelectNodes($"uses-permission[@android:name='{name}']", manager).OfType<XmlNode>().ToList();
+                        if (node.Count > 0) {
                             element = document.CreateElement("uses-permission");
-                            element.SetAttribute("android:name", name);
+                            element.SetAttribute("name", android, name);
                             manifest.AppendChild(element);
                         }
                     }
                 }
             } else {
-                Debug.LogWarning("GPG: GameInformation instance not found, therefore the AndroidManifest.xml file won't be patched");
+                Debug.LogWarning("GPG: GameInformation instance not found, therefore the AndroidManifest.xml file will be partially patched");
             }
 
             File.WriteAllText(path, document.OuterXml);
