@@ -43,7 +43,7 @@ namespace GooglePlayGames.Editor {
         public   const string KEY_CLASS_NAME         = "proj.ConstantsClassName";
         internal const string KEY_LAST_UPGRADE       = "lastUpgrade";
         public   const string KEY_NEARBY_SETUP_DONE  = "android.NearbySetupDone";
-        internal const string KEY_PLUGIN_VERSION     = "proj.pluginVersion";
+        public   const string KEY_PLUGIN_VERSION     = "proj.pluginVersion";
         public   const string KEY_SERVICE_ID         = "App.NearbdServiceId";
         public   const string KEY_WEB_CLIENT_ID      = "and.ClientId";
 
@@ -195,39 +195,6 @@ namespace GooglePlayGames.Editor {
             if (!Directory.Exists(dir)) {
                 Directory.CreateDirectory(dir);
             }
-        }
-
-        public static void GenerateAndroidManifest()
-        {
-            var content = ReadEditorTemplate("AndroidManifest.xml");
-            var extend = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(ProjectSettings.Instance.Get(KEY_SERVICE_ID))) {
-                extend[PLACEHOLDER_NEARBY_PERMISSIONS] = string.Join("\n", new[] {
-                        "<!-- Required for Nearby Connections -->\n",
-                        "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
-                        "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\" />",
-                        "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\" />",
-                        "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\" />",
-                        "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />",
-                    }.Select(it => $"        {it}")
-                );
-                extend[PLACEHOLDER_SERVICE_ID_ELEMENT] = string.Join("\n", new[] {
-                        "<!-- Required for Nearby Connections API -->\n",
-                        "<meta-data android:name=\"com.google.android.gms.nearby.connection.SERVICE_ID\" android:value=\"__NEARBY_SERVICE_ID__\" />",
-                    }.Select(it => $"             {it}")
-                );
-            } else {
-                extend[PLACEHOLDER_NEARBY_PERMISSIONS] = string.Empty;
-                extend[PLACEHOLDER_SERVICE_ID_ELEMENT] = string.Empty;
-            }
-
-            foreach (var entry in s_replacements) {
-                var value = ProjectSettings.Instance.Get(entry.Value, extend);
-                content = content.Replace(entry.Key, value);
-            }
-
-            WriteFile(ManifestPath, content);
-            UpdateGameInfo();
         }
 
         private static string GetAndroidSdkPath()

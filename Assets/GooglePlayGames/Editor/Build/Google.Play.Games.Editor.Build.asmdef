@@ -2,6 +2,7 @@
     "name": "Google.Play.Games.Editor.Build",
     "rootNamespace": "",
     "references": [
+        "Google.Play.Games",
         "Google.Play.Games.Editor",
         "Google.Play.Games.Editor.UI"
     ],

@@ -105,7 +105,7 @@ namespace GooglePlayGames.Editor.UI {
             EnsureDirExists("Assets/Plugins");
             EnsureDirExists("Assets/Plugins/Android");
 
-            GenerateAndroidManifest();
+            UpdateGameInfo();
 
             ProjectSettings.Instance.Set(KEY_NEARBY_SETUP_DONE, true);
             ProjectSettings.Instance.Save();

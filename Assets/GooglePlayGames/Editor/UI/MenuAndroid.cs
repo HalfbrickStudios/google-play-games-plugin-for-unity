@@ -241,7 +241,7 @@ namespace GooglePlayGames.Editor.UI {
                 return false;
             }
 
-            GenerateAndroidManifest();
+            UpdateGameInfo();
 
             AssetDatabase.Refresh();
             ProjectSettings.Instance.Set(KEY_ANDROID_SETUP_DONE, true);
