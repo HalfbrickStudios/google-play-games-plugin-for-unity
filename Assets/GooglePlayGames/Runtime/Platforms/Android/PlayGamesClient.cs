@@ -733,7 +733,7 @@ namespace GooglePlayGames.Android {
             // HelperFragment.Class.ShowCompareProfileWithAlternativeNameHintsUI(playerId, otherPlayerInGameName, currentPlayerInGameName, AsOnGameThreadCallback(callback));
         }
 
-        public void ShowLeaderboardUI(string leaderboardId, ALTS span, Action<AUS> callback)
+        public void ShowLeaderboardUI(string id, ALTS span, Action<AUS> callback)
         {
             const string method = "PlayGamesClient.ShowLeaderboardUI(string, LeaderboardTimeSpan, Action<UiStatus>)";
             Logger.t($"AND: Calling {method}");
@@ -745,10 +745,10 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            if (leaderboardId == null) {
-                // HelperFragment.Class.ShowAllLeaderboardsUI(callback);
+            if (id == null) {
+                HelperFragment.ShowAllLeaderboardsUi(callback);
             } else {
-                // HelperFragment.Class.ShowLeaderboardUI(leaderboardId, span, callback);
+                HelperFragment.ShowLeaderboardUi(id, span, callback);
             }
         }
 
