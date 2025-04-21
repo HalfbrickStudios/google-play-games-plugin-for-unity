@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+using GooglePlayGames.Android.Java;
 using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
@@ -265,7 +266,7 @@ namespace GooglePlayGames.Android {
                 return;
             }
 
-            // HelperFragment.ShowSelectSnapshotUI(showCreateSaveUI, showDeleteSaveUI, (int)maxDisplayedSavedGames, uiTitle, callback);
+            HelperFragment.ShowSelectSnapshotUi(uiTitle, showCreateSaveUI, showDeleteSaveUI, (int)maxDisplayedSavedGames, callback);
         }
 
         #endregion ISavedGameClient implementation
