@@ -278,7 +278,7 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (m_friendsResolutionException != null) {
-                // HelperFragment.Class.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
+                HelperFragment.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
                 return;
             }
 
@@ -296,8 +296,7 @@ namespace GooglePlayGames.Android {
                     if (required) {
                         using var jResolvable = JRAE.WrapInstance(jException);
                         m_friendsResolutionException = jResolvable.JGetResolution();
-                        // TODO: Port AskForLoadFriendsResolution
-                        // HelperFragment.Class.AskForLoadFriendsResolution(m_friendsResolutionException, AsOnGameThreadCallback(callback));
+                        HelperFragment.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
                         return;
                     }
                     if (IsApiException(jException)) {
@@ -727,11 +726,13 @@ namespace GooglePlayGames.Android {
             Logger.t($"AND: Calling {method}");
 
             callback = Utility.ToUiAction(callback);
+
             if (!IsAuthenticated()) {
                 callback.Invoke(AUS.NotAuthorized);
                 return;
             }
-            // HelperFragment.Class.ShowAchievementsUI(callback);
+
+            HelperFragment.ShowAchievementsUi(callback);
         }
 
         public void ShowCompareProfileWithAlternativeNameHintsUI(string playerId, string otherPlayerInGameName, string currentPlayerInGameName, Action<AUS> callback)
