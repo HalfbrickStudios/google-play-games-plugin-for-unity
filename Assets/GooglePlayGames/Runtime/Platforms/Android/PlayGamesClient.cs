@@ -55,12 +55,12 @@ using APGC   = GooglePlayGames.Android.PlayGamesClient;
 using APGCAS = GooglePlayGames.Android.PlayGamesClient.AuthState;
 
 using JAE   = GooglePlayGames.Android.Java.ApiException;
-using JAEI  = GooglePlayGames.Android.Java.ApiException.Instance;
 using JLSBI = GooglePlayGames.Android.Java.LeaderboardScoreBuffer.Instance;
 using JLSsI = GooglePlayGames.Android.Java.LeaderboardsClient.LeaderboardScores.Instance;
 using JOI   = GooglePlayGames.Android.Java.Object.Instance;
 using JPG   = GooglePlayGames.Android.Java.PlayGames;
 using JPGS  = GooglePlayGames.Android.Java.PlayGamesSdk;
+using JRAE  = GooglePlayGames.Android.Java.ResolvableApiException;
 
 namespace GooglePlayGames.Android {
 
@@ -285,9 +285,9 @@ namespace GooglePlayGames.Android {
             }).JAddOnFailureListener(jException => {
                 Logger.t($"AND: Failure {method}");
                 Logger.d("AND: " + jException.JToString());
-                HelperFragment.IsResolutionRequired(jException, resolutionRequired => {
-                    if (resolutionRequired) {
-                        using var jResolvable = ResolvableApiException.WrapInstance(jException);
+                HelperFragment.IsResolutionRequired(jException, required => {
+                    if (required) {
+                        using var jResolvable = JRAE.WrapInstance(jException);
                         m_friendsResolutionException = jResolvable.JGetResolution();
                         // TODO: Port AskForLoadFriendsResolution
                         // HelperFragment.Class.AskForLoadFriendsResolution(m_friendsResolutionException, AsOnGameThreadCallback(callback));
@@ -529,14 +529,15 @@ namespace GooglePlayGames.Android {
             }).JAddOnFailureListener(jException => {
                 Logger.t($"AND: Failure {method}");
                 Logger.d("AND: " + jException.JToString());
-                // HelperFragment.Class.IsResolutionRequired(exception, resolutionRequired => {
-                //     if (resolutionRequired) {
-                //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
-                //         InvokeCallbackOnGameThread(callback, new LeaderboardScoreData(token.LeaderboardId, ResponseStatus.ResolutionRequired));
-                //     } else {
-                //         m_friendsResolutionException = null;
-                //     }
-                // });
+                HelperFragment.IsResolutionRequired(jException, required => {
+                    if (required) {
+                        using var jResolvable = JRAE.WrapInstance(jException);
+                        m_friendsResolutionException = jResolvable.JGetResolution();
+                        callback.Invoke(new ALSD(token.LeaderboardId, ARS.ResolutionRequired));
+                    } else {
+                        m_friendsResolutionException = null;
+                    }
+                });
                 callback.Invoke(new ALSD(token.LeaderboardId, ARS.InternalError));
             });
         }
