@@ -27,14 +27,21 @@ using UAJO = UnityEngine.AndroidJavaObject;
 
 using ALTS = GooglePlayGames.Api.LeaderboardTimeSpan;
 using AUS  = GooglePlayGames.Api.UiStatus;
+using ASUS = GooglePlayGames.Api.SavedGame.SelectUiStatus;
+using AISGM = GooglePlayGames.Api.SavedGame.ISavedGameMetadata;
+using ASM = GooglePlayGames.Android.SnapshotMetadata;
 
 using JC = GooglePlayGames.Android.JavaClass;
+using JO = GooglePlayGames.Android.JavaObject;
 
 using JAI  = GooglePlayGames.Android.Java.Activity.Instance;
 using JEI  = GooglePlayGames.Android.Java.Exception.Instance;
 using JHFC = GooglePlayGames.Android.Java.HelperFragment.Class;
+using JHF = GooglePlayGames.Android.Java.HelperFragment;
 using JT   = GooglePlayGames.Android.Java.Task;
 using JUP  = GooglePlayGames.Android.Java.UnityPlayer;
+using JSMI = GooglePlayGames.Android.Java.SnapshotMetadata.Instance;
+
 
 namespace GooglePlayGames.Android.Java {
 
@@ -43,6 +50,50 @@ namespace GooglePlayGames.Android.Java {
         public static readonly string ClassName               =  "HelperFragment";
         public static readonly string PackageName             =  "com.google.games.bridge";
         public static readonly string FullyQualifiedClassName = $"{PackageName}.{ClassName}";
+
+        internal static class Request
+        {
+
+            public static readonly string ClassName = $"{JHF.ClassName}$PlayerFriendStatus";
+            public static readonly string FullyQualifiedClassName = $"{PackageName}.{ClassName}";
+
+            public static Instance MakeInstance() => new();
+            public static Instance WrapInstance(UAJO jObject) => new(jObject.GetRawObject());
+
+            internal sealed class Instance : JO
+            {
+                internal Instance() : base(FullyQualifiedClassName)
+                {
+                    Logger.t($"JNI: Initializing class {FullyQualifiedClassName}");
+                }
+
+                internal Instance(IntPtr ptr) : base(ptr)
+                {
+                    Logger.t($"JNI: Wrapping instance {FullyQualifiedClassName}");
+                }
+
+                public JSMI JMetadata
+                {
+                    get
+                    {
+                        Logger.t($"JNI: Reading {FullyQualifiedClassName}.JMetadata");
+                        return GetStatic<JSMI>("metadata");
+                    }
+                }     
+                
+                public int Status
+                {
+                    get
+                    {
+                        Logger.t($"JNI: Reading {FullyQualifiedClassName}.Status");
+                        return GetStatic<int>("status");
+                    }
+                }
+
+            }
+
+        }
+
 
         public static JHFC MakeClass() => new();
 
@@ -68,6 +119,18 @@ namespace GooglePlayGames.Android.Java {
         public static void             ShowCompareProfileWithAlternativeNameHintsUi (JAI         jActivity,  string       userId,            string      comparandUserName, string      userName, Action<AUS> callback) => JHFC.Instance.ShowCompareProfileWithAlternativeNameHintsUi (jActivity,  userId,            comparandUserName, userName, callback);
         public static JT.Instance<int> JShowCompareProfileWithAlternativeNameHintsUi(string      userId,     string       comparandUserName, string      userName                                                     ) => JHFC.Instance.JShowCompareProfileWithAlternativeNameHintsUi(userId,     comparandUserName, userName                             );
         public static JT.Instance<int> JShowCompareProfileWithAlternativeNameHintsUi(JAI         jActivity,  string       userId,            string      comparandUserName, string      userName                      ) => JHFC.Instance.JShowCompareProfileWithAlternativeNameHintsUi(jActivity,  userId,            comparandUserName, userName          );
+        public static JT.Instance<Request.Instance> JShowSelectSnapshotUi(JAI jActivity, string title, bool showCreate, bool showDelete, int limit) => JHFC.Instance.JShowSelectSnapshotUi(jActivity, title, showCreate, showDelete, limit);
+
+        public static void ShowSelectSnapshotUi(string title, bool showCreate, bool showDelete, int limit, Action<ASUS, AISGM> callback)
+        {
+            JHFC.Instance.ShowSelectSnapshotUi(title, showCreate, showDelete, limit, callback);
+        }
+
+        public static void ShowSelectSnapshotUi(JAI jActivity, string title, bool showCreate, bool showDelete, int limit, Action<ASUS, AISGM> callback)
+        {
+            JHFC.Instance.ShowSelectSnapshotUi(jActivity, title, showCreate, showDelete, limit, callback);
+        }
+
 
         internal sealed class Class : JC {
 
@@ -116,8 +179,12 @@ namespace GooglePlayGames.Android.Java {
                 return CallStatic<JT.Instance<int>>("showCompareProfileWithAlternativeNameHintsUi", jActivity, userId, comparandUserName, userName);
             }
 
+            public JT.Instance<Request.Instance> JShowSelectSnapshotUi(JAI jActivity, string title, bool showCreate, bool showDelete, int limit)
+            {
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.showSelectSnapshotUi(Activity, string, bool, bool, int)");
+                return CallStatic<JT.Instance<Request.Instance>>("showSelectSnapshotUi", jActivity, title, showCreate, showDelete, limit);
+            }
         }
-
     }
 
 }
@@ -241,6 +308,34 @@ namespace GooglePlayGames.Android.Java.Extensions {
             }).JAddOnFailureListener(jException => {
                 callback?.Invoke(AUS.InternalError);
             });
+        }
+
+        public static void ShowSelectSnapshotUi(this JHFC self, string title, bool showCreate, bool showDelete, int limit, Action<ASUS, AISGM> callback)
+        {
+            using var jActivity = JUP.JCurrentActivity;
+            self.JShowSelectSnapshotUi(jActivity, title, showCreate, showDelete, limit);
+        }
+
+        public static void ShowSelectSnapshotUi(this JHFC self, JAI jActivity, string title, bool showCreate, bool showDelete, int limit, Action<ASUS, AISGM> callback)
+        {
+            using var jTask = self.JShowSelectSnapshotUi(jActivity, title, showCreate, showDelete, limit);
+            jTask.JAddOnSuccessListener(
+                result =>
+                {
+                    var status = (ASUS)result.Status;
+                    using var jMetadata = result.JMetadata;
+
+                    ASM metadata =
+                        jMetadata == null
+                            ? null
+                            : new ASM(jMetadata, jSnapshotContents: null);
+
+                    callback?.Invoke(status, metadata);
+                }).JAddOnFailureListener(
+                jException =>
+                {
+                    callback?.Invoke(ASUS.InternalError, null);
+                });
         }
 
     }
