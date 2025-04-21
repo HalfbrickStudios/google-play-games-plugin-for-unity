@@ -46,13 +46,28 @@ namespace GooglePlayGames.Editor.Build {
                 return;
             }
 
-            var text        = File.ReadAllText(path);
-            var document    = new XmlDocument();
-            document.LoadXml(text);
-            var manifest    = document.SelectSingleNode("/manifest");
-            var application = manifest.SelectSingleNode("/application");
+            var text = File.ReadAllText(path);
+            if (string.IsNullOrEmpty(text)) {
+                Debug.LogError($"GPG: Manifest file is empty @ {path}");
+                return;
+            }
 
-            
+            var document = new XmlDocument();
+            document.LoadXml(text);
+
+            var manifest = document.SelectSingleNode("/manifest");
+            if (manifest == null) {
+                Debug.LogError($"GPG: Manifest node not found in AndroidManifest.xml @ {path}");
+                return;
+            }
+
+            var application = manifest.SelectSingleNode("/application");
+            if (application == null) {
+                Debug.LogError($"GPG: Application node not found in AndroidManifest.xml @ {path}");
+                return;
+            }
+
+
             var name = "com.google.android.gms.games.unityVersion";
             var node = application.SelectSingleNode($"/meta-data[@android:name='{name}']");
             if (node != null) {
