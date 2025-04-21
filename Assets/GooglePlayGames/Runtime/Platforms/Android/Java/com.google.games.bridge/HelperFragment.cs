@@ -18,8 +18,6 @@
 
 using System;
 
-using UnityEngine;
-
 using GooglePlayGames.Android.Java.Extensions;
 
 using Logger = GooglePlayGames.Utils.Logger;
@@ -35,9 +33,8 @@ using JEI  = GooglePlayGames.Android.Java.Exception.Instance;
 using JHFC = GooglePlayGames.Android.Java.HelperFragment.Class;
 using JT   = GooglePlayGames.Android.Java.Task;
 using JTI  = GooglePlayGames.Android.Java.Task.Instance;
+using JUP  = GooglePlayGames.Android.Java.UnityPlayer;
 using JVI  = GooglePlayGames.Android.Java.View.Instance;
-using GooglePlayGames.Api;
-using System.Reflection.Emit;
 
 namespace GooglePlayGames.Android.Java {
 
@@ -49,15 +46,18 @@ namespace GooglePlayGames.Android.Java {
 
         public static JHFC MakeClass() => new();
 
-        public static JT.Instance<int> JAskForLoadFriendsResolution(JAI jActivity,   UAJO         jIntent   ) => JHFC.Instance.JAskForLoadFriendsResolution(jActivity,  jIntent   );
-        public static JVI              JGetDecorView               (JAI  jActivity                          ) => JHFC.Instance.JGetDecorView               (jActivity             );
-        public static bool              IsResolutionRequired       (JEI  jException                         ) => JHFC.Instance.IsResolutionRequired        (jException            );
-        public static void              IsResolutionRequired       (JEI  jException, Action<bool> callback  ) => JHFC.Instance.IsResolutionRequired        (jException, callback  );
-        public static JTI              JShowAchievementUi          (JAI  jActivity                          ) => JHFC.Instance.JShowAchievementUi          (jActivity             );
-        public static JTI              JShowAllLeaderboardsUi      (JAI  jActivity                          ) => JHFC.Instance.JShowAllLeaderboardsUi      (jActivity             );
-        public static JTI              JShowLeaderboardUi          (JAI  jActivity                          ) => JHFC.Instance.JShowLeaderboardUi          (jActivity             );
-        public static JTI              JShowLeaderboardUi          (JAI  jActivity, JEI           jException) => JHFC.Instance.JShowLeaderboardUi          (jActivity,  jException);
-        public static void              ShowCaptureOverlayUi       (JAI  jActivity                          ) => JHFC.Instance.ShowCaptureOverlayUi        (jActivity             );
+        public static void              AskForLoadFriendsResolution(JAI  jActivity, UAJO          jIntent, Action<AUS> callback) => JHFC.Instance.AskForLoadFriendsResolution(jActivity, jIntent, callback);
+        public static void              AskForLoadFriendsResolution(UAJO jIntent,   Action<AUS>   callback                     ) => JHFC.Instance.AskForLoadFriendsResolution(jIntent, callback);
+        public static JT.Instance<int> JAskForLoadFriendsResolution(UAJO jIntent                                               ) => JHFC.Instance.JAskForLoadFriendsResolution(jIntent               );
+        public static JT.Instance<int> JAskForLoadFriendsResolution(JAI  jActivity,   UAJO        jIntent                      ) => JHFC.Instance.JAskForLoadFriendsResolution(jActivity,  jIntent   );
+        public static JVI              JGetDecorView               (JAI  jActivity                                             ) => JHFC.Instance.JGetDecorView               (jActivity             );
+        public static bool              IsResolutionRequired       (JEI  jException                                            ) => JHFC.Instance.IsResolutionRequired        (jException            );
+        public static void              IsResolutionRequired       (JEI  jException, Action<bool> callback                     ) => JHFC.Instance.IsResolutionRequired        (jException, callback  );
+        public static JTI              JShowAchievementUi          (JAI  jActivity                                             ) => JHFC.Instance.JShowAchievementUi          (jActivity             );
+        public static JTI              JShowAllLeaderboardsUi      (JAI  jActivity                                             ) => JHFC.Instance.JShowAllLeaderboardsUi      (jActivity             );
+        public static JTI              JShowLeaderboardUi          (JAI  jActivity                                             ) => JHFC.Instance.JShowLeaderboardUi          (jActivity             );
+        public static JTI              JShowLeaderboardUi          (JAI  jActivity, JEI           jException                   ) => JHFC.Instance.JShowLeaderboardUi          (jActivity,  jException);
+        public static void              ShowCaptureOverlayUi       (JAI  jActivity                                             ) => JHFC.Instance.ShowCaptureOverlayUi        (jActivity             );
 
         internal sealed class Class : JC {
 
@@ -72,14 +72,8 @@ namespace GooglePlayGames.Android.Java {
 
             public JT.Instance<int> JAskForLoadFriendsResolution(JAI jActivity, UAJO jIntent)
             {
-                Logger.t($"JNI: Calling {FullyQualifiedClassName}.askForLoadFriendsResolution(Activity)");
-                // TODO: Port this to C#
-                // GenericResolutionUiRequest request = new GenericResolutionUiRequest(pendingIntent);
-                // if (!HelperFragment.startRequest(parentActivity, request)) {
-                //     request.setResult(CommonUIStatus.UI_BUSY);
-                // }
-                // return request.getTask();
-                return null;
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.askForLoadFriendsResolution(Activity, AndroidJavaObject)");
+                return CallStatic<JT.Instance<int>>("askForLoadFriendsResolution", jActivity, jIntent);
             }
 
             public JVI JGetDecorView(JAI jActivity)
@@ -140,6 +134,12 @@ namespace GooglePlayGames.Android.Java.Extensions {
             callback?.Invoke(isResolutionRequired);
         }
 
+        public static JT.Instance<int> JAskForLoadFriendsResolution(this JHFC self, UAJO jIntent)
+        {
+            using var jActivity = JUP.JCurrentActivity;
+            return self.JAskForLoadFriendsResolution(jActivity, jIntent);
+        }
+
         public static void AskForLoadFriendsResolution(this JHFC self, JAI jActivity, UAJO jIntent, Action<AUS> callback)
         {
             using var jTask = self.JAskForLoadFriendsResolution(jActivity, jIntent);
@@ -148,6 +148,12 @@ namespace GooglePlayGames.Android.Java.Extensions {
             }).JAddOnFailureListener(jException => {
                 callback?.Invoke(AUS.InternalError);
             });
+        }
+
+        public static void AskForLoadFriendsResolution(this JHFC self, UAJO jIntent, Action<AUS> callback)
+        {
+            using var jActivity = JUP.JCurrentActivity;
+            self.AskForLoadFriendsResolution(jActivity, jIntent, callback);
         }
 
     }

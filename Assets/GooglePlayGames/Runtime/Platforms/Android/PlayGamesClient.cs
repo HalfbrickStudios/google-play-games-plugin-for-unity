@@ -271,7 +271,7 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (m_friendsResolutionException != null) {
-                // HelperFragment.Class.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
+                HelperFragment.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
                 return;
             }
 
@@ -289,8 +289,7 @@ namespace GooglePlayGames.Android {
                     if (required) {
                         using var jResolvable = JRAE.WrapInstance(jException);
                         m_friendsResolutionException = jResolvable.JGetResolution();
-                        // TODO: Port AskForLoadFriendsResolution
-                        // HelperFragment.Class.AskForLoadFriendsResolution(m_friendsResolutionException, AsOnGameThreadCallback(callback));
+                        HelperFragment.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
                         return;
                     }
                     if (IsApiException(jException)) {
