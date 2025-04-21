@@ -714,11 +714,13 @@ namespace GooglePlayGames.Android {
             Logger.t($"AND: Calling {method}");
 
             callback = Utility.ToUiAction(callback);
+
             if (!IsAuthenticated()) {
                 callback.Invoke(AUS.NotAuthorized);
                 return;
             }
-            // HelperFragment.Class.ShowAchievementsUI(callback);
+
+            HelperFragment.ShowAchievementsUi(callback);
         }
 
         public void ShowCompareProfileWithAlternativeNameHintsUI(string playerId, string otherPlayerInGameName, string currentPlayerInGameName, Action<AUS> callback)
