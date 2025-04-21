@@ -274,6 +274,7 @@ namespace GooglePlayGames.Android {
         #region Object implementation
 
         public override string ToString() => $"SavedGameClient(playClient: {JPlayClient}, snapClient: {JSnapshotClient})";
+
         public override int GetHashCode() => HashCode.Combine(JPlayClient, JSnapshotClient);
 
         public override bool Equals(object other)

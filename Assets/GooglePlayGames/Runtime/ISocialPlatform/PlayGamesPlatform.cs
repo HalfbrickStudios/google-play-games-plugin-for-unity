@@ -57,6 +57,7 @@ using ARS   = GooglePlayGames.Api.ResponseStatus;
 using ASIS  = GooglePlayGames.Api.SignInStatus;
 using ASPC  = GooglePlayGames.Api.ScorePageCursor;
 using AUS   = GooglePlayGames.Api.UiStatus;
+using System.Runtime.InteropServices;
 
 namespace GooglePlayGames {
 
@@ -612,7 +613,18 @@ namespace GooglePlayGames {
 
         #region Object implementation
 
-        public override string ToString() => $"PlayGamesPlatform(client: {m_client}, defaultLeaderboardId: {m_defaultLeaderboardId}, idMap: {m_idMap}, LocalUser: {LocalUser})";
+        internal string ToString(GPGLU user)
+        {
+            if (user != null && user == LocalUser) {
+                return $"PlayGamesPlatform(client: {m_client}, defaultLeaderboardId: {m_defaultLeaderboardId}, idMap: {m_idMap})";
+            }
+            if (LocalUser is GPGLU casted) {
+                return $"PlayGamesPlatform(client: {m_client}, defaultLeaderboardId: {m_defaultLeaderboardId}, idMap: {m_idMap}, LocalUser: {casted.ToString(this)})";
+            }
+            return $"PlayGamesPlatform(client: {m_client}, defaultLeaderboardId: {m_defaultLeaderboardId}, idMap: {m_idMap}, LocalUser: {LocalUser})";
+        }
+
+        public override string ToString() => ToString(null);
 
         public override int GetHashCode() => HashCode.Combine(m_client, m_defaultLeaderboardId, m_idMap, LocalUser);
 

@@ -130,7 +130,18 @@ namespace GooglePlayGames {
 
         #region Object implementation
 
-        public override string ToString() => $"PlayGamesLocalUser({base.ToString()}, platform: {m_platform}, stats: {m_stats})";
+        internal string ToString(GPGP platform)
+        {
+            if (platform != null && platform == m_platform) {
+                return $"PlayGamesLocalUser({base.ToString()}, stats: {m_stats})";
+            }
+            if (m_platform is GPGP casted) {
+                return $"PlayGamesLocalUser({base.ToString()}, platform: {casted.ToString(this)}, stats: {m_stats})";
+            }
+            return $"PlayGamesLocalUser({base.ToString()}, platform: {m_platform}, stats: {m_stats})";
+        }
+
+        public override string ToString() => ToString(null);
 
         public override int GetHashCode() => HashCode.Combine(m_platform, m_stats);
 
