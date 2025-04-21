@@ -58,6 +58,7 @@ using JOI   = GooglePlayGames.Android.Java.Object.Instance;
 using JPG   = GooglePlayGames.Android.Java.PlayGames;
 using JPGS  = GooglePlayGames.Android.Java.PlayGamesSdk;
 using GooglePlayGames.Config;
+using GooglePlayGames.Android.Java;
 
 namespace GooglePlayGames.Android {
 
@@ -187,7 +188,7 @@ namespace GooglePlayGames.Android {
             }).JAddOnFailureListener(jException => {
                 Logger.t($"AND: Failure {method}");
                 Logger.d("AND: " + jException.JToString());
-                // HelperFragmentClass.Instance.IsResolutionRequired(exception, resolutionRequired => {
+                // HelperFragment.Class.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
                 //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
                 //         m_lastLoadFriendsStatus = LoadFriendsStatus.ResolutionRequired;
@@ -268,7 +269,7 @@ namespace GooglePlayGames.Android {
             callback = Utility.ToUiAction(callback);
 
             if (m_friendsResolutionException != null) {
-                // HelperFragmentClass.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
+                // HelperFragment.Class.AskForLoadFriendsResolution(m_friendsResolutionException, callback);
                 return;
             }
 
@@ -282,10 +283,10 @@ namespace GooglePlayGames.Android {
             }).JAddOnFailureListener(jException => {
                 Logger.t($"AND: Failure {method}");
                 Logger.d("AND: " + jException.JToString());
-                // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
+                // HelperFragment.Class.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
                 //         m_friendsResolutionException = exception.Call<AndroidJavaObject>("getResolution");
-                //         // HelperFragmentClass.AskForLoadFriendsResolution(m_friendsResolutionException, AsOnGameThreadCallback(callback));
+                //         // HelperFragment.Class.AskForLoadFriendsResolution(m_friendsResolutionException, AsOnGameThreadCallback(callback));
                 //         return;
                 //     }
                 //     if (IsApiException(exception)) {
@@ -523,7 +524,7 @@ namespace GooglePlayGames.Android {
             }).JAddOnFailureListener(jException => {
                 Logger.t($"AND: Failure {method}");
                 Logger.d("AND: " + jException.JToString());
-                // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
+                // HelperFragment.Class.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
                 //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
                 //         InvokeCallbackOnGameThread(callback, new LeaderboardScoreData(token.LeaderboardId, ResponseStatus.ResolutionRequired));
@@ -558,7 +559,7 @@ namespace GooglePlayGames.Android {
             }).JAddOnFailureListener(jException => {
                 Logger.t($"AND: Failure {method}");
                 Logger.d("AND: " + jException.JToString());
-                // HelperFragmentClass.IsResolutionRequired(exception, resolutionRequired => {
+                // HelperFragment.Class.IsResolutionRequired(exception, resolutionRequired => {
                 //     if (resolutionRequired) {
                 //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
                 //         InvokeCallbackOnGameThread(callback, new LeaderboardScoreData(id, ResponseStatus.ResolutionRequired));
@@ -712,7 +713,7 @@ namespace GooglePlayGames.Android {
                 callback.Invoke(AUS.NotAuthorized);
                 return;
             }
-            // HelperFragmentClass.ShowAchievementsUI(callback);
+            // HelperFragment.Class.ShowAchievementsUI(callback);
         }
 
         public void ShowCompareProfileWithAlternativeNameHintsUI(string playerId, string otherPlayerInGameName, string currentPlayerInGameName, Action<AUS> callback)
@@ -722,7 +723,7 @@ namespace GooglePlayGames.Android {
 
             callback = Utility.ToUiAction(callback);
 
-            // HelperFragmentClass.ShowCompareProfileWithAlternativeNameHintsUI(playerId, otherPlayerInGameName, currentPlayerInGameName, AsOnGameThreadCallback(callback));
+            // HelperFragment.Class.ShowCompareProfileWithAlternativeNameHintsUI(playerId, otherPlayerInGameName, currentPlayerInGameName, AsOnGameThreadCallback(callback));
         }
 
         public void ShowLeaderboardUI(string leaderboardId, ALTS span, Action<AUS> callback)
@@ -738,9 +739,9 @@ namespace GooglePlayGames.Android {
             }
 
             if (leaderboardId == null) {
-                // HelperFragmentClass.ShowAllLeaderboardsUI(callback);
+                // HelperFragment.Class.ShowAllLeaderboardsUI(callback);
             } else {
-                // HelperFragmentClass.ShowLeaderboardUI(leaderboardId, span, callback);
+                // HelperFragment.Class.ShowLeaderboardUI(leaderboardId, span, callback);
             }
         }
 
