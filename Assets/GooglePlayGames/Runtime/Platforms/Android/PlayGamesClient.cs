@@ -190,29 +190,36 @@ namespace GooglePlayGames.Android {
             }).JAddOnFailureListener(jException => {
                 Logger.t($"AND: Failure {method}");
                 Logger.d("AND: " + jException.JToString());
-                // HelperFragment.Class.IsResolutionRequired(exception, resolutionRequired => {
-                //     if (resolutionRequired) {
-                //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
-                //         m_lastLoadFriendsStatus = LoadFriendsStatus.ResolutionRequired;
-                //         m_friends = new IUserProfile[0];
-                //         InvokeCallbackOnGameThread(callback, LoadFriendsStatus.ResolutionRequired);
-                //     } else {
-                //         m_friendsResolutionException = null;
-                //         if (IsApiException(exception)) {
-                //             var casted = exception as ApiExceptionObject;
-                //             var statusCode = casted.GetStatusCode();
-                //             if (statusCode == /* GamesClientStatusCodes.NETWORK_ERROR_NO_DATA */ 26504) {
-                //                 m_lastLoadFriendsStatus = LoadFriendsStatus.NetworkError;
-                //                 InvokeCallbackOnGameThread(callback, LoadFriendsStatus.NetworkError);
-                //                 return;
-                //             }
-                //         }
-                // 
-                //         m_lastLoadFriendsStatus = LoadFriendsStatus.InternalError;
-                //         Logger.e("LoadFriends failed: " + jException.JToString());
-                //         InvokeCallbackOnGameThread(callback, LoadFriendsStatus.InternalError);
-                //     }
-                // });
+                HelperFragment.IsResolutionRequired(jException, resolutionRequired =>
+                {
+                    if (resolutionRequired)
+                    {
+                        using var jResolvable = JRAE.WrapInstance(jException);
+                        m_friendsResolutionException = jResolvable.JGetResolution();
+                        m_lastLoadFriendsStatus = ALFS.ResolutionRequired;
+                        m_friends = new UIUP[0];
+                        callback.Invoke(ALFS.ResolutionRequired);
+                    }
+                    else
+                    {
+                        m_friendsResolutionException = null;
+                        if (IsApiException(jException))
+                        {
+                            using var jWrapped = JAE.WrapInstance(jException);
+                            var statusCode = jWrapped.GetStatusCode();
+                            if (statusCode == /* GamesClientStatusCodes.NETWORK_ERROR_NO_DATA */ 26504)
+                            {
+                                m_lastLoadFriendsStatus = ALFS.NetworkError;
+                                callback.Invoke(ALFS.NetworkError);
+                                return;
+                            }
+                        }
+
+                        m_lastLoadFriendsStatus = ALFS.InternalError;
+                        Logger.e("LoadFriends failed: " + jException.JToString());
+                        callback.Invoke(ALFS.InternalError);
+                    }
+                });
             });
         }
 
@@ -565,14 +572,19 @@ namespace GooglePlayGames.Android {
             }).JAddOnFailureListener(jException => {
                 Logger.t($"AND: Failure {method}");
                 Logger.d("AND: " + jException.JToString());
-                // HelperFragment.Class.IsResolutionRequired(exception, resolutionRequired => {
-                //     if (resolutionRequired) {
-                //         m_friendsResolutionException = exception.Call<UAJO>("getResolution");
-                //         InvokeCallbackOnGameThread(callback, new LeaderboardScoreData(id, ResponseStatus.ResolutionRequired));
-                //     } else {
-                //         m_friendsResolutionException = null;
-                //     }
-                // });
+                HelperFragment.IsResolutionRequired(jException, resolutionRequired =>
+                {
+                    if (resolutionRequired)
+                    {
+                        using var jResolvable = JRAE.WrapInstance(jException);
+                        m_friendsResolutionException = jResolvable.JGetResolution();
+                        callback.Invoke(new ALSD(id, ARS.ResolutionRequired));
+                    }
+                    else
+                    {
+                        m_friendsResolutionException = null;
+                    }
+                });
                 callback.Invoke(new ALSD(id, ARS.InternalError));
             });
         }
