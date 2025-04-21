@@ -8,7 +8,7 @@ namespace GooglePlayGames.Config {
     [CreateAssetMenu(fileName = FileName, menuName = "Google/Play Games/Game Information")]
     public class GameInformation : ScriptableObject {
 
-        public const string FileName = "GooglePlayGames.Config.GameInformation";
+        public const string FileName = "GooglePlayGames.GameInformation";
 
         private static GameInformation s_instance;
 

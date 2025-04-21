@@ -197,7 +197,8 @@ namespace GooglePlayGames.Editor.UI {
             }
 
             if (resourceKeys.Count > 0) {
-                WriteResourceIds(classDirectory, className, resourceKeys);
+                // TODO: Check if this is necessary at all
+                // WriteResourceIds(classDirectory, className, resourceKeys);
             }
 
             return appId != null;
