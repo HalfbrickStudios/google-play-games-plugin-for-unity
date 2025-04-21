@@ -1,19 +1,3 @@
-// <copyright file="AndroidTokenClient.cs" company="Google Inc.">
-// Copyright (C) 2015 Google Inc.
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//  http://www.apache.org/licenses/LICENSE-2.0
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-// </copyright>
-
 #if UNITY_ANDROID
 
 using System;
@@ -42,6 +26,7 @@ using ASGMU = GooglePlayGames.Api.SavedGame.SavedGameMetadataUpdate;
 using ASGRS = GooglePlayGames.Api.SavedGame.SavedGameRequestStatus;
 using ASPC  = GooglePlayGames.Api.ScorePageCursor;
 using ASPD  = GooglePlayGames.Api.ScorePageDirection;
+using ASUS  = GooglePlayGames.Api.SavedGame.SelectUiStatus;
 
 using JABI   = GooglePlayGames.Android.Java.AchievementBuffer.Instance;
 using JAI    = GooglePlayGames.Android.Java.Achievement.Instance;
@@ -64,6 +49,7 @@ using JPSI   = GooglePlayGames.Android.Java.PlayerStats.Instance;
 using JSC    = GooglePlayGames.Android.Java.SnapshotsClient;
 using JSMC   = GooglePlayGames.Android.Java.SnapshotMetadataChange;
 using JSMCI  = GooglePlayGames.Android.Java.SnapshotMetadataChange.Instance;
+using System.Text.RegularExpressions;
 
 namespace GooglePlayGames.Utils {
 
@@ -161,8 +147,8 @@ namespace GooglePlayGames.Utils {
             using (var jBuffer = jScores.JGetScores()) {
                 result = ToAndroidLeaderboardScoreData(jBuffer, id, status);
                 if (collection != null && span != null) {
-                    result.NextPageToken = new ASPC(jBuffer, id, (ALC)collection, (ALTS)span, ASPD.Forward);
-                    result.PrevPageToken = new ASPC(jBuffer, id, (ALC)collection, (ALTS)span, ASPD.Backward);
+                    result.NextPageCursor     = new ASPC(jBuffer, id, (ALC)collection, (ALTS)span, ASPD.Forward);
+                    result.PreviousPageCursor = new ASPC(jBuffer, id, (ALC)collection, (ALTS)span, ASPD.Backward);
                 }
             }
             using (var jLeaderboard = jScores.JGetLeaderboard()) {
@@ -262,6 +248,8 @@ namespace GooglePlayGames.Utils {
         public static ARS ToAndroidResponseStatus(bool jIsStale) => jIsStale ? ARS.SuccessWithStale : ARS.Success;
 
         public static ASGRS ToAndroidSavedGameRequestStatus(bool jIsAuthenticated) => jIsAuthenticated ? ASGRS.InternalError : ASGRS.AuthenticationError;
+
+        public static ASUS ToAndroidSelectUiStatus(int jStatus) => (ASUS)jStatus; // No Gods or Kings. Only Crash.
 
         public static int ToJavaLeaderboardVariantCollection(ALC collection) => collection switch
         {
