@@ -19,7 +19,9 @@
 using System;
 using System.Linq;
 
+using GooglePlayGames.Android.Java;
 using GooglePlayGames.Android.Java.Extensions;
+using GooglePlayGames.Config;
 using GooglePlayGames.Utils;
 
 using Logger = GooglePlayGames.Utils.Logger;
@@ -52,13 +54,13 @@ using GPGHO = GooglePlayGames.Utils.PlayGamesHelperObject;
 using APGC   = GooglePlayGames.Android.PlayGamesClient;
 using APGCAS = GooglePlayGames.Android.PlayGamesClient.AuthState;
 
+using JAE   = GooglePlayGames.Android.Java.ApiException;
+using JAEI  = GooglePlayGames.Android.Java.ApiException.Instance;
 using JLSBI = GooglePlayGames.Android.Java.LeaderboardScoreBuffer.Instance;
 using JLSsI = GooglePlayGames.Android.Java.LeaderboardsClient.LeaderboardScores.Instance;
 using JOI   = GooglePlayGames.Android.Java.Object.Instance;
 using JPG   = GooglePlayGames.Android.Java.PlayGames;
 using JPGS  = GooglePlayGames.Android.Java.PlayGamesSdk;
-using GooglePlayGames.Config;
-using GooglePlayGames.Android.Java;
 
 namespace GooglePlayGames.Android {
 
@@ -283,23 +285,26 @@ namespace GooglePlayGames.Android {
             }).JAddOnFailureListener(jException => {
                 Logger.t($"AND: Failure {method}");
                 Logger.d("AND: " + jException.JToString());
-                // HelperFragment.Class.IsResolutionRequired(exception, resolutionRequired => {
-                //     if (resolutionRequired) {
-                //         m_friendsResolutionException = exception.Call<AndroidJavaObject>("getResolution");
-                //         // HelperFragment.Class.AskForLoadFriendsResolution(m_friendsResolutionException, AsOnGameThreadCallback(callback));
-                //         return;
-                //     }
-                //     if (IsApiException(exception)) {
-                //         var casted = exception as AEO;
-                //         var statusCode = casted.GetStatusCode();
-                //         if (statusCode == /* GamesClientStatusCodes.NETWORK_ERROR_NO_DATA */ 26504) {
-                //             InvokeCallbackOnGameThread(callback, UIStatus.NetworkError);
-                //             return;
-                //         }
-                //     }
-                //     Logger.e("LoadFriends failed: " + jException.JToString());
-                //     InvokeCallbackOnGameThread(callback, UIStatus.InternalError);
-                // });
+                HelperFragment.IsResolutionRequired(jException, resolutionRequired => {
+                    if (resolutionRequired) {
+                        using var jResolvable = ResolvableApiException.WrapInstance(jException);
+                        m_friendsResolutionException = jResolvable.JGetResolution();
+                        // TODO: Port AskForLoadFriendsResolution
+                        // HelperFragment.Class.AskForLoadFriendsResolution(m_friendsResolutionException, AsOnGameThreadCallback(callback));
+                        return;
+                    }
+                    if (IsApiException(jException)) {
+                        using var jWrapped = JAE.WrapInstance(jException);
+                        var statusCode = jWrapped.GetStatusCode();
+                        // TODO: Port GamesClientStatusCodes
+                        if (statusCode == /* GamesClientStatusCodes.NETWORK_ERROR_NO_DATA */ 26504) {
+                            callback.Invoke(AUS.NetworkError);
+                            return;
+                        }
+                    }
+                    Logger.e("LoadFriends failed: " + jException.JToString());
+                    callback.Invoke(AUS.InternalError);
+                });
             });
         }
 

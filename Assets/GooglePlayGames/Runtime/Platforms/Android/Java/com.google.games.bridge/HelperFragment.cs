@@ -16,11 +16,14 @@
 
 #if UNITY_ANDROID
 
-using GooglePlayGames.Utils;
+using System;
+
+using GooglePlayGames.Android.Java.Extensions;
+
+using Logger = GooglePlayGames.Utils.Logger;
 
 using JC = GooglePlayGames.Android.JavaClass;
 
-using JAEI = GooglePlayGames.Android.Java.ApiException.Instance;
 using JAI  = GooglePlayGames.Android.Java.Activity.Instance;
 using JHFC = GooglePlayGames.Android.Java.HelperFragment.Class;
 using JEI  = GooglePlayGames.Android.Java.Exception.Instance;
@@ -37,13 +40,14 @@ namespace GooglePlayGames.Android.Java {
 
         public static JHFC MakeClass() => new();
 
-        public static JVI  JGetDecorView         (JAI  jActivity                ) => JHFC.Instance.JGetDecorView         (jActivity            );
-        public static bool  IsResolutionRequired (JAEI jException               ) => JHFC.Instance.IsResolutionRequired  (jException           );
-        public static JTI  JShowAchievementUi    (JAI  jActivity                ) => JHFC.Instance.JShowAchievementUi    (jActivity            );
-        public static JTI  JShowAllLeaderboardsUi(JAI  jActivity                ) => JHFC.Instance.JShowAllLeaderboardsUi(jActivity            );
-        public static JTI  JShowLeaderboardUi    (JAI  jActivity                ) => JHFC.Instance.JShowLeaderboardUi    (jActivity            );
-        public static JTI  JShowLeaderboardUi    (JAI  jActivity, JEI jException) => JHFC.Instance.JShowLeaderboardUi    (jActivity, jException);
-        public static void  ShowCaptureOverlayUi (JAI  jActivity                ) => JHFC.Instance.ShowCaptureOverlayUi  (jActivity            );
+        public static JVI  JGetDecorView         (JAI  jActivity                          ) => JHFC.Instance.JGetDecorView         (jActivity            );
+        public static bool  IsResolutionRequired (JEI  jException                         ) => JHFC.Instance.IsResolutionRequired  (jException           );
+        public static void  IsResolutionRequired (JEI  jException, Action<bool> callback  ) => JHFC.Instance.IsResolutionRequired  (jException, callback );
+        public static JTI  JShowAchievementUi    (JAI  jActivity                          ) => JHFC.Instance.JShowAchievementUi    (jActivity            );
+        public static JTI  JShowAllLeaderboardsUi(JAI  jActivity                          ) => JHFC.Instance.JShowAllLeaderboardsUi(jActivity            );
+        public static JTI  JShowLeaderboardUi    (JAI  jActivity                          ) => JHFC.Instance.JShowLeaderboardUi    (jActivity            );
+        public static JTI  JShowLeaderboardUi    (JAI  jActivity, JEI           jException) => JHFC.Instance.JShowLeaderboardUi    (jActivity, jException);
+        public static void  ShowCaptureOverlayUi (JAI  jActivity                          ) => JHFC.Instance.ShowCaptureOverlayUi  (jActivity            );
 
         internal sealed class Class : JC {
 
@@ -62,7 +66,7 @@ namespace GooglePlayGames.Android.Java {
                 return CallStatic<JVI>("getDecorView", jActivity);
             }
 
-            public bool IsResolutionRequired(JAEI jException)
+            public bool IsResolutionRequired(JEI jException)
             {
                 Logger.t($"JNI: Calling {FullyQualifiedClassName}.isResolutionRequired(Exception)");
                 return CallStatic<bool>("isResolutionRequired", jException);
@@ -98,6 +102,20 @@ namespace GooglePlayGames.Android.Java {
                 CallStatic("showCaptureOverlayUi", jActivity);
             }
 
+        }
+
+    }
+
+}
+
+namespace GooglePlayGames.Android.Java.Extensions {
+
+    internal static class HelperFragmentExtensions {
+
+        public static void IsResolutionRequired(this JHFC self, JEI jException, Action<bool> callback)
+        {
+            var isResolutionRequired = self.IsResolutionRequired(jException);
+            callback?.Invoke(isResolutionRequired);
         }
 
     }
