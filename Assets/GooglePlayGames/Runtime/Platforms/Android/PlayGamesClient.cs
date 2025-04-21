@@ -735,14 +735,14 @@ namespace GooglePlayGames.Android {
             HelperFragment.ShowAchievementsUi(callback);
         }
 
-        public void ShowCompareProfileWithAlternativeNameHintsUI(string playerId, string otherPlayerInGameName, string currentPlayerInGameName, Action<AUS> callback)
+        public void ShowCompareProfileWithAlternativeNameHintsUI(string userId, string comparandUserName, string userName, Action<AUS> callback)
         {
             const string method = "PlayGamesClient.ShowCompareProfileWithAlternativeNameHintsUI(string, string, string, Action<UiStatus>)";
             Logger.t($"AND: Calling {method}");
 
             callback = Utility.ToUiAction(callback);
 
-            // HelperFragment.Class.ShowCompareProfileWithAlternativeNameHintsUI(playerId, otherPlayerInGameName, currentPlayerInGameName, AsOnGameThreadCallback(callback));
+            HelperFragment.ShowCompareProfileWithAlternativeNameHintsUi(userId, comparandUserName, userName, callback);
         }
 
         public void ShowLeaderboardUI(string id, ALTS span, Action<AUS> callback)

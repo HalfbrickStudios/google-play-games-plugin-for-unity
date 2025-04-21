@@ -35,7 +35,6 @@ using JEI  = GooglePlayGames.Android.Java.Exception.Instance;
 using JHFC = GooglePlayGames.Android.Java.HelperFragment.Class;
 using JT   = GooglePlayGames.Android.Java.Task;
 using JUP  = GooglePlayGames.Android.Java.UnityPlayer;
-using JVI  = GooglePlayGames.Android.Java.View.Instance;
 
 namespace GooglePlayGames.Android.Java {
 
@@ -47,26 +46,28 @@ namespace GooglePlayGames.Android.Java {
 
         public static JHFC MakeClass() => new();
 
-        public static void              AskForLoadFriendsResolution(JAI         jActivity, UAJO          jIntent, Action<AUS> callback                    ) => JHFC.Instance.AskForLoadFriendsResolution(jActivity,   jIntent, callback         );
-        public static void              AskForLoadFriendsResolution(UAJO        jIntent,   Action<AUS>   callback                                         ) => JHFC.Instance.AskForLoadFriendsResolution(jIntent,     callback                  );
-        public static JT.Instance<int> JAskForLoadFriendsResolution(UAJO        jIntent                                                                   ) => JHFC.Instance.JAskForLoadFriendsResolution(jIntent                               );
-        public static JT.Instance<int> JAskForLoadFriendsResolution(JAI         jActivity,   UAJO        jIntent                                          ) => JHFC.Instance.JAskForLoadFriendsResolution(jActivity,  jIntent                   );
-        public static JVI              JGetDecorView               (JAI         jActivity                                                                 ) => JHFC.Instance.JGetDecorView               (jActivity                             );
-        public static bool              IsResolutionRequired       (JEI         jException                                                                ) => JHFC.Instance.IsResolutionRequired        (jException                            );
-        public static void              IsResolutionRequired       (JEI         jException, Action<bool> callback                                         ) => JHFC.Instance.IsResolutionRequired        (jException, callback                  );
-        public static void              ShowAchievementsUi         (Action<AUS> callback                                                                  ) => JHFC.Instance.ShowAchievementsUi          (callback                              );
-        public static void              ShowAchievementsUi         (JAI         jActivity,  Action<AUS>  callback                                         ) => JHFC.Instance.ShowAchievementsUi          (jActivity,  callback                  );
-        public static JT.Instance<int> JShowAchievementUi          (                                                                                      ) => JHFC.Instance.JShowAchievementUi          (                                      );
-        public static JT.Instance<int> JShowAchievementUi          (JAI         jActivity                                                                 ) => JHFC.Instance.JShowAchievementUi          (jActivity                             );
-        public static void              ShowAllLeaderboardsUi      (Action<AUS> callback                                                                  ) => JHFC.Instance.ShowAllLeaderboardsUi       (callback                              );
-        public static void              ShowAllLeaderboardsUi      (JAI         jActivity,  Action<AUS>  callback                                         ) => JHFC.Instance.ShowAllLeaderboardsUi       (jActivity,  callback                  );
-        public static JT.Instance<int> JShowAllLeaderboardsUi      (                                                                                      ) => JHFC.Instance.JShowAllLeaderboardsUi      (                                      );
-        public static JT.Instance<int> JShowAllLeaderboardsUi      (JAI         jActivity                                                                 ) => JHFC.Instance.JShowAllLeaderboardsUi      (jActivity                             );
-        public static void              ShowLeaderboardUi          (string      id,         ALTS         span,    Action<AUS> callback                    ) => JHFC.Instance.ShowLeaderboardUi           (id,         span,    callback         );
-        public static void              ShowLeaderboardUi          (JAI         jActivity,  string       id,      ALTS        span,   Action<AUS> callback) => JHFC.Instance.ShowLeaderboardUi           (jActivity,  id,      span,    callback);
-        public static JT.Instance<int> JShowLeaderboardUi          (string      id,         int          span                                             ) => JHFC.Instance.JShowLeaderboardUi          (id,         span                      );
-        public static JT.Instance<int> JShowLeaderboardUi          (JAI         jActivity,  string       id,      int         span                        ) => JHFC.Instance.JShowLeaderboardUi          (jActivity,  id,      span             );
-        public static void              ShowCaptureOverlayUi       (JAI         jActivity                                                                 ) => JHFC.Instance.ShowCaptureOverlayUi        (jActivity                             );
+        public static void              AskForLoadFriendsResolution                 (JAI         jActivity, UAJO          jIntent,           Action<AUS> callback                                                     ) => JHFC.Instance.AskForLoadFriendsResolution                  (jActivity,  jIntent,           callback                             );
+        public static void              AskForLoadFriendsResolution                 (UAJO        jIntent,   Action<AUS>   callback                                                                                    ) => JHFC.Instance.AskForLoadFriendsResolution                  (jIntent,    callback                                                );
+        public static JT.Instance<int> JAskForLoadFriendsResolution                 (UAJO        jIntent                                                                                                              ) => JHFC.Instance.JAskForLoadFriendsResolution                 (jIntent                                                             );
+        public static JT.Instance<int> JAskForLoadFriendsResolution                 (JAI         jActivity,   UAJO        jIntent                                                                                     ) => JHFC.Instance.JAskForLoadFriendsResolution                 (jActivity,  jIntent                                                 );
+        public static bool              IsResolutionRequired                        (JEI         jException                                                                                                           ) => JHFC.Instance.IsResolutionRequired                         (jException                                                          );
+        public static void              IsResolutionRequired                        (JEI         jException, Action<bool> callback                                                                                    ) => JHFC.Instance.IsResolutionRequired                         (jException, callback                                                );
+        public static void              ShowAchievementsUi                          (Action<AUS> callback                                                                                                             ) => JHFC.Instance.ShowAchievementsUi                           (callback                                                            );
+        public static void              ShowAchievementsUi                          (JAI         jActivity,  Action<AUS>  callback                                                                                    ) => JHFC.Instance.ShowAchievementsUi                           (jActivity,  callback                                                );
+        public static JT.Instance<int> JShowAchievementUi                           (                                                                                                                                 ) => JHFC.Instance.JShowAchievementUi                           (                                                                    );
+        public static JT.Instance<int> JShowAchievementUi                           (JAI         jActivity                                                                                                            ) => JHFC.Instance.JShowAchievementUi                           (jActivity                                                           );
+        public static void              ShowAllLeaderboardsUi                       (Action<AUS> callback                                                                                                             ) => JHFC.Instance.ShowAllLeaderboardsUi                        (callback                                                            );
+        public static void              ShowAllLeaderboardsUi                       (JAI         jActivity,  Action<AUS>  callback                                                                                    ) => JHFC.Instance.ShowAllLeaderboardsUi                        (jActivity,  callback                                                );
+        public static JT.Instance<int> JShowAllLeaderboardsUi                       (                                                                                                                                 ) => JHFC.Instance.JShowAllLeaderboardsUi                       (                                                                    );
+        public static JT.Instance<int> JShowAllLeaderboardsUi                       (JAI         jActivity                                                                                                            ) => JHFC.Instance.JShowAllLeaderboardsUi                       (jActivity                                                           );
+        public static void              ShowLeaderboardUi                           (string      id,         ALTS         span,              Action<AUS> callback                                                     ) => JHFC.Instance.ShowLeaderboardUi                            (id,         span,              callback                             );
+        public static void              ShowLeaderboardUi                           (JAI         jActivity,  string       id,                ALTS        span,              Action<AUS> callback                      ) => JHFC.Instance.ShowLeaderboardUi                            (jActivity,  id,                span,              callback          );
+        public static JT.Instance<int> JShowLeaderboardUi                           (string      id,         int          span                                                                                        ) => JHFC.Instance.JShowLeaderboardUi                           (id,         span                                                    );
+        public static JT.Instance<int> JShowLeaderboardUi                           (JAI         jActivity,  string       id,                int         span                                                         ) => JHFC.Instance.JShowLeaderboardUi                           (jActivity,  id,                span                                 );
+        public static void             ShowCompareProfileWithAlternativeNameHintsUi (string      userId,     string       comparandUserName, string      userName,          Action<AUS> callback                      ) => JHFC.Instance.ShowCompareProfileWithAlternativeNameHintsUi (userId,     comparandUserName, userName,          callback          );
+        public static void             ShowCompareProfileWithAlternativeNameHintsUi (JAI         jActivity,  string       userId,            string      comparandUserName, string      userName, Action<AUS> callback) => JHFC.Instance.ShowCompareProfileWithAlternativeNameHintsUi (jActivity,  userId,            comparandUserName, userName, callback);
+        public static JT.Instance<int> JShowCompareProfileWithAlternativeNameHintsUi(string      userId,     string       comparandUserName, string      userName                                                     ) => JHFC.Instance.JShowCompareProfileWithAlternativeNameHintsUi(userId,     comparandUserName, userName                             );
+        public static JT.Instance<int> JShowCompareProfileWithAlternativeNameHintsUi(JAI         jActivity,  string       userId,            string      comparandUserName, string      userName                      ) => JHFC.Instance.JShowCompareProfileWithAlternativeNameHintsUi(jActivity,  userId,            comparandUserName, userName          );
 
         internal sealed class Class : JC {
 
@@ -83,12 +84,6 @@ namespace GooglePlayGames.Android.Java {
             {
                 Logger.t($"JNI: Calling {FullyQualifiedClassName}.askForLoadFriendsResolution(Activity, AndroidJavaObject)");
                 return CallStatic<JT.Instance<int>>("askForLoadFriendsResolution", jActivity, jIntent);
-            }
-
-            public JVI JGetDecorView(JAI jActivity)
-            {
-                Logger.t($"JNI: Calling {FullyQualifiedClassName}.getDecorView(Activity)");
-                return CallStatic<JVI>("getDecorView", jActivity);
             }
 
             public bool IsResolutionRequired(JEI jException)
@@ -115,10 +110,10 @@ namespace GooglePlayGames.Android.Java {
                 return CallStatic<JT.Instance<int>>("showLeaderboardUi", jActivity, id, span);
             }
 
-            public void ShowCaptureOverlayUi(JAI jActivity)
+            public JT.Instance<int> JShowCompareProfileWithAlternativeNameHintsUi(JAI jActivity, string userId, string comparandUserName, string userName)
             {
-                Logger.t($"JNI: Calling {FullyQualifiedClassName}.showCaptureOverlayUi(Activity)");
-                CallStatic("showCaptureOverlayUi", jActivity);
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}.showCompareProfileWithAlternativeNameHintsUi(Activity, string, string, string)");
+                return CallStatic<JT.Instance<int>>("showCompareProfileWithAlternativeNameHintsUi", jActivity, userId, comparandUserName, userName);
             }
 
         }
@@ -196,6 +191,28 @@ namespace GooglePlayGames.Android.Java.Extensions {
         public static void ShowAllLeaderboardsUi(this JHFC self, JAI jActivity, Action<AUS> callback)
         {
             using var jTask = self.JShowAllLeaderboardsUi(jActivity);
+            jTask.JAddOnSuccessListener(code => {
+                callback?.Invoke((AUS)code);
+            }).JAddOnFailureListener(jException => {
+                callback?.Invoke(AUS.InternalError);
+            });
+        }
+
+        public static JT.Instance<int> JShowCompareProfileWithAlternativeNameHintsUi(this JHFC self, string userId, string comparandUserName, string userName)
+        {
+            using var jActivity = JUP.JCurrentActivity;
+            return self.JShowCompareProfileWithAlternativeNameHintsUi(jActivity, userId, comparandUserName, userName);
+        }
+
+        public static void ShowCompareProfileWithAlternativeNameHintsUi(this JHFC self, string userId, string comparandUserName, string userName, Action<AUS> callback)
+        {
+            using var jActivity = JUP.JCurrentActivity;
+            self.ShowCompareProfileWithAlternativeNameHintsUi(userId, comparandUserName, userName, callback);
+        }
+
+        public static void ShowCompareProfileWithAlternativeNameHintsUi(this JHFC self, JAI jActivity, string userId, string comparandUserName, string userName, Action<AUS> callback)
+        {
+            using var jTask = self.JShowCompareProfileWithAlternativeNameHintsUi(jActivity, userId, comparandUserName, userName);
             jTask.JAddOnSuccessListener(code => {
                 callback?.Invoke((AUS)code);
             }).JAddOnFailureListener(jException => {
