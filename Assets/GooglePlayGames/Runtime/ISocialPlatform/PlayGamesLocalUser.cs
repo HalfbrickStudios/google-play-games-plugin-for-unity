@@ -16,6 +16,8 @@
 
 using System;
 
+using GooglePlayGames.Utils;
+
 using UILU = UnityEngine.SocialPlatforms.ILocalUser;
 using UIUP = UnityEngine.SocialPlatforms.IUserProfile;
 using UUS  = UnityEngine.SocialPlatforms.UserState;
@@ -130,26 +132,26 @@ namespace GooglePlayGames {
 
         #region Object implementation
 
-        internal string ToString(GPGP platform)
-        {
-            if (platform != null && platform == m_platform) {
-                return $"PlayGamesLocalUser({base.ToString()}, stats: {m_stats})";
-            }
-            if (m_platform is GPGP casted) {
-                return $"PlayGamesLocalUser({base.ToString()}, platform: {casted.ToString(this)}, stats: {m_stats})";
-            }
-            return $"PlayGamesLocalUser({base.ToString()}, platform: {m_platform}, stats: {m_stats})";
-        }
+        private bool m_stringify = false;
 
-        public override string ToString() => ToString(null);
+        public override string ToString()
+        {
+            if (m_stringify) return $"PlayGamesLocalUser(...)";
+            try {
+                m_stringify = true;
+                return $"PlayGamesLocalUser({base.ToString()}, platform: {m_platform}, stats: {m_stats})";
+            } finally {
+                m_stringify = false;
+            }
+        }
 
         public override int GetHashCode() => HashCode.Combine(m_platform, m_stats);
 
         public override bool Equals(object other)
         {
             if (other is not GPGLU it) return false;
-            return m_platform.Equals(it.m_platform) &&
-                   m_stats    ==     it.m_stats;
+            return Utility.Equals(m_platform, it.m_platform) &&
+                   Utility.Equals(m_stats,    it.m_stats);
         }
 
         #endregion Object implementation

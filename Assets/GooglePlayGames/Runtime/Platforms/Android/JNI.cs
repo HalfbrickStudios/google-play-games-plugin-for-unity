@@ -32,13 +32,15 @@ namespace GooglePlayGames.Android {
             var boolType    = typeof(bool);
             var constructor = type.GetConstructor(flags, binder, new[] { intpType }, modifiers);
             if (constructor != null) {
-                result = (WrappingSubType)constructor.Invoke(new object[] { jObject.GetRawObject() });
+                var instance = constructor.Invoke(new object[] { jObject.GetRawObject() });
+                    result   = (WrappingSubType)instance;
                 return true;
             }
 
             constructor = type.GetConstructor(flags, binder, new[] { intpType, boolType }, modifiers);
             if (constructor != null) {
-                result = (WrappingSubType)constructor.Invoke(new object[] { jObject.GetRawObject(), true });
+                var instance = constructor.Invoke(new object[] { jObject.GetRawObject(), true });
+                    result   = (WrappingSubType)instance;
                 return true;
             }
 

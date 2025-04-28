@@ -32,7 +32,7 @@ namespace GooglePlayGames.Api.Nearby {
         public override bool Equals(object other)
         {
             if (other is not AUDL it) return false;
-            return m_listener.Equals(it.m_listener);
+            return Utility.Equals(m_listener, it.m_listener);
         }
 
         #endregion Object implementation
@@ -61,7 +61,7 @@ namespace GooglePlayGames.Api.Nearby {
         public override bool Equals(object other)
         {
             if (other is not AUML it) return false;
-            return m_listener.Equals(it.m_listener);
+            return Utility.Equals(m_listener, it.m_listener);
         }
 
         #endregion Object implementation

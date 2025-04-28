@@ -17,6 +17,8 @@
 using System;
 using System.Collections.Generic;
 
+using GooglePlayGames.Utils;
+
 using UnityEngine.SocialPlatforms;
 
 using ALSD = GooglePlayGames.Api.LeaderboardScoreData;
@@ -87,13 +89,13 @@ namespace GooglePlayGames.Api {
         public override bool Equals(object other)
         {
             if (other is not ALSD it) return false;
-            return ApproximateCount   ==     it.ApproximateCount    &&
-                   Id                .Equals(it.Id)                 &&
-                   NextPageCursor    .Equals(it.NextPageCursor)     &&
-                   PlayerScore       .Equals(it.PlayerScore)        &&
-                   PreviousPageCursor.Equals(it.PreviousPageCursor) &&
-                   Status             ==     it.Status              &&
-                   Title             .Equals(it.Title);
+            return Utility.Equals(ApproximateCount,   it.ApproximateCount)   &&
+                   Utility.Equals(Id,                 it.Id)                 &&
+                   Utility.Equals(NextPageCursor,     it.NextPageCursor)     &&
+                   Utility.Equals(PlayerScore,        it.PlayerScore)        &&
+                   Utility.Equals(PreviousPageCursor, it.PreviousPageCursor) &&
+                   Utility.Equals(Status,             it.Status)             &&
+                   Utility.Equals(Title,              it.Title);
         }
 
         #endregion Object implementation

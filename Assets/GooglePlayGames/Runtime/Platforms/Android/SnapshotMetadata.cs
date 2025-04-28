@@ -59,16 +59,27 @@ namespace GooglePlayGames.Android {
 
         #region Object implementation
 
-        public override string ToString() => $"SnapshotMetadata(JSnapshot: {JSnapshot}, JSnapshotContents: {JSnapshotContents}, JSnapshotMetadata: {JSnapshotMetadata})";
+        private bool m_stringify = false;
+
+        public override string ToString()
+        {
+            if (m_stringify) return $"SnapshotMetadata(...)";
+            try {
+                m_stringify = true;
+                return $"SnapshotMetadata(JSnapshot: {JSnapshot}, JSnapshotContents: {JSnapshotContents}, JSnapshotMetadata: {JSnapshotMetadata})";
+            } finally {
+                m_stringify = false;
+            }
+        }
 
         public override int GetHashCode() => HashCode.Combine(JSnapshot, JSnapshotContents, JSnapshotMetadata);
 
         public override bool Equals(object other)
         {
             if (other is not ASM it) return false;
-            return JSnapshot        .Equals(it.JSnapshot)         &&
-                   JSnapshotContents.Equals(it.JSnapshotContents) &&
-                   JSnapshotMetadata.Equals(it.JSnapshotMetadata);
+            return Utility.Equals(JSnapshot,         it.JSnapshot)         &&
+                   Utility.Equals(JSnapshotContents, it.JSnapshotContents) &&
+                   Utility.Equals(JSnapshotMetadata, it.JSnapshotMetadata);
         }
 
         #endregion Object implementation

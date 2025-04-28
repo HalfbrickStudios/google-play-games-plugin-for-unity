@@ -16,6 +16,8 @@
 
 using System;
 
+using GooglePlayGames.Utils;
+
 using ARA = GooglePlayGames.Api.RecallAccess;
 
 namespace GooglePlayGames.Api {
@@ -45,7 +47,7 @@ namespace GooglePlayGames.Api {
         public override bool Equals(object other)
         {
             if (other is not ARA it) return false;
-            return SessionId.Equals(it.SessionId);
+            return Utility.Equals(SessionId, it.SessionId);
         }
 
         #endregion Object implementation

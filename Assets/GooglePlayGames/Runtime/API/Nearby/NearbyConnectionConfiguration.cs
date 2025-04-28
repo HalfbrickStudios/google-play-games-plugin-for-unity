@@ -52,8 +52,8 @@ namespace GooglePlayGames.Api.Nearby {
         public override bool Equals(object other)
         {
             if (other is not ANCC it) return false;
-            return InitializationCallback.Equals(it.InitializationCallback) &&
-                   LocalClientId          ==     it.LocalClientId;
+            return Utility.Equals(InitializationCallback, it.InitializationCallback) &&
+                   Utility.Equals(LocalClientId,          it.LocalClientId);
         }
 
         #endregion Object implementation

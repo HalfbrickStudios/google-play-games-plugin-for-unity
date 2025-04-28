@@ -61,6 +61,7 @@ using JOI   = GooglePlayGames.Android.Java.Object.Instance;
 using JPG   = GooglePlayGames.Android.Java.PlayGames;
 using JPGS  = GooglePlayGames.Android.Java.PlayGamesSdk;
 using JRAE  = GooglePlayGames.Android.Java.ResolvableApiException;
+using System.Diagnostics;
 
 namespace GooglePlayGames.Android {
 
@@ -241,8 +242,7 @@ namespace GooglePlayGames.Android {
             jTask.JAddOnCompleteListener(jIt => {
                 Logger.t($"AND: Completed {method}");
                 if (jIt.JIsSuccessful()) {
-                    using (var jData = jIt.JGetResult()) {
-                        using var jPlayer = jData.JGet();
+                    using (var jPlayer = jIt.JGetResult()) {
                         m_user = Utility.ToAndroidPlayer(jPlayer);
                     }
                     lock (m_gameServicesLock) {
@@ -669,7 +669,7 @@ namespace GooglePlayGames.Android {
             if (!GameInformation.HasInstance) {
                 throw new NullReferenceException("The GameInformation instance is not available");
             } else if (!GameInformation.Instance.HasWebId) {
-                throw new InvalidOperationException("The GameInformation instance is missing the Web Client Id; make sure it's configured");
+                Logger.w("AND: The GameInformation instance is missing the Web Client Id; make sure it's configured");
             }
 
             callback = Utility.ToUiAction(callback);
@@ -819,7 +819,18 @@ namespace GooglePlayGames.Android {
 
         #region Object implementation
 
-        public override string ToString() => $"PlayGamesClient(authState: {m_authState}, authStateLock: {m_authStateLock}, eventsClient: {m_eventsClient}, friends: {m_friends}, friendsMaxResults: {m_friendsMaxResults}, friendsResolutionException: {m_friendsResolutionException}, gameServicesLock: {m_gameServicesLock}, lastLoadFriendsStatus: {m_lastLoadFriendsStatus}, leaderboardMaxResults: {m_leaderboardMaxResults}, savedGameClient: {m_savedGameClient}, user: {m_user})";
+        private bool m_stringify = false;
+
+        public override string ToString()
+        {
+            if (m_stringify) return $"PlayGamesClient(...)";
+            try {
+                m_stringify = true;
+                return $"PlayGamesClient(authState: {m_authState}, authStateLock: {m_authStateLock}, eventsClient: {m_eventsClient}, friends: IUserProfile[{m_friends.Length}], friendsMaxResults: {m_friendsMaxResults}, friendsResolutionException: {m_friendsResolutionException}, gameServicesLock: {m_gameServicesLock}, lastLoadFriendsStatus: {m_lastLoadFriendsStatus}, leaderboardMaxResults: {m_leaderboardMaxResults}, savedGameClient: {m_savedGameClient}, user: {m_user})";
+            } finally {
+                m_stringify = false;
+            }
+        }
 
         public override int GetHashCode()
         {
@@ -831,17 +842,17 @@ namespace GooglePlayGames.Android {
         public override bool Equals(object other)
         {
             if (other is not APGC it) return false;
-            return m_authState                          ==     it.m_authState &&
-                   m_authStateLock                      ==     it.m_authStateLock &&
-                   m_eventsClient                      .Equals(it.m_eventsClient) &&
-                   m_friends                   .SequenceEqual (it.m_friends) &&
-                   m_friendsMaxResults                  ==     it.m_friendsMaxResults &&
-                   m_friendsResolutionException        .Equals(it.m_friendsResolutionException) &&
-                   m_gameServicesLock                   ==     it.m_gameServicesLock &&
-                   m_lastLoadFriendsStatus              ==     it.m_lastLoadFriendsStatus &&
-                   m_leaderboardMaxResults              ==     it.m_leaderboardMaxResults &&
-                   m_savedGameClient                   .Equals(it.m_savedGameClient) &&
-                   m_user                              .Equals(it.m_user);
+            return Utility.Equals(m_authState,                  it.m_authState)                  &&
+                   Utility.Equals(m_authStateLock,              it.m_authStateLock)              &&
+                   Utility.Equals(m_eventsClient,               it.m_eventsClient)               &&
+                   Utility.Equals(m_friends,                    it.m_friends)                    &&
+                   Utility.Equals(m_friendsMaxResults,          it.m_friendsMaxResults)          &&
+                   Utility.Equals(m_friendsResolutionException, it.m_friendsResolutionException) &&
+                   Utility.Equals(m_gameServicesLock,           it.m_gameServicesLock)           &&
+                   Utility.Equals(m_lastLoadFriendsStatus,      it.m_lastLoadFriendsStatus)      &&
+                   Utility.Equals(m_leaderboardMaxResults,      it.m_leaderboardMaxResults)      &&
+                   Utility.Equals(m_savedGameClient,            it.m_savedGameClient)            &&
+                   Utility.Equals(m_user,                       it.m_user);
         }
 
         #endregion Object implementation

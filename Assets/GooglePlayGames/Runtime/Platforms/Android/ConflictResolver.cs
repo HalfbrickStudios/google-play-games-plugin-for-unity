@@ -101,20 +101,31 @@ namespace GooglePlayGames.Android {
 
         #region Object implementation
 
-        public override string ToString() => $"ConflictResolver(callback: {m_callback}, conflict: {m_conflict}, original: {m_original}, retry: {m_retry}, saveClient: {m_saveClient}, snapClient: {m_jSnapClient}, unmerged: {m_unmerged})";
+        private bool m_stringify = false;
+
+        public override string ToString()
+        {
+            if (m_stringify) return $"ConflictResolver(...)";
+            try {
+                m_stringify = true;
+                return $"ConflictResolver(callback: {m_callback}, conflict: {m_conflict}, original: {m_original}, retry: {m_retry}, saveClient: {m_saveClient}, snapClient: {m_jSnapClient}, unmerged: {m_unmerged})";
+            } finally {
+                m_stringify = false;
+            }
+        }
 
         public override int GetHashCode() => HashCode.Combine(m_callback, m_conflict, m_original, m_retry, m_saveClient, m_jSnapClient, m_unmerged);
 
         public override bool Equals(object other)
         {
             if (other is not ACR it) return false;
-            return m_callback   .Equals(it.m_callback)    &&
-                   m_conflict   .Equals(it.m_conflict)    &&
-                   m_original   .Equals(it.m_original)    &&
-                   m_retry      .Equals(it.m_retry)       &&
-                   m_saveClient .Equals(it.m_saveClient)  &&
-                   m_jSnapClient.Equals(it.m_jSnapClient) &&
-                   m_unmerged   .Equals(it.m_unmerged);
+            return Utility.Equals(m_callback,    it.m_callback)    &&
+                   Utility.Equals(m_conflict,    it.m_conflict)    &&
+                   Utility.Equals(m_original,    it.m_original)    &&
+                   Utility.Equals(m_retry,       it.m_retry)       &&
+                   Utility.Equals(m_saveClient,  it.m_saveClient)  &&
+                   Utility.Equals(m_jSnapClient, it.m_jSnapClient) &&
+                   Utility.Equals(m_unmerged,    it.m_unmerged);
         }
 
         #endregion Object implementation

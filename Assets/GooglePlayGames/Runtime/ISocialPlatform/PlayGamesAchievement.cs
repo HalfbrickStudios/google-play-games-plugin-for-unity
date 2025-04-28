@@ -17,6 +17,7 @@
 using System;
 
 using GooglePlayGames.Api;
+using GooglePlayGames.Utils;
 
 using UDHT = UnityEngine.Networking.DownloadHandlerTexture;
 using UIA  = UnityEngine.SocialPlatforms.IAchievement;
@@ -147,18 +148,18 @@ namespace GooglePlayGames {
         public override bool Equals(object other)
         {
             if (other is not GPGA it) return false;
-            return Id              .Equals(it.Id)               &&
-                   m_description   .Equals(it.m_description)    &&
-                   m_image         .Equals(it.m_image)          &&
-                   m_imageFetcher  .Equals(it.m_imageFetcher)   &&
-                   IsCompleted      ==     it.IsCompleted       &&
-                   IsHidden         ==     it.IsHidden          &&
-                   IsIncremental    ==     it.IsIncremental     &&
-                   LastReportedDate.Equals(it.LastReportedDate) &&
-                   PercentCompleted.Equals(it.PercentCompleted) &&
-                   Points           ==     it.Points            &&
-                   Title           .Equals(it.Title)            &&
-                   TotalSteps       ==     it.TotalSteps;
+            return Utility.Equals(Id,               it.Id)               &&
+                   Utility.Equals(m_description,    it.m_description)    &&
+                   Utility.Equals(m_image,          it.m_image)          &&
+                   Utility.Equals(m_imageFetcher,   it.m_imageFetcher)   &&
+                   Utility.Equals(IsCompleted,      it.IsCompleted)      &&
+                   Utility.Equals(IsHidden,         it.IsHidden)         &&
+                   Utility.Equals(IsIncremental,    it.IsIncremental)    &&
+                   Utility.Equals(LastReportedDate, it.LastReportedDate) &&
+                   Utility.Equals(PercentCompleted, it.PercentCompleted) &&
+                   Utility.Equals(Points,           it.Points)           &&
+                   Utility.Equals(Title,            it.Title)            &&
+                   Utility.Equals(TotalSteps,       it.TotalSteps);
         }
 
         #endregion Object implementation

@@ -1,5 +1,7 @@
 ﻿using System;
 
+using GooglePlayGames.Utils;
+
 using AE  = GooglePlayGames.Api.Events.Event;
 using AEV = GooglePlayGames.Api.Events.EventVisibility;
 using AIE = GooglePlayGames.Api.Events.IEvent;
@@ -34,12 +36,12 @@ namespace GooglePlayGames.Api.Events {
         public override bool Equals(object other)
         {
             if (other is not AE it) return false;
-            return CurrentCount ==     it.CurrentCount &&
-                   Description .Equals(it.Description) &&
-                   Id          .Equals(it.Id)          &&
-                   ImageUrl    .Equals(it.ImageUrl)    &&
-                   Name        .Equals(it.Name)        &&
-                   Visibility   ==     it.Visibility;
+            return Utility.Equals(CurrentCount, it.CurrentCount) &&
+                   Utility.Equals(Description,  it.Description)  &&
+                   Utility.Equals(Id,           it.Id)           &&
+                   Utility.Equals(ImageUrl,     it.ImageUrl)     &&
+                   Utility.Equals(Name,         it.Name)         &&
+                   Utility.Equals(Visibility,   it.Visibility);
         }
 
         #endregion Object implementation

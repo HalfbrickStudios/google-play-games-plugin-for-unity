@@ -36,13 +36,13 @@ namespace GooglePlayGames.Android.Java {
             }
 
             [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
-            internal void onSuccess(UAJO result)
+            internal void onSuccess(UAJO jResult)
             {
                 Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onSuccess(AndroidJavaObject)");
                 var tresult = typeof(TResult);
                 var tuajo   = typeof(UAJO);
                 if (Jni.IsStrictSubclass(tresult, typeof(JO))) {
-                    OnSuccessHandler(Jni.Wrap<TResult>(result));
+                    OnSuccessHandler(Jni.Wrap<TResult>(jResult));
                 } else if (Jni.IsStrictSubclass(tresult, tuajo)) {
                     throw new NotImplementedException("You are using a subclass of AndroidJavaObject that does not inherit from GooglePlayGames.JavaObject; this is a developer bug!");
                 } else {

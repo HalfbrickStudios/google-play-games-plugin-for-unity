@@ -22,6 +22,19 @@ namespace GooglePlayGames.Utils {
 
         public static long ToInt64(double value) => Convert.ToInt64(value);
 
+        public static new bool Equals(object a, object b) => a == b || (a != null && a.Equals(b));
+
+        public static bool Equals(object[] a, object[] b)
+        {
+            if (a == b) return true;
+            if (a == null || b == null) return false;
+            if (a.Length != b.Length) return false;
+            for (var i = 0; i < a.Length; i += 1) {
+                if (!Equals(a[i], b[i])) return false;
+            }
+            return true;
+        }
+
     }
 
 }

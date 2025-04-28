@@ -613,28 +613,28 @@ namespace GooglePlayGames {
 
         #region Object implementation
 
-        internal string ToString(GPGLU user)
-        {
-            if (user != null && user == LocalUser) {
-                return $"PlayGamesPlatform(client: {m_client}, defaultLeaderboardId: {m_defaultLeaderboardId}, idMap: {m_idMap})";
-            }
-            if (LocalUser is GPGLU casted) {
-                return $"PlayGamesPlatform(client: {m_client}, defaultLeaderboardId: {m_defaultLeaderboardId}, idMap: {m_idMap}, LocalUser: {casted.ToString(this)})";
-            }
-            return $"PlayGamesPlatform(client: {m_client}, defaultLeaderboardId: {m_defaultLeaderboardId}, idMap: {m_idMap}, LocalUser: {LocalUser})";
-        }
+        private bool m_stringify = false;
 
-        public override string ToString() => ToString(null);
+        public override string ToString()
+        {
+            if (m_stringify) return $"PlayGamesPlatform(...)";
+            try {
+                m_stringify = true;
+                return $"PlayGamesPlatform(client: {m_client}, defaultLeaderboardId: {m_defaultLeaderboardId}, idMap: Dictionary<string, string>[{m_idMap.Count}], LocalUser: {LocalUser})";
+            } finally {
+                m_stringify = false;
+            }
+        }
 
         public override int GetHashCode() => HashCode.Combine(m_client, m_defaultLeaderboardId, m_idMap, LocalUser);
 
         public override bool Equals(object other)
         {
             if (other is not GPGP it) return false;
-            return m_client                      .Equals(it.m_client)               &&
-                   m_defaultLeaderboardId        .Equals(it.m_defaultLeaderboardId) &&
-                   m_idMap               .SequenceEqual (it.m_idMap)                &&
-                   LocalUser                     .Equals(it.LocalUser);
+            return Utility.Equals(m_client,               it.m_client)               &&
+                   Utility.Equals(m_defaultLeaderboardId, it.m_defaultLeaderboardId) &&
+                   Utility.Equals(m_idMap,                it.m_idMap)                &&
+                   Utility.Equals(LocalUser,              it.LocalUser);
         }
 
         #endregion Object implementation

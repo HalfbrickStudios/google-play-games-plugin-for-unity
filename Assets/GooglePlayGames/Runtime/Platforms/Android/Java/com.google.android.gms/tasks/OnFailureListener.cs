@@ -5,9 +5,12 @@ using System.Diagnostics.CodeAnalysis;
 
 using GooglePlayGames.Utils;
 
-using AJP = UnityEngine.AndroidJavaProxy;
+using UAJO = UnityEngine.AndroidJavaObject;
+using UAJP = UnityEngine.AndroidJavaProxy;
 
+using JE    = GooglePlayGames.Android.Java.Exception;
 using JEI   = GooglePlayGames.Android.Java.Exception.Instance;
+using JO    = GooglePlayGames.Android.Java.Object;
 using JOFLP = GooglePlayGames.Android.Java.OnFailureListener.Proxy;
 
 namespace GooglePlayGames.Android.Java {
@@ -20,7 +23,7 @@ namespace GooglePlayGames.Android.Java {
 
         public static JOFLP MakeProxy(JOFLP.OnFailureDelegate callback = null) => new(callback);
 
-        internal sealed class Proxy : AJP {
+        internal sealed class Proxy : UAJP {
             
             public delegate void OnFailureDelegate(JEI jException);
 
@@ -33,9 +36,27 @@ namespace GooglePlayGames.Android.Java {
             }
 
             [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
+            internal void onFailure(UAJO jException)
+            {
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onFailure(AndroidJavaObject)");
+                using var jObject = JO.WrapInstance(jException);
+                using var jClass  = jObject.JGetClass();
+                if (JE.JClass.IsAssignableFrom(jClass)) {
+                    OnFailure(Jni.Wrap<JEI>(jException));
+                } else {
+                    throw new InvalidOperationException($"Cannot cast {typeof(UAJO)} to {typeof(JEI)} (unreachable branch?)");
+                }
+            }
+
+            [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
             internal void onFailure(JEI jException)
             {
-                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onFailure(Exception)");
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onFailure(Exception.Instance)");
+                OnFailureHandler(jException);
+            }
+
+            internal void OnFailureHandler(JEI jException)
+            {
                 if (jException is IDisposable disposable) {
                     using (disposable) {
                         OnFailure?.Invoke(jException);

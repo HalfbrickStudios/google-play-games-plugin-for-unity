@@ -37,10 +37,10 @@ namespace GooglePlayGames.Android.Java {
                 Logger.t($"JNI: Creating instance of {FullyQualifiedClassName}");
             }
 
-            public JT.Instance<JAD.Instance<JPI>> JGetCurrentPlayer()
+            public JT.Instance<JPI> JGetCurrentPlayer()
             {
                 Logger.t($"JNI: Calling {FullyQualifiedClassName}.getCurrentPlayer()");
-                return Call<JT.Instance<JAD.Instance<JPI>>>("getCurrentPlayer");
+                return Call<JT.Instance<JPI>>("getCurrentPlayer");
             }
 
             public JT.Instance<JAD.Instance<JPI>> JGetCurrentPlayer(bool reload)

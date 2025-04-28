@@ -45,9 +45,9 @@ namespace GooglePlayGames.Api.Nearby {
         public override bool Equals(object other)
         {
             if (other is not AED it) return false;
-            return EndpointId.Equals(it.EndpointId) &&
-                   Name      .Equals(it.Name)       &&
-                   ServiceId .Equals(it.ServiceId);
+            return Utility.Equals(EndpointId, it.EndpointId) &&
+                   Utility.Equals(Name,       it.Name)       &&
+                   Utility.Equals(ServiceId,  it.ServiceId);
         }
 
         #endregion Object implementation

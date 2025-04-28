@@ -16,6 +16,8 @@
 
 using System;
 
+using GooglePlayGames.Utils;
+
 using GPGP = GooglePlayGames.PlayGamesPlatform;
 using GPGS = GooglePlayGames.PlayGamesScore;
 
@@ -67,12 +69,12 @@ namespace GooglePlayGames {
         public override bool Equals(object other)
         {
             if (other is not GPGS it) return false;
-            return Date         .Equals(it.Date)          &&
-                   LeaderboardId.Equals(it.LeaderboardId) &&
-                   MetaData     .Equals(it.MetaData)      &&
-                   Rank          ==     it.Rank           &&
-                   UserId       .Equals(it.UserId)        &&
-                   Value         ==     it.Value;
+            return Utility.Equals(Date,          it.Date)          &&
+                   Utility.Equals(LeaderboardId, it.LeaderboardId) &&
+                   Utility.Equals(MetaData,      it.MetaData)      &&
+                   Utility.Equals(Rank,          it.Rank)          &&
+                   Utility.Equals(UserId,        it.UserId)        &&
+                   Utility.Equals(Value,         it.Value);
         }
 
         #endregion Object implementation

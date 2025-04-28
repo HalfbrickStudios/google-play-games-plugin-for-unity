@@ -259,15 +259,26 @@ namespace GooglePlayGames.Android {
 
         #region Object implementation
 
-        public override string ToString() => $"NearbyConnectionClient(client: {m_client}, listener: {MessageListener})";
+        private bool m_stringify = false;
+
+        public override string ToString()
+        {
+            if (m_stringify) return $"NearbyConnectionClient(...)";
+            try {
+                m_stringify = true;
+                return $"NearbyConnectionClient(client: {m_client}, listener: {MessageListener})";
+            } finally {
+                m_stringify = false;
+            }
+        }
 
         public override int GetHashCode() => HashCode.Combine(m_client, MessageListener);
 
         public override bool Equals(object other)
         {
             if (other is not ANCC it) return false;
-            return m_client       .Equals(it.m_client) &&
-                   MessageListener.Equals(it.MessageListener);
+            return Utility.Equals(m_client,        it.m_client) &&
+                   Utility.Equals(MessageListener, it.MessageListener);
         }
 
         #endregion Object implementation

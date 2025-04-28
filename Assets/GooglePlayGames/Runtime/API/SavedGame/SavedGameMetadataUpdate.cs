@@ -105,11 +105,11 @@ namespace GooglePlayGames.Api.SavedGame {
         public override bool Equals(object other)
         {
             if (other is not ASGMU it) return false;
-            return IsCoverImageUpdated          ==     it.IsCoverImageUpdated  &&
-                   IsDescriptionUpdated         ==     it.IsDescriptionUpdated &&
-                   UpdatedDescription          .Equals(it.UpdatedDescription)  &&
-                   UpdatedPlayedTime           .Equals(it.UpdatedPlayedTime)   &&
-                   UpdatedPngCoverImage.SequenceEqual (it.UpdatedPngCoverImage);
+            return Utility.Equals(IsCoverImageUpdated,  it.IsCoverImageUpdated)  &&
+                   Utility.Equals(IsDescriptionUpdated, it.IsDescriptionUpdated) &&
+                   Utility.Equals(UpdatedDescription,   it.UpdatedDescription)   &&
+                   Utility.Equals(UpdatedPlayedTime,    it.UpdatedPlayedTime)    &&
+                   Utility.Equals(UpdatedPngCoverImage, it.UpdatedPngCoverImage);
         }
 
         #endregion Object implementation

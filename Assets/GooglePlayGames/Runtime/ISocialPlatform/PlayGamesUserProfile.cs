@@ -150,12 +150,12 @@ namespace GooglePlayGames {
         public override bool Equals(object other)
         {
             if (other is not GPGUP it) return false;
-            return AvatarUrl.Equals(it.AvatarUrl) &&
-                   Id       .Equals(it.Id)        &&
-                   m_image  .Equals(it.m_image)   &&
-                   IsFriend  ==     it.IsFriend   &&
-                   m_loading ==     it.m_loading  &&
-                   UserName .Equals(it.UserName);
+            return Utility.Equals(AvatarUrl, it.AvatarUrl) &&
+                   Utility.Equals(Id,        it.Id)        &&
+                   Utility.Equals(m_image,   it.m_image)   &&
+                   Utility.Equals(IsFriend,  it.IsFriend)  &&
+                   Utility.Equals(m_loading, it.m_loading) &&
+                   Utility.Equals(UserName,  it.UserName);
         }
 
         #endregion Object implementation

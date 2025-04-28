@@ -40,6 +40,7 @@ namespace GooglePlayGames.Android {
 
         public SavedGameClient(APGC androidClient)
         {
+            Logger.t("AND: Calling GooglePlayGames.Android.SavedGameClient.ctor(PlayGamesClient)");
             JPlayClient     = androidClient;
             JSnapshotClient = JPG.JGetSnapshotsClient();
         }
@@ -273,15 +274,26 @@ namespace GooglePlayGames.Android {
 
         #region Object implementation
 
-        public override string ToString() => $"SavedGameClient(playClient: {JPlayClient}, snapClient: {JSnapshotClient})";
+        private bool m_stringify = false;
+
+        public override string ToString()
+        {
+            if (m_stringify) return $"SavedGameClient(...)";
+            try {
+                m_stringify = true;
+                return $"SavedGameClient(playClient: {JPlayClient}, snapClient: {JSnapshotClient})";
+            } finally {
+                m_stringify = false;
+            }
+        }
 
         public override int GetHashCode() => HashCode.Combine(JPlayClient, JSnapshotClient);
 
         public override bool Equals(object other)
         {
             if (other is not ASGC it) return false;
-            return JPlayClient    .Equals(it.JPlayClient) &&
-                   JSnapshotClient.Equals(it.JSnapshotClient);
+            return Utility.Equals(JPlayClient,     it.JPlayClient) &&
+                   Utility.Equals(JSnapshotClient, it.JSnapshotClient);
         }
 
         #endregion Object implementation

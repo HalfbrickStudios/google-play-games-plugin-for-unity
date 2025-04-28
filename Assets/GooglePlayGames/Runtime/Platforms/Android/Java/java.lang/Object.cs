@@ -40,7 +40,7 @@ namespace GooglePlayGames.Android.Java {
             public JCI JGetClass()
             {
                 Logger.t($"JNI: Calling {FullyQualifiedClassName}.getClass()");
-                return Get<JCI>("getClass");
+                return Call<JCI>("getClass");
             }
 
             public string JToString()

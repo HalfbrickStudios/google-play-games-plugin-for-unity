@@ -16,6 +16,8 @@
 
 using System;
 
+using GooglePlayGames.Utils;
+
 using ALC  = GooglePlayGames.Api.LeaderboardCollection;
 using ALTS = GooglePlayGames.Api.LeaderboardTimeSpan;
 using ASPC = GooglePlayGames.Api.ScorePageCursor;
@@ -54,10 +56,10 @@ namespace GooglePlayGames.Api {
         public override bool Equals(object other)
         {
             if (other is not ASPC it) return false;
-            return Collection    ==     it.Collection     &&
-                   Direction     ==     it.Direction      &&
-                   LeaderboardId.Equals(it.LeaderboardId) &&
-                   TimeSpan      ==     it.TimeSpan;
+            return Utility.Equals(Collection,    it.Collection)    &&
+                   Utility.Equals(Direction,     it.Direction)     &&
+                   Utility.Equals(LeaderboardId, it.LeaderboardId) &&
+                   Utility.Equals(TimeSpan,      it.TimeSpan);
 
         }
 

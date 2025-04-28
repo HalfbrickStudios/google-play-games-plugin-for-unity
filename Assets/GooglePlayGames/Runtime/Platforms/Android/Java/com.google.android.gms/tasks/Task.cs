@@ -6,6 +6,8 @@ using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
+using JC   = GooglePlayGames.Android.Java.Class;
+using JCI  = GooglePlayGames.Android.Java.Class.Instance;
 using JEI  = GooglePlayGames.Android.Java.Exception.Instance;
 using JOI  = GooglePlayGames.Android.Java.Object.Instance;
 using JOCL = GooglePlayGames.Android.Java.OnCompleteListener;
@@ -21,6 +23,8 @@ namespace GooglePlayGames.Android.Java {
         public static readonly string ClassName = "Task";
         public static readonly string PackageName = "com.google.android.gms.tasks";
         public static readonly string FullyQualifiedClassName = $"{PackageName}.{ClassName}";
+
+        public static JCI JClass => JC.JForName(FullyQualifiedClassName);
 
         public static JTI MakeInstance() => new(FullyQualifiedClassName, inherit: false);
 

@@ -16,6 +16,8 @@
 
 using System;
 
+using GooglePlayGames.Utils;
+
 using AA = GooglePlayGames.Api.Achievement;
 
 namespace GooglePlayGames.Api {
@@ -62,18 +64,18 @@ namespace GooglePlayGames.Api {
         public override bool Equals(object other)
         {
             if (other is not AA it) return false;
-            return CurrentSteps     ==     it.CurrentSteps      &&
-                   Description     .Equals(it.Description)      &&
-                   Id              .Equals(it.Id)               &&
-                   IsIncremental    ==     it.IsIncremental     &&
-                   IsRevealed       ==     it.IsRevealed        &&
-                   IsUnlocked       ==     it.IsUnlocked        &&
-                   LastModifiedTime.Equals(it.LastModifiedTime) &&
-                   Name            .Equals(it.Name)             &&
-                   Points           ==     it.Points            &&
-                   RevealedImageUrl.Equals(it.RevealedImageUrl) &&
-                   TotalSteps       ==     it.TotalSteps        &&
-                   UnlockedImageUrl.Equals(it.UnlockedImageUrl);
+            return Utility.Equals(CurrentSteps,     it.CurrentSteps)     &&
+                   Utility.Equals(Description,      it.Description)      &&
+                   Utility.Equals(Id,               it.Id)               &&
+                   Utility.Equals(IsIncremental,    it.IsIncremental)    &&
+                   Utility.Equals(IsRevealed,       it.IsRevealed)       &&
+                   Utility.Equals(IsUnlocked,       it.IsUnlocked)       &&
+                   Utility.Equals(LastModifiedTime, it.LastModifiedTime) &&
+                   Utility.Equals(Name,             it.Name)             &&
+                   Utility.Equals(Points,           it.Points)           &&
+                   Utility.Equals(RevealedImageUrl, it.RevealedImageUrl) &&
+                   Utility.Equals(TotalSteps,       it.TotalSteps)       &&
+                   Utility.Equals(UnlockedImageUrl, it.UnlockedImageUrl);
         }
 
         #endregion Object implementation

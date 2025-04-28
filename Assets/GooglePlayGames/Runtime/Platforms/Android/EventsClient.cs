@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using UnityEngine;
-
 using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
@@ -29,6 +27,7 @@ namespace GooglePlayGames.Android {
 
         public EventsClient()
         {
+            Logger.t("AND: Calling GooglePlayGames.Android.EventsClient.ctor()");
             m_client = JPG.JGetEventsClient();
         }
 
@@ -95,14 +94,26 @@ namespace GooglePlayGames.Android {
 
         #region Object implementation
 
-        public override string ToString() => $"EventsClient(client: {m_client})";
+
+        private bool m_stringify = false;
+
+        public override string ToString()
+        {
+            if (m_stringify) return $"EventsClient(...)";
+            try {
+                m_stringify = true;
+                return $"EventsClient(client: {m_client})";
+            } finally {
+                m_stringify = false;
+            }
+        }
 
         public override int GetHashCode() => HashCode.Combine(m_client);
 
         public override bool Equals(object other)
         {
             if (other is not AEC it) return false;
-            return m_client.Equals(it.m_client);
+            return Utility.Equals(m_client, it.m_client);
         }
 
         #endregion Object implementation

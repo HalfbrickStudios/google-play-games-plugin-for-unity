@@ -17,6 +17,8 @@
 using System;
 using System.Collections.Generic;
 
+using GooglePlayGames.Utils;
+
 using UIL = UnityEngine.SocialPlatforms.ILeaderboard;
 using UIS = UnityEngine.SocialPlatforms.IScore;
 using UR  = UnityEngine.SocialPlatforms.Range;
@@ -134,16 +136,16 @@ namespace GooglePlayGames {
         public override bool Equals(object other)
         {
             if (other is not GPGL it) return false;
-            return Id            .Equals(it.Id)             &&
-                   IsLoading      ==     it.IsLoading       &&
-                   LocalUserScore.Equals(it.LocalUserScore) &&
-                   MaxRange       ==     it.MaxRange        &&
-                   Range         .Equals(it.Range)          &&
-                   m_scores      .Equals(it.m_scores)       &&
-                   TimeScope      ==     it.TimeScope       &&
-                   Title         .Equals(it.Title)          &&
-                   UserScope      ==     it.UserScope       &&
-                   m_users        ==     it.m_users;
+            return Utility.Equals(Id,             it.Id)             &&
+                   Utility.Equals(IsLoading,      it.IsLoading)      &&
+                   Utility.Equals(LocalUserScore, it.LocalUserScore) &&
+                   Utility.Equals(MaxRange,       it.MaxRange)       &&
+                   Utility.Equals(Range,          it.Range)          &&
+                   Utility.Equals(m_scores,       it.m_scores)       &&
+                   Utility.Equals(TimeScope,      it.TimeScope)      &&
+                   Utility.Equals(Title,          it.Title)          &&
+                   Utility.Equals(UserScope,      it.UserScope)      &&
+                   Utility.Equals(m_users,        it.m_users);
         }
 
         #endregion Object implementation

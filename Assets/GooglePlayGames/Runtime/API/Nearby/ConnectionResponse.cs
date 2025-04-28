@@ -71,10 +71,10 @@ namespace GooglePlayGames.Api.Nearby {
         public override bool Equals(object other)
         {
             if (other is not ACR it) return false;
-            return LocalClientId            ==     it.LocalClientId     &&
-                   Payload         .SequenceEqual (it.Payload)          &&
-                   RemoteEndpointId        .Equals(it.RemoteEndpointId) &&
-                   ResponseStatus           ==     it.ResponseStatus;
+            return Utility.Equals(LocalClientId,    it.LocalClientId)    &&
+                   Utility.Equals(Payload,          it.Payload)          &&
+                   Utility.Equals(RemoteEndpointId, it.RemoteEndpointId) &&
+                   Utility.Equals(ResponseStatus,   it.ResponseStatus);
         }
 
         #endregion Object implementation

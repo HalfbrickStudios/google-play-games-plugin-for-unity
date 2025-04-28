@@ -5,8 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 
 using GooglePlayGames.Utils;
 
-using AJP = UnityEngine.AndroidJavaProxy;
+using UAJO = UnityEngine.AndroidJavaObject;
+using UAJP = UnityEngine.AndroidJavaProxy;
 
+using JO = GooglePlayGames.Android.Java.Object;
 using JT = GooglePlayGames.Android.Java.Task;
 
 namespace GooglePlayGames.Android.Java {
@@ -19,7 +21,7 @@ namespace GooglePlayGames.Android.Java {
 
         public static Proxy<TResult> MakeProxy<TResult>(Proxy<TResult>.OnCompleteDelegate callback = null) => new(callback);
 
-        internal sealed class Proxy<TResult> : AJP {
+        internal sealed class Proxy<TResult> : UAJP {
             
             public delegate void OnCompleteDelegate(JT.Instance<TResult> jTask);
 
@@ -32,15 +34,33 @@ namespace GooglePlayGames.Android.Java {
             }
 
             [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
-            internal void onComplete(JT.Instance<TResult> jTask)
+            internal void onComplete(UAJO jTask)
             {
-                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onComplete(Task<TResult>)");
-                if (jTask is IDisposable disposable) {
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onComplete(AndroidJavaObject)");
+                using var jObject = JO.WrapInstance(jTask);
+                using var jClass  = jObject.JGetClass();
+                if (JT.JClass.IsAssignableFrom(jClass)) {
+                    OnCompleteHandler(Jni.Wrap<JT.Instance<TResult>>(jTask));
+                } else {
+                    throw new InvalidOperationException($"Cannot cast {typeof(UAJO)} to {typeof(JT.Instance<TResult>)} (unreachable branch?)");
+                }
+            }
+
+            [SuppressMessage("Style", "IDE1006", Justification = "Must match Java interface name")]
+            internal void onComplete(JT.Instance<TResult> task)
+            {
+                Logger.t($"JNI: Calling {FullyQualifiedClassName}<TResult>.onComplete(Task.Instance<TResult>)");
+                OnCompleteHandler(task);
+            }
+
+            internal void OnCompleteHandler(JT.Instance<TResult> task)
+            {
+                if (task is IDisposable disposable) {
                     using (disposable) {
-                        OnComplete?.Invoke(jTask);
+                        OnComplete?.Invoke(task);
                     }
                 } else {
-                    OnComplete?.Invoke(jTask);
+                    OnComplete?.Invoke(task);
                 }
             }
 

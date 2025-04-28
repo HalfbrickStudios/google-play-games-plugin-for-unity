@@ -15,7 +15,6 @@
 // </copyright>
 
 using System;
-using System.Linq;
 
 using GooglePlayGames.Utils;
 
@@ -45,8 +44,8 @@ namespace GooglePlayGames.Api.Nearby {
         public override bool Equals(object other)
         {
             if (other is not ACR it) return false;
-            return Payload       .SequenceEqual (it.Payload) &&
-                   RemoteEndpoint        .Equals(it.RemoteEndpoint);
+            return Utility.Equals(Payload,        it.Payload) &&
+                   Utility.Equals(RemoteEndpoint, it.RemoteEndpoint);
         }
 
         #endregion Object implementation
