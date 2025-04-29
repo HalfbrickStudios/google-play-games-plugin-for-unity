@@ -41,6 +41,7 @@ using ALS   = GooglePlayGames.Api.LeaderboardStart;
 using ALSD  = GooglePlayGames.Api.LeaderboardScoreData;
 using ALTS  = GooglePlayGames.Api.LeaderboardTimeSpan;
 using AP    = GooglePlayGames.Api.Player;
+using APP   = GooglePlayGames.Api.PlayerProfile;
 using APS   = GooglePlayGames.Api.PlayerStats;
 using ARA   = GooglePlayGames.Api.RecallAccess;
 using ARS   = GooglePlayGames.Api.ResponseStatus;
@@ -61,7 +62,6 @@ using JOI   = GooglePlayGames.Android.Java.Object.Instance;
 using JPG   = GooglePlayGames.Android.Java.PlayGames;
 using JPGS  = GooglePlayGames.Android.Java.PlayGamesSdk;
 using JRAE  = GooglePlayGames.Android.Java.ResolvableApiException;
-using System.Diagnostics;
 
 namespace GooglePlayGames.Android {
 
@@ -75,7 +75,7 @@ namespace GooglePlayGames.Android {
         private volatile APGCAS m_authState                  = APGCAS.Unauthenticated;
         private readonly object m_authStateLock              = new();
         private volatile AIEC   m_eventsClient               = null;
-        private          UIUP[] m_friends                    = new UIUP[0];
+        private          APP[]  m_friends                    = new APP[0];
         private readonly int    m_friendsMaxResults          = 200;
         private          UAJO   m_friendsResolutionException = null;
         private readonly object m_gameServicesLock           = new();
@@ -198,7 +198,7 @@ namespace GooglePlayGames.Android {
                         using var jResolvable = JRAE.WrapInstance(jException);
                         m_friendsResolutionException = jResolvable.JGetResolution();
                         m_lastLoadFriendsStatus = ALFS.ResolutionRequired;
-                        m_friends = new UIUP[0];
+                        m_friends = new APP[0];
                         callback.Invoke(ALFS.ResolutionRequired);
                     }
                     else

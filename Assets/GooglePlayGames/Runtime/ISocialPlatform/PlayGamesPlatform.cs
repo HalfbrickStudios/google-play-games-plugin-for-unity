@@ -57,7 +57,6 @@ using ARS   = GooglePlayGames.Api.ResponseStatus;
 using ASIS  = GooglePlayGames.Api.SignInStatus;
 using ASPC  = GooglePlayGames.Api.ScorePageCursor;
 using AUS   = GooglePlayGames.Api.UiStatus;
-using System.Runtime.InteropServices;
 
 namespace GooglePlayGames {
 
@@ -143,7 +142,7 @@ namespace GooglePlayGames {
             LocalUser = new GPGLU(this);
         }
 
-        public UILU LocalUser { get; }
+        public GPGLU LocalUser { get; }
 
         public AIEC  Events    => m_client.GetEventsClient();
         public AISGC SavedGame => m_client.GetSavedGameClient();

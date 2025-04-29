@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 
-using UnityEngine.SocialPlatforms;
-
 using US = UnityEngine.SocialPlatforms.IScore;
 
 using GPGS = GooglePlayGames.PlayGamesScore;
@@ -49,7 +47,6 @@ using JPSI   = GooglePlayGames.Android.Java.PlayerStats.Instance;
 using JSC    = GooglePlayGames.Android.Java.SnapshotsClient;
 using JSMC   = GooglePlayGames.Android.Java.SnapshotMetadataChange;
 using JSMCI  = GooglePlayGames.Android.Java.SnapshotMetadataChange.Instance;
-using System.Text.RegularExpressions;
 
 namespace GooglePlayGames.Utils {
 
@@ -219,10 +216,10 @@ namespace GooglePlayGames.Utils {
             return new APP(displayName, playerId, avatarUrl, isFriend);
         }
 
-        public static IEnumerable<IUserProfile> ToAndroidPlayerProfile(JPBI jPlayers)
+        public static IEnumerable<APP> ToAndroidPlayerProfile(JPBI jPlayers)
         {
             var count = jPlayers.GetCount();
-            var users = new IUserProfile[count];
+            var users = new APP[count];
             for (var i = 0; i < count; i += 1) {
                 using var player = jPlayers.JGet(i);
                 users[i] = ToAndroidPlayerProfile(player);
