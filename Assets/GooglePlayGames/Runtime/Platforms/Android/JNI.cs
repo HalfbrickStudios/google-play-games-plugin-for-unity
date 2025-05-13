@@ -25,21 +25,21 @@ namespace GooglePlayGames.Android {
         public static bool TryWrap<WrappingSubType>(UAJO jObject, out WrappingSubType result)
         {
             var type        = typeof(WrappingSubType);
-            var flags       = BindingFlags.Instance | BindingFlags.NonPublic;
+            var flags       = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
             var binder      = null as Binder;
             var intpType    = typeof(IntPtr);
-            var modifiers   = null as ParameterModifier[];
+            var modifiers   = Array.Empty<ParameterModifier>();
             var boolType    = typeof(bool);
-            var constructor = type.GetConstructor(flags, binder, new[] { intpType }, modifiers);
+            var constructor = type.GetConstructor(flags, binder, new[] { intpType, boolType }, modifiers);
             if (constructor != null) {
-                var instance = constructor.Invoke(new object[] { jObject.GetRawObject() });
+                var instance = constructor.Invoke(new object[] { jObject.GetRawObject(), true });
                     result   = (WrappingSubType)instance;
                 return true;
             }
 
-            constructor = type.GetConstructor(flags, binder, new[] { intpType, boolType }, modifiers);
+            constructor = type.GetConstructor(flags, binder, new[] { intpType }, modifiers);
             if (constructor != null) {
-                var instance = constructor.Invoke(new object[] { jObject.GetRawObject(), true });
+                var instance = constructor.Invoke(new object[] { jObject.GetRawObject() });
                     result   = (WrappingSubType)instance;
                 return true;
             }
@@ -53,7 +53,13 @@ namespace GooglePlayGames.Android {
             if (TryWrap(jObject, out WrappingSubType result)) {
                 return result;
             }
-            throw new NotImplementedException($"No wrapping constructor found for {typeof(WrappingSubType)} with IntPtr (and optionally a bool) as parameters");
+            var text = $"No wrapping constructor found for {typeof(WrappingSubType)} with IntPtr (and optionally a bool) as parameters";
+            try {
+                text += "\n  - $_.getClass().getName() => " + jObject.Call<UAJO>("getClass").Call<string>("getName");
+                text += "\n  - $_.toString()           => " + jObject.Call<string>("toString");
+            } finally {
+                throw new NotImplementedException(text);
+            }
         }
 
         public delegate ReturnType WrappedCallDelegate<ReturnType>();
