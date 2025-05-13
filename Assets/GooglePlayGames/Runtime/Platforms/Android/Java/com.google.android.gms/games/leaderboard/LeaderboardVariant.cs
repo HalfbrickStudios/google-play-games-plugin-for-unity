@@ -2,18 +2,20 @@
 
 using System;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
 using JC = GooglePlayGames.Android.JavaClass;
 
-using ALC = GooglePlayGames.Api.LeaderboardCollection;
+using ALC  = GooglePlayGames.Api.LeaderboardCollection;
 using ALTS = GooglePlayGames.Api.LeaderboardTimeSpan;
 
 using JLVC = GooglePlayGames.Android.Java.LeaderboardVariant.Class;
 using JLVI = GooglePlayGames.Android.Java.LeaderboardVariant.Instance;
-using JOI = GooglePlayGames.Android.Java.Object.Instance;
+using JOI  = GooglePlayGames.Android.Java.Object.Instance;
 
 namespace GooglePlayGames.Android.Java {
 
@@ -89,6 +91,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal sealed class Instance : JOI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");

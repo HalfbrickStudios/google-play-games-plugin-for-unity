@@ -2,12 +2,13 @@
 
 using System;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
 using JOI   = GooglePlayGames.Android.Java.Object.Instance;
-using JPFS  = GooglePlayGames.Android.Java.Player.PlayerFriendStatus;
 using JPRII = GooglePlayGames.Android.Java.PlayerRelationshipInfo.Instance;
 
 namespace GooglePlayGames.Android.Java {
@@ -24,6 +25,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal sealed class Instance : JOI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");

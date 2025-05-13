@@ -3,6 +3,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
@@ -16,6 +18,7 @@ using ARS   = GooglePlayGames.Api.ResponseStatus;
 
 using ANCC = GooglePlayGames.Android.NearbyConnectionClient;
 
+using JCCI         = GooglePlayGames.Android.Java.ConnectionsClient.Instance;
 using JCII         = GooglePlayGames.Android.Java.ConnectionInfo.Instance;
 using JCLCP        = GooglePlayGames.Android.Java.ConnectionLifecycleCallbackProxy;
 using JCLCPCP      = GooglePlayGames.Android.Java.ConnectionLifecycleCallbackProxy.Callback.Proxy;
@@ -24,7 +27,6 @@ using JCLCPCPCReqD = GooglePlayGames.Android.Java.ConnectionLifecycleCallbackPro
 using JCLCPCPCResD = GooglePlayGames.Android.Java.ConnectionLifecycleCallbackProxy.Callback.Proxy.OnConnectionResponseDelegate;
 using JCLCPI       = GooglePlayGames.Android.Java.ConnectionLifecycleCallbackProxy.Instance;
 using JCRI         = GooglePlayGames.Android.Java.ConnectionResolution.Instance;
-using JCCI         = GooglePlayGames.Android.Java.ConnectionsClient.Instance;
 using JCSC         = GooglePlayGames.Android.Java.ConnectionsStatusCodes;
 using JOI          = GooglePlayGames.Android.Java.Object.Instance;
 using JPCP         = GooglePlayGames.Android.Java.PayloadCallbackProxy;
@@ -167,6 +169,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal sealed class Instance : JOI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");

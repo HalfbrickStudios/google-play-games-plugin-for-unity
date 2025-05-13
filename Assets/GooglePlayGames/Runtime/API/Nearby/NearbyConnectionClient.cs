@@ -1,5 +1,3 @@
-using System;
-
 using GooglePlayGames.Utils;
 
 using AED  = GooglePlayGames.Api.Nearby.EndpointDetails;

@@ -3,6 +3,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
@@ -12,10 +14,10 @@ using AED  = GooglePlayGames.Api.Nearby.EndpointDetails;
 using AIDL = GooglePlayGames.Api.Nearby.IDiscoveryListener;
 
 using JDEII     = GooglePlayGames.Android.Java.DiscoveredEndpointInfo.Instance;
-using JOI       = GooglePlayGames.Android.Java.Object.Instance;
-using JPCPCP    = GooglePlayGames.Android.Java.EndpointDiscoveryCallbackProxy.Callback.Proxy;
 using JEDCPCPFD = GooglePlayGames.Android.Java.EndpointDiscoveryCallbackProxy.Callback.Proxy.OnEndpointFoundDelegate;
 using JEDCPCPLD = GooglePlayGames.Android.Java.EndpointDiscoveryCallbackProxy.Callback.Proxy.OnEndpointLostDelegate;
+using JOI       = GooglePlayGames.Android.Java.Object.Instance;
+using JPCPCP    = GooglePlayGames.Android.Java.EndpointDiscoveryCallbackProxy.Callback.Proxy;
 using JPCPI     = GooglePlayGames.Android.Java.EndpointDiscoveryCallbackProxy.Instance;
 
 namespace GooglePlayGames.Android.Java {
@@ -79,6 +81,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal sealed class Instance : JOI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");

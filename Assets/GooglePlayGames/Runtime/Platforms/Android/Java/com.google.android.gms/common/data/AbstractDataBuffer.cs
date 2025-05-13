@@ -2,6 +2,8 @@
 
 using System;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
@@ -23,6 +25,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal class Instance<T> : JDB.Instance<T> {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool inherit = true) : base(pointer)
             {
                 if (!inherit) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");

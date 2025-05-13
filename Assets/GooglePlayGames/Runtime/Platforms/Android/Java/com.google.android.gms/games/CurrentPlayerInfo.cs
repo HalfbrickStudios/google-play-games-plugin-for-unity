@@ -2,6 +2,8 @@
 
 using System;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
@@ -9,7 +11,6 @@ using UAJO = UnityEngine.AndroidJavaObject;
 using AFLVS = GooglePlayGames.Api.FriendsListVisibilityStatus;
 
 using JCPII = GooglePlayGames.Android.Java.CurrentPlayerInfo.Instance;
-using JFLVS = GooglePlayGames.Android.Java.Player.FriendsListVisibilityStatus;
 using JOI   = GooglePlayGames.Android.Java.Object.Instance;
 
 namespace GooglePlayGames.Android.Java {
@@ -26,6 +27,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal sealed class Instance : JOI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");

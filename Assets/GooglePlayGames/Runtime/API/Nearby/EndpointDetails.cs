@@ -16,7 +16,6 @@
 
 using System;
 
-using GooglePlayGames.Android.Java;
 using GooglePlayGames.Utils;
 
 using AED = GooglePlayGames.Api.Nearby.EndpointDetails;

@@ -2,6 +2,8 @@
 
 using System;
 
+using UnityEngine.Scripting;
+
 using UAJO = UnityEngine.AndroidJavaObject;
 
 using Logger = GooglePlayGames.Utils.Logger;
@@ -21,8 +23,10 @@ namespace GooglePlayGames.Android.Java {
 
         public static JAI WrapInstance(UAJO jObject) => new(jObject.GetRawObject(), noLog: false);
 
+        [Preserve]
         internal sealed class Instance : JCI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");

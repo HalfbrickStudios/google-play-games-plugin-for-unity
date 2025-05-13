@@ -5,17 +5,17 @@ using GooglePlayGames.Utils;
 
 using JC = GooglePlayGames.Android.JavaClass;
 
-using JAI = GooglePlayGames.Android.Java.Activity.Instance;
-using JACI = GooglePlayGames.Android.Java.AchievementsClient.Instance;
-using JECI = GooglePlayGames.Android.Java.EventsClient.Instance;
+using JAI   = GooglePlayGames.Android.Java.Activity.Instance;
+using JACI  = GooglePlayGames.Android.Java.AchievementsClient.Instance;
+using JECI  = GooglePlayGames.Android.Java.EventsClient.Instance;
 using JGSII = GooglePlayGames.Android.Java.GamesSignIn.Instance;
-using JLCI = GooglePlayGames.Android.Java.LeaderboardsClient.Instance;
-using JPGC = GooglePlayGames.Android.Java.PlayGames.Class;
-using JPCI = GooglePlayGames.Android.Java.PlayersClient.Instance;
+using JLCI  = GooglePlayGames.Android.Java.LeaderboardsClient.Instance;
+using JPGC  = GooglePlayGames.Android.Java.PlayGames.Class;
+using JPCI  = GooglePlayGames.Android.Java.PlayersClient.Instance;
 using JPSCI = GooglePlayGames.Android.Java.PlayerStatsClient.Instance;
-using JRCI = GooglePlayGames.Android.Java.RecallClient.Instance;
-using JSCI = GooglePlayGames.Android.Java.SnapshotsClient.Instance;
-using JUP = GooglePlayGames.Android.Java.UnityPlayer;
+using JRCI  = GooglePlayGames.Android.Java.RecallClient.Instance;
+using JSCI  = GooglePlayGames.Android.Java.SnapshotsClient.Instance;
+using JUP   = GooglePlayGames.Android.Java.UnityPlayer;
 
 namespace GooglePlayGames.Android.Java {
 

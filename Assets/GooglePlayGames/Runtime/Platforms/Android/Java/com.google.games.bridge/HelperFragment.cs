@@ -18,6 +18,8 @@
 
 using System;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Android.Java.Extensions;
 using GooglePlayGames.Utils;
 
@@ -34,11 +36,10 @@ using JC = GooglePlayGames.Android.JavaClass;
 using JO = GooglePlayGames.Android.JavaObject;
 using SM = GooglePlayGames.Android.SnapshotMetadata;
 
-
 using JAI   = GooglePlayGames.Android.Java.Activity.Instance;
 using JEI   = GooglePlayGames.Android.Java.Exception.Instance;
-using JHFC  = GooglePlayGames.Android.Java.HelperFragment.Class;
 using JHF   = GooglePlayGames.Android.Java.HelperFragment;
+using JHFC  = GooglePlayGames.Android.Java.HelperFragment.Class;
 using JHFRI = GooglePlayGames.Android.Java.HelperFragment.Request.Instance;
 using JSMI  = GooglePlayGames.Android.Java.SnapshotMetadata.Instance;
 using JT    = GooglePlayGames.Android.Java.Task;
@@ -63,14 +64,15 @@ namespace GooglePlayGames.Android.Java {
 
             internal sealed class Instance : JO {
 
+                [Preserve]
+                internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
+                {
+                    if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");
+                }
+
                 internal Instance() : base(FullyQualifiedClassName)
                 {
                     Logger.t($"JNI: Initializing class {FullyQualifiedClassName}");
-                }
-
-                internal Instance(IntPtr ptr) : base(ptr)
-                {
-                    Logger.t($"JNI: Wrapping instance {FullyQualifiedClassName}");
                 }
 
                 public JSMI JMetadata

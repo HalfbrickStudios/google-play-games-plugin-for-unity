@@ -2,6 +2,8 @@
 
 using System;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
@@ -20,8 +22,8 @@ namespace GooglePlayGames.Android.Java {
 
     internal static class Task {
 
-        public static readonly string ClassName = "Task";
-        public static readonly string PackageName = "com.google.android.gms.tasks";
+        public static readonly string ClassName               = "Task";
+        public static readonly string PackageName             = "com.google.android.gms.tasks";
         public static readonly string FullyQualifiedClassName = $"{PackageName}.{ClassName}";
 
         public static JCI JClass => JC.JForName(FullyQualifiedClassName);
@@ -32,6 +34,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal class Instance : JOI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool inherit = true) : base(pointer)
             {
                 if (!inherit) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");
@@ -75,6 +78,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal sealed class Instance<TResult> : JTI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}<TResult>");

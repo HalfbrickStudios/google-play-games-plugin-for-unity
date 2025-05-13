@@ -2,24 +2,26 @@
 
 using System;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
 using JC = GooglePlayGames.Android.JavaClass;
 
-using JAD = GooglePlayGames.Android.Java.AnnotatedData;
-using JDOC = GooglePlayGames.Android.Java.SnapshotsClient.DataOrConflict;
-using JOI = GooglePlayGames.Android.Java.Object.Instance;
-using JT = GooglePlayGames.Android.Java.Task;
-using JSBI = GooglePlayGames.Android.Java.SnapshotMetadataBuffer.Instance;
-using JSI = GooglePlayGames.Android.Java.Snapshot.Instance;
-using JSCI = GooglePlayGames.Android.Java.SnapshotsClient.SnapshotConflict.Instance;
+using JAD   = GooglePlayGames.Android.Java.AnnotatedData;
+using JDOC  = GooglePlayGames.Android.Java.SnapshotsClient.DataOrConflict;
+using JOI   = GooglePlayGames.Android.Java.Object.Instance;
+using JSBI  = GooglePlayGames.Android.Java.SnapshotMetadataBuffer.Instance;
+using JSCI  = GooglePlayGames.Android.Java.SnapshotsClient.SnapshotConflict.Instance;
 using JSCsI = GooglePlayGames.Android.Java.SnapshotContents.Instance;
 using JSsCC = GooglePlayGames.Android.Java.SnapshotsClient.Class;
 using JSsCI = GooglePlayGames.Android.Java.SnapshotsClient.Instance;
-using JSMI = GooglePlayGames.Android.Java.SnapshotMetadata.Instance;
+using JSI   = GooglePlayGames.Android.Java.Snapshot.Instance;
 using JSMCI = GooglePlayGames.Android.Java.SnapshotMetadataChange.Instance;
+using JSMI  = GooglePlayGames.Android.Java.SnapshotMetadata.Instance;
+using JT    = GooglePlayGames.Android.Java.Task;
 
 namespace GooglePlayGames.Android.Java {
 
@@ -40,6 +42,7 @@ namespace GooglePlayGames.Android.Java {
 
             internal sealed class Instance<T> : JOI {
 
+                [Preserve]
                 internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
                 {
                     if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");
@@ -83,6 +86,7 @@ namespace GooglePlayGames.Android.Java {
 
             internal sealed class Instance : JOI {
 
+                [Preserve]
                 internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
                 {
                     if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");
@@ -188,6 +192,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal sealed class Instance : JOI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");

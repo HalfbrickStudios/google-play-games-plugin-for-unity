@@ -2,14 +2,16 @@
 
 using System;
 
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
 
-using JOI   = GooglePlayGames.Android.Java.Object.Instance;
 using JAOB  = GooglePlayGames.Android.Java.AdvertisingOptions.Builder;
 using JAOBI = GooglePlayGames.Android.Java.AdvertisingOptions.Builder.Instance;
 using JAOI  = GooglePlayGames.Android.Java.AdvertisingOptions.Instance;
+using JOI   = GooglePlayGames.Android.Java.Object.Instance;
 using JSI   = GooglePlayGames.Android.Java.Strategy.Instance;
 
 namespace GooglePlayGames.Android.Java {
@@ -33,6 +35,7 @@ namespace GooglePlayGames.Android.Java {
 
             internal sealed class Instance : JOI {
 
+                [Preserve]
                 internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
                 {
                     if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");
@@ -65,6 +68,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal sealed class Instance : JOI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");

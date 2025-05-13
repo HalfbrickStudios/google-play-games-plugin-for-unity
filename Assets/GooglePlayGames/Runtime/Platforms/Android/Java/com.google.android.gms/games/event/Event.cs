@@ -1,5 +1,9 @@
 #if UNITY_ANDROID
 
+using System;
+
+using UnityEngine.Scripting;
+
 using GooglePlayGames.Utils;
 
 using UAJO = UnityEngine.AndroidJavaObject;
@@ -8,7 +12,6 @@ using AEV = GooglePlayGames.Api.Events.EventVisibility;
 
 using JEI = GooglePlayGames.Android.Java.Event.Instance;
 using JOI = GooglePlayGames.Android.Java.Object.Instance;
-using System;
 
 namespace GooglePlayGames.Android.Java {
 
@@ -24,6 +27,7 @@ namespace GooglePlayGames.Android.Java {
 
         internal sealed class Instance : JOI {
 
+            [Preserve]
             internal Instance(IntPtr pointer, bool noLog = true) : base(pointer)
             {
                 if (!noLog) Logger.t($"JNI: Wrapping instance of {FullyQualifiedClassName}");
