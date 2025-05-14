@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "com.google.external-dependency-manager": {
+    "com.halfbrick.google.external-dependency-manager": {
       "version": "1.2.185",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
-      "url": "https://package.openupm.com"
+      "url": "https://packages.halfbrickplus.com"
     },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
