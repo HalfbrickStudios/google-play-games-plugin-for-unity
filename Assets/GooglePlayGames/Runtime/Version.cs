@@ -18,7 +18,7 @@ namespace GooglePlayGames {
 
     public class Version {
         public const int    VersionInt    = 0x20000;
-        public const string VersionString = "2.0.0-9";
+        public const string VersionString = "2.0.0-10";
         public const string VersionKey    = "20000";
     }
 
