@@ -1,3 +1,5 @@
+#if UNITY_ANDROID
+
 using System;
 using System.Reflection;
 
@@ -80,3 +82,5 @@ namespace GooglePlayGames.Android {
     }
 
 }
+
+#endif
