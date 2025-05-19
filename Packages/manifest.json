@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.google.external-dependency-manager": "1.2.185",
+    "com.halfbrick.google.external-dependency-manager": "1.2.185",
     "com.unity.ide.rider": "3.0.36",
     "com.unity.ide.visualstudio": "2.0.23",
     "com.unity.ide.vscode": "1.2.5",
@@ -11,6 +11,13 @@
   },
   "scopedRegistries": [
     {
+      "name": "Halfbrick+",
+      "url": "https://packages.halfbrickplus.com",
+      "scopes": [
+        "com.halfbrick."
+      ]
+    },
+	  {
       "name": "OpenUPM",
       "url": "https://package.openupm.com",
       "scopes": [

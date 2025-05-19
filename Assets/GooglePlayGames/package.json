@@ -1,19 +1,26 @@
 {
-    "name": "com.google.play.games",
+    "name": "com.halfbrick.google.play.games",
     "displayName": "Google Play Games",
     "description": "The Google Play Games plugin for Unity allows you to access the Google Play Games API through Unity's social interface.",
-    "version": "2.0.0-9",
+    "version": "2.0.0-10",
     "unity": "2018.4",
     "author": {
         "name": "Google LLC"
     },
     "dependencies": {
-        "com.google.external-dependency-manager": "1.2.185",
+        "com.halfbrick.google.external-dependency-manager": "1.2.185",
         "com.unity.modules.androidjni": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0",
         "com.unity.modules.unitywebrequesttexture": "1.0.0"
     },
     "scopedRegistries": [
+        {
+            "name": "Halfbrick+",
+            "url": "https://packages.halfbrickplus.com",
+            "scopes": [
+                "com.halfbrick."
+            ]
+        },
         {
             "name": "OpenUPM",
             "url": "https://package.openupm.com",

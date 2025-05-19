@@ -26,6 +26,14 @@ MonoBehaviour:
     m_IsDefault: 1
     m_Capabilities: 7
     m_ConfigSource: 0
+  - m_Id: scoped:project:Halfbrick+
+    m_Name: Halfbrick+
+    m_Url: https://packages.halfbrickplus.com
+    m_Scopes:
+    - com.halfbrick
+    m_IsDefault: 0
+    m_Capabilities: 0
+    m_ConfigSource: 4
   - m_Id: scoped:project:OpenUPM
     m_Name: OpenUPM
     m_Url: https://package.openupm.com
@@ -34,11 +42,11 @@ MonoBehaviour:
     m_IsDefault: 0
     m_Capabilities: 0
     m_ConfigSource: 4
-  m_UserSelectedRegistryName: OpenUPM
+  m_UserSelectedRegistryName: Halfbrick+
   m_UserAddingNewScopedRegistry: 0
   m_RegistryInfoDraft:
     m_Modified: 0
     m_ErrorMessage: 
-    m_UserModificationsInstanceId: -836
+    m_UserModificationsInstanceId: -834
     m_OriginalInstanceId: -838
   m_LoadAssets: 0
