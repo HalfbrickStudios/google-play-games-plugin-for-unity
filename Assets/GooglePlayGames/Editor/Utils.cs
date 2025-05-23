@@ -61,7 +61,7 @@ namespace GooglePlayGames.Editor {
         private const string GAME_INFO_RELATIVE_PATH = "Runtime/Scripts/GameInfo.cs";
         private const string MANIFEST_RELATIVE_PATH  = "../../Plugins/Android/GooglePlayGamesManifest.androidlib/AndroidManifest.xml";
         private const string ROOT_DIRECTORY_NAME     = "GooglePlayGames";
-        private const string ROOT_PACKAGE_NAME       = "com.google.play.games";
+        private const string ROOT_PACKAGE_NAME       = "com.halfbrick.google.play-games";
 
         private static string s_rootPath = string.Empty;
 
